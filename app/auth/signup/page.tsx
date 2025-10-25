@@ -297,7 +297,7 @@ const SignUp = () => {
                 variant="outline"
                 onClick={() => handleSocialSignup("github")}
               >
-                <Github className="h-4 w-4 mr-2" />
+                <Github />
                 GitHub
               </Button>
             </div>

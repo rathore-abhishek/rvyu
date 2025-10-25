@@ -18,7 +18,7 @@ const Navbar = async () => {
       <nav className="container mx-auto flex max-w-6xl items-center justify-between px-6 py-4 bg-linear-to-br from-background to-background/80 border rounded-3xl mt-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Logo" width={40} height={40} />
+          <Image src="/logo.png" alt="Logo" width={36} height={36} />
           <span className="text-lg font-serif font-semibold">rvyu.</span>
         </Link>
 
