@@ -8,6 +8,7 @@ import Navbar from "@/components/common/navbar";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import TanstackQueryProvider from "@/components/providers/tanstack-query-provider";
 import { Toaster } from "@/components/ui/sonner";
+import Footer from "@/components/common/footer";
 
 const serif = Instrument_Serif({
   variable: "--font-serif",
@@ -46,6 +47,7 @@ export default function RootLayout({
             <ProgessProvider>
               <Navbar />
               {children}
+              <Footer />
               <Toaster />
             </ProgessProvider>
           </TanstackQueryProvider>
