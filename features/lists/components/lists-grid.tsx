@@ -91,10 +91,7 @@ export function ListsGrid() {
     deleteListMutation({ id: listToDelete.id });
   };
 
-  const handleEdit = (
-    e: React.MouseEvent,
-    id: string,
-  ) => {
+  const handleEdit = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     e.stopPropagation();
     router.push(`/dashboard/lists/${id}/edit`);
@@ -151,9 +148,7 @@ export function ListsGrid() {
   return (
     <>
       <div className="grid auto-rows-fr gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <CreateListCard
-          onClick={() => router.push("/dashboard/lists/create")}
-        />
+        <CreateListCard />
         {lists.map(({ id, name, description, createdAt, visibility }) => (
           <article
             key={id}

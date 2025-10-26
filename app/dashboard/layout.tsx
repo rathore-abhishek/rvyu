@@ -9,9 +9,9 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Button } from "@/components/ui/button";
-import { LogIn } from "lucide-react";
+import { Plus, LogIn, FolderPlus, Boxes } from "lucide-react";
 import Link from "next/link";
-import Plus from "@/components/icons/plus";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const DashboardLayout = async ({
   children,
@@ -53,12 +53,28 @@ const DashboardLayout = async ({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <DashboardHeader />
-          <Button size="sm" asChild>
-            <Link href="/dashboard/lists/create">
-              <Plus />
-              Create new list
-            </Link>
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="sm">
+                <Plus />
+                Create
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/projects/create" className="flex items-center gap-2">
+                  <Boxes className="h-4 w-4" />
+                  New Project
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/lists/create" className="flex items-center gap-2">
+                  <FolderPlus className="h-4 w-4" />
+                  New List
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <DashboardTabs />
         {children}
