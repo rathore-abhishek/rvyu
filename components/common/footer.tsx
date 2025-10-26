@@ -42,17 +42,17 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="border-t bg-background">
-      <div className="container mx-auto max-w-6xl px-6 py-12">
+    <footer className="bg-background border-t px-6 py-16">
+      <div className="container mx-auto max-w-6xl">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand Section */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-4">
+            <Link href="/" className="mb-4 flex items-center gap-2">
               <Image src="/logo.png" alt="Logo" width={32} height={32} />
-              <span className="text-xl font-serif font-semibold">rvyu.</span>
+              <span className="font-serif text-xl font-semibold">rvyu.</span>
             </Link>
-            <p className="text-sm text-muted-foreground mb-4 max-w-xs">
+            <p className="text-muted-foreground mb-4 max-w-xs text-sm">
               Share your projects, discover amazing work, and connect with
               creators from around the world.
             </p>
@@ -75,13 +75,13 @@ const Footer = () => {
 
           {/* Product Links */}
           <div>
-            <h3 className="font-semibold text-sm mb-4">Product</h3>
+            <h3 className="mb-4 text-sm font-semibold">Product</h3>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-muted-foreground hover:text-foreground text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -92,13 +92,13 @@ const Footer = () => {
 
           {/* Company Links */}
           <div>
-            <h3 className="font-semibold text-sm mb-4">Company</h3>
+            <h3 className="mb-4 text-sm font-semibold">Company</h3>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-muted-foreground hover:text-foreground text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -109,13 +109,13 @@ const Footer = () => {
 
           {/* Legal Links */}
           <div>
-            <h3 className="font-semibold text-sm mb-4">Legal</h3>
+            <h3 className="mb-4 text-sm font-semibold">Legal</h3>
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-muted-foreground hover:text-foreground text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -126,13 +126,13 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-muted-foreground">
+        <div className="mt-12 border-t pt-8">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <p className="text-muted-foreground text-sm">
               © {currentYear} rvyu. All rights reserved.
             </p>
-            <p className="text-sm text-muted-foreground">
-              Made with <Heart className="inline-block w-4 h-4 text-red-500" />{" "}
+            <p className="text-muted-foreground text-sm">
+              Made with <Heart className="inline-block h-4 w-4 text-red-500" />{" "}
               by{" "}
               <a
                 href="https://rathore-abhishek.vercel.app"

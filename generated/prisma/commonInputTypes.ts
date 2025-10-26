@@ -147,6 +147,23 @@ export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
 }
 
+export type EnumListVisibilityFilter<$PrismaModel = never> = {
+  equals?: $Enums.ListVisibility | Prisma.EnumListVisibilityFieldRefInput<$PrismaModel>
+  in?: $Enums.ListVisibility[] | Prisma.ListEnumListVisibilityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ListVisibility[] | Prisma.ListEnumListVisibilityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumListVisibilityFilter<$PrismaModel> | $Enums.ListVisibility
+}
+
+export type EnumListVisibilityWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ListVisibility | Prisma.EnumListVisibilityFieldRefInput<$PrismaModel>
+  in?: $Enums.ListVisibility[] | Prisma.ListEnumListVisibilityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ListVisibility[] | Prisma.ListEnumListVisibilityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumListVisibilityWithAggregatesFilter<$PrismaModel> | $Enums.ListVisibility
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumListVisibilityFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumListVisibilityFilter<$PrismaModel>
+}
+
 export type IntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -319,6 +336,23 @@ export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
   _max?: Prisma.NestedDateTimeNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumListVisibilityFilter<$PrismaModel = never> = {
+  equals?: $Enums.ListVisibility | Prisma.EnumListVisibilityFieldRefInput<$PrismaModel>
+  in?: $Enums.ListVisibility[] | Prisma.ListEnumListVisibilityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ListVisibility[] | Prisma.ListEnumListVisibilityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumListVisibilityFilter<$PrismaModel> | $Enums.ListVisibility
+}
+
+export type NestedEnumListVisibilityWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ListVisibility | Prisma.EnumListVisibilityFieldRefInput<$PrismaModel>
+  in?: $Enums.ListVisibility[] | Prisma.ListEnumListVisibilityFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ListVisibility[] | Prisma.ListEnumListVisibilityFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumListVisibilityWithAggregatesFilter<$PrismaModel> | $Enums.ListVisibility
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumListVisibilityFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumListVisibilityFilter<$PrismaModel>
 }
 
 export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {

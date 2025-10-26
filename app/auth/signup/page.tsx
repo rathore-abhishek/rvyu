@@ -66,29 +66,29 @@ const SignUp = () => {
   };
 
   return (
-    <div className="bg-background flex items-center justify-center min-h-screen p-4">
-      <div className="flex flex-col items-center gap-4 w-full">
+    <div className="bg-background my-32 flex items-center justify-center px-4">
+      <div className="flex w-full flex-col items-center gap-4">
         <div className="text-center">
-          <h1 className="text-4xl text-muted-foreground font-serif">
+          <h1 className="text-muted-foreground font-serif text-4xl">
             Ready to start?
           </h1>
-          <h2 className="text-foreground text-5xl font-serif">
+          <h2 className="text-foreground font-serif text-5xl">
             Create your <span className="italic">account</span>.
           </h2>
         </div>
         <Card className="w-full max-w-md">
           <CardContent className="space-y-4">
             {error && (
-              <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
-                <p className="text-sm text-destructive">{error.message}</p>
+              <div className="border-destructive/20 bg-destructive/10 rounded-lg border p-4">
+                <p className="text-destructive text-sm">{error.message}</p>
               </div>
             )}
 
             {isSuccess ? (
               <div className="space-y-4">
-                <div className="rounded-lg border border-green-500/20 bg-green-500/10 p-4 space-y-3">
+                <div className="space-y-3 rounded-lg border border-green-500/20 bg-green-500/10 p-4">
                   <div className="flex items-start gap-3">
-                    <Tick className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                    <Tick className="mt-0.5 h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
                     <div className="space-y-1">
                       <p className="text-sm font-medium text-green-600 dark:text-green-400">
                         Account Created Successfully!
@@ -99,7 +99,7 @@ const SignUp = () => {
                           {form.state.values.email}
                         </span>
                       </p>
-                      <p className="text-xs text-green-600/70 dark:text-green-400/70 pt-1">
+                      <p className="pt-1 text-xs text-green-600/70 dark:text-green-400/70">
                         Please check your inbox and click the link to sign in
                         and verify your account.
                       </p>
@@ -110,7 +110,7 @@ const SignUp = () => {
                 <div className="text-center">
                   <Link
                     href="/auth/login"
-                    className="text-sm text-primary hover:underline"
+                    className="text-primary text-sm hover:underline"
                   >
                     Go to Sign In
                   </Link>
@@ -145,7 +145,7 @@ const SignUp = () => {
                         />
                       </InputGroup>
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
+                        <p className="text-destructive text-sm">
                           {field.state.meta.errors[0]?.message}
                         </p>
                       )}
@@ -174,7 +174,7 @@ const SignUp = () => {
                         />
                       </InputGroup>
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
+                        <p className="text-destructive text-sm">
                           {field.state.meta.errors[0]?.message}
                         </p>
                       )}
@@ -214,7 +214,7 @@ const SignUp = () => {
                         </InputGroupAddon>
                       </InputGroup>
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
+                        <p className="text-destructive text-sm">
                           {field.state.meta.errors[0]?.message}
                         </p>
                       )}
@@ -258,7 +258,7 @@ const SignUp = () => {
                         </InputGroupAddon>
                       </InputGroup>
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-sm text-destructive">
+                        <p className="text-destructive text-sm">
                           {field.state.meta.errors[0]?.message}
                         </p>
                       )}
@@ -277,7 +277,7 @@ const SignUp = () => {
                 <Separator />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="bg-card px-2 text-muted-foreground">
+                <span className="bg-card text-muted-foreground px-2">
                   Or continue with
                 </span>
               </div>
@@ -308,7 +308,7 @@ const SignUp = () => {
               </span>
               <Link
                 href="/auth/login"
-                className="text-primary hover:underline font-medium"
+                className="text-primary font-medium hover:underline"
               >
                 Sign in
               </Link>

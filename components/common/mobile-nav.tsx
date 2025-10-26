@@ -41,7 +41,12 @@ export function MobileNav({ user }: MobileNavProps) {
       .slice(0, 2);
   };
 
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) => {
+    if (path === "/dashboard") {
+      return pathname.startsWith("/dashboard");
+    }
+    return pathname === path;
+  };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -53,7 +58,7 @@ export function MobileNav({ user }: MobileNavProps) {
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="w-[300px] sm:w-[340px] px-0 flex flex-col"
+        className="flex w-[300px] flex-col px-0 sm:w-[340px]"
       >
         {/* Header with Logo */}
         <SheetHeader className="px-6 pb-4">
@@ -64,7 +69,7 @@ export function MobileNav({ user }: MobileNavProps) {
               onClick={() => setOpen(false)}
             >
               <Image src="/logo.png" alt="Logo" width={36} height={36} />
-              <span className="text-2xl font-serif font-semibold">rvyu.</span>
+              <span className="font-serif text-2xl font-semibold">rvyu.</span>
             </Link>
           </SheetTitle>
         </SheetHeader>
@@ -72,21 +77,21 @@ export function MobileNav({ user }: MobileNavProps) {
         {/* User Profile Section */}
         {user && (
           <>
-            <div className="px-6 py-4 bg-accent">
+            <div className="bg-accent px-6 py-4">
               <div className="flex items-center gap-3">
-                <Avatar className="h-12 w-12 border-2 border-background">
+                <Avatar className="border-background h-12 w-12 border-2">
                   <AvatarImage src={user.image || ""} alt={user.name} />
                   <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
                     {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate">{user.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold">{user.name}</p>
+                  <p className="text-muted-foreground truncate text-xs">
                     {user.email}
                   </p>
                 </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                <ChevronRight className="text-muted-foreground h-4 w-4" />
               </div>
             </div>
             <Separator />
@@ -95,15 +100,15 @@ export function MobileNav({ user }: MobileNavProps) {
 
         {/* Navigation Links */}
         <nav className="flex-1 overflow-y-auto py-4">
-          <div className="px-3 space-y-1">
+          <div className="space-y-1 px-3">
             <Link
               href="/dashboard"
               onClick={() => setOpen(false)}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
                 isActive("/dashboard")
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent",
               )}
             >
               <Dashboard className="h-5 w-5" />
@@ -114,10 +119,10 @@ export function MobileNav({ user }: MobileNavProps) {
               href="/lists"
               onClick={() => setOpen(false)}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
                 isActive("/lists")
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent",
               )}
             >
               <List className="h-5 w-5" />
@@ -132,7 +137,7 @@ export function MobileNav({ user }: MobileNavProps) {
                 <form action={logout}>
                   <button
                     type="submit"
-                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/10 rounded-lg transition-all"
+                    className="text-destructive hover:bg-destructive/10 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all"
                   >
                     <LogOut className="h-5 w-5" />
                     <span>Sign Out</span>
@@ -151,7 +156,7 @@ export function MobileNav({ user }: MobileNavProps) {
                     Get Started
                   </Link>
                 </Button>
-                <p className="text-xs text-muted-foreground text-center mt-3">
+                <p className="text-muted-foreground mt-3 text-center text-xs">
                   Already have an account?{" "}
                   <Link
                     href="/auth/login"

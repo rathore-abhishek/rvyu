@@ -163,6 +163,7 @@ export const ListScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
+  visibility: 'visibility',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

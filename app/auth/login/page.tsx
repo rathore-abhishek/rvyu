@@ -59,28 +59,28 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-background flex items-center justify-center min-h-screen p-4">
-      <div className="flex flex-col items-center gap-4 w-full">
+    <div className="bg-background my-32 flex items-center justify-center px-4">
+      <div className="flex w-full flex-col items-center gap-4">
         <div className="text-center">
-          <h1 className="text-4xl text-muted-foreground font-serif">
+          <h1 className="text-muted-foreground font-serif text-4xl">
             Welcome back!
           </h1>
-          <p className="text-foreground text-5xl font-serif">
+          <p className="text-foreground font-serif text-5xl">
             Login to your account.
           </p>
         </div>
         <Card className="w-full max-w-md">
           <CardContent className="space-y-4">
             {error && (
-              <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
-                <p className="text-sm text-destructive">{error.message}</p>
+              <div className="border-destructive/20 bg-destructive/10 rounded-lg border p-4">
+                <p className="text-destructive text-sm">{error.message}</p>
               </div>
             )}
 
             {isSuccess && (
               <div className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-4">
                 <div className="flex items-start gap-3">
-                  <Tick className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+                  <Tick className="mt-0.5 h-5 w-5 shrink-0 text-blue-600 dark:text-blue-400" />
                   <div className="space-y-1">
                     <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
                       Login Email Sent!
@@ -126,7 +126,7 @@ const Login = () => {
                       />
                     </InputGroup>
                     {field.state.meta.errors.length > 0 && (
-                      <p className="text-sm text-destructive">
+                      <p className="text-destructive text-sm">
                         {field.state.meta.errors[0]?.message}
                       </p>
                     )}
@@ -157,14 +157,16 @@ const Login = () => {
                         <InputGroupButton
                           size="icon-xs"
                           onClick={() => setShowPassword(!showPassword)}
-                          aria-label={showPassword ? "Hide password" : "Show password"}
+                          aria-label={
+                            showPassword ? "Hide password" : "Show password"
+                          }
                         >
                           {showPassword ? <EyeClose /> : <EyeOpen />}
                         </InputGroupButton>
                       </InputGroupAddon>
                     </InputGroup>
                     {field.state.meta.errors.length > 0 && (
-                      <p className="text-sm text-destructive">
+                      <p className="text-destructive text-sm">
                         {field.state.meta.errors[0]?.message}
                       </p>
                     )}
@@ -182,7 +184,7 @@ const Login = () => {
                 <Separator />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="bg-card px-2 text-muted-foreground">
+                <span className="bg-card text-muted-foreground px-2">
                   Or continue with
                 </span>
               </div>
@@ -213,7 +215,7 @@ const Login = () => {
               </span>
               <Link
                 href="/auth/signup"
-                className="text-primary hover:underline font-medium"
+                className="text-primary font-medium hover:underline"
               >
                 Sign up
               </Link>

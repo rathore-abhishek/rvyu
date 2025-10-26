@@ -27,6 +27,7 @@ export type ListMinAggregateOutputType = {
   id: string | null
   name: string | null
   description: string | null
+  visibility: $Enums.ListVisibility | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -36,6 +37,7 @@ export type ListMaxAggregateOutputType = {
   id: string | null
   name: string | null
   description: string | null
+  visibility: $Enums.ListVisibility | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -45,6 +47,7 @@ export type ListCountAggregateOutputType = {
   id: number
   name: number
   description: number
+  visibility: number
   userId: number
   createdAt: number
   updatedAt: number
@@ -56,6 +59,7 @@ export type ListMinAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  visibility?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -65,6 +69,7 @@ export type ListMaxAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  visibility?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -74,6 +79,7 @@ export type ListCountAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  visibility?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -156,6 +162,7 @@ export type ListGroupByOutputType = {
   id: string
   name: string
   description: string | null
+  visibility: $Enums.ListVisibility
   userId: string
   createdAt: Date
   updatedAt: Date
@@ -186,6 +193,7 @@ export type ListWhereInput = {
   id?: Prisma.StringFilter<"List"> | string
   name?: Prisma.StringFilter<"List"> | string
   description?: Prisma.StringNullableFilter<"List"> | string | null
+  visibility?: Prisma.EnumListVisibilityFilter<"List"> | $Enums.ListVisibility
   userId?: Prisma.StringFilter<"List"> | string
   createdAt?: Prisma.DateTimeFilter<"List"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"List"> | Date | string
@@ -197,6 +205,7 @@ export type ListOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -211,6 +220,7 @@ export type ListWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ListWhereInput | Prisma.ListWhereInput[]
   name?: Prisma.StringFilter<"List"> | string
   description?: Prisma.StringNullableFilter<"List"> | string | null
+  visibility?: Prisma.EnumListVisibilityFilter<"List"> | $Enums.ListVisibility
   userId?: Prisma.StringFilter<"List"> | string
   createdAt?: Prisma.DateTimeFilter<"List"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"List"> | Date | string
@@ -222,6 +232,7 @@ export type ListOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -237,6 +248,7 @@ export type ListScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"List"> | string
   name?: Prisma.StringWithAggregatesFilter<"List"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"List"> | string | null
+  visibility?: Prisma.EnumListVisibilityWithAggregatesFilter<"List"> | $Enums.ListVisibility
   userId?: Prisma.StringWithAggregatesFilter<"List"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"List"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"List"> | Date | string
@@ -246,6 +258,7 @@ export type ListCreateInput = {
   id?: string
   name: string
   description?: string | null
+  visibility?: $Enums.ListVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutListsInput
@@ -256,6 +269,7 @@ export type ListUncheckedCreateInput = {
   id?: string
   name: string
   description?: string | null
+  visibility?: $Enums.ListVisibility
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -266,6 +280,7 @@ export type ListUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumListVisibilityFieldUpdateOperationsInput | $Enums.ListVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutListsNestedInput
@@ -276,6 +291,7 @@ export type ListUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumListVisibilityFieldUpdateOperationsInput | $Enums.ListVisibility
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -286,6 +302,7 @@ export type ListCreateManyInput = {
   id?: string
   name: string
   description?: string | null
+  visibility?: $Enums.ListVisibility
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -295,6 +312,7 @@ export type ListUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumListVisibilityFieldUpdateOperationsInput | $Enums.ListVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -303,6 +321,7 @@ export type ListUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumListVisibilityFieldUpdateOperationsInput | $Enums.ListVisibility
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -322,6 +341,7 @@ export type ListCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -331,6 +351,7 @@ export type ListMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -340,6 +361,7 @@ export type ListMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -392,6 +414,10 @@ export type ListUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.ListScalarWhereInput | Prisma.ListScalarWhereInput[]
 }
 
+export type EnumListVisibilityFieldUpdateOperationsInput = {
+  set?: $Enums.ListVisibility
+}
+
 export type ListCreateNestedOneWithoutListProjectsInput = {
   create?: Prisma.XOR<Prisma.ListCreateWithoutListProjectsInput, Prisma.ListUncheckedCreateWithoutListProjectsInput>
   connectOrCreate?: Prisma.ListCreateOrConnectWithoutListProjectsInput
@@ -410,6 +436,7 @@ export type ListCreateWithoutUserInput = {
   id?: string
   name: string
   description?: string | null
+  visibility?: $Enums.ListVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
   listProjects?: Prisma.ListProjectCreateNestedManyWithoutListInput
@@ -419,6 +446,7 @@ export type ListUncheckedCreateWithoutUserInput = {
   id?: string
   name: string
   description?: string | null
+  visibility?: $Enums.ListVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
   listProjects?: Prisma.ListProjectUncheckedCreateNestedManyWithoutListInput
@@ -457,6 +485,7 @@ export type ListScalarWhereInput = {
   id?: Prisma.StringFilter<"List"> | string
   name?: Prisma.StringFilter<"List"> | string
   description?: Prisma.StringNullableFilter<"List"> | string | null
+  visibility?: Prisma.EnumListVisibilityFilter<"List"> | $Enums.ListVisibility
   userId?: Prisma.StringFilter<"List"> | string
   createdAt?: Prisma.DateTimeFilter<"List"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"List"> | Date | string
@@ -466,6 +495,7 @@ export type ListCreateWithoutListProjectsInput = {
   id?: string
   name: string
   description?: string | null
+  visibility?: $Enums.ListVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutListsInput
@@ -475,6 +505,7 @@ export type ListUncheckedCreateWithoutListProjectsInput = {
   id?: string
   name: string
   description?: string | null
+  visibility?: $Enums.ListVisibility
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -500,6 +531,7 @@ export type ListUpdateWithoutListProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumListVisibilityFieldUpdateOperationsInput | $Enums.ListVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutListsNestedInput
@@ -509,6 +541,7 @@ export type ListUncheckedUpdateWithoutListProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumListVisibilityFieldUpdateOperationsInput | $Enums.ListVisibility
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -518,6 +551,7 @@ export type ListCreateManyUserInput = {
   id?: string
   name: string
   description?: string | null
+  visibility?: $Enums.ListVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -526,6 +560,7 @@ export type ListUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumListVisibilityFieldUpdateOperationsInput | $Enums.ListVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   listProjects?: Prisma.ListProjectUpdateManyWithoutListNestedInput
@@ -535,6 +570,7 @@ export type ListUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumListVisibilityFieldUpdateOperationsInput | $Enums.ListVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   listProjects?: Prisma.ListProjectUncheckedUpdateManyWithoutListNestedInput
@@ -544,6 +580,7 @@ export type ListUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumListVisibilityFieldUpdateOperationsInput | $Enums.ListVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -583,6 +620,7 @@ export type ListSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   name?: boolean
   description?: boolean
+  visibility?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -595,6 +633,7 @@ export type ListSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   name?: boolean
   description?: boolean
+  visibility?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -605,6 +644,7 @@ export type ListSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   name?: boolean
   description?: boolean
+  visibility?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -615,12 +655,13 @@ export type ListSelectScalar = {
   id?: boolean
   name?: boolean
   description?: boolean
+  visibility?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ListOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["list"]>
+export type ListOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "visibility" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["list"]>
 export type ListInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   listProjects?: boolean | Prisma.List$listProjectsArgs<ExtArgs>
@@ -643,6 +684,7 @@ export type $ListPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: string
     name: string
     description: string | null
+    visibility: $Enums.ListVisibility
     userId: string
     createdAt: Date
     updatedAt: Date
@@ -1074,6 +1116,7 @@ export interface ListFieldRefs {
   readonly id: Prisma.FieldRef<"List", 'String'>
   readonly name: Prisma.FieldRef<"List", 'String'>
   readonly description: Prisma.FieldRef<"List", 'String'>
+  readonly visibility: Prisma.FieldRef<"List", 'ListVisibility'>
   readonly userId: Prisma.FieldRef<"List", 'String'>
   readonly createdAt: Prisma.FieldRef<"List", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"List", 'DateTime'>

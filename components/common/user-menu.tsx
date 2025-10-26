@@ -49,8 +49,8 @@ export function UserMenu({ user }: UserMenuProps) {
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
-            <p className="text-xs text-muted-foreground">{user.email}</p>
+            <p className="text-sm leading-none font-medium">{user.name}</p>
+            <p className="text-muted-foreground text-xs">{user.email}</p>
           </div>
         </div>
         <Separator />
@@ -69,7 +69,7 @@ export function UserMenu({ user }: UserMenuProps) {
           <form action={logout}>
             <Button
               variant="ghost"
-              className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/8"
+              className="text-destructive hover:text-destructive hover:bg-destructive/8 w-full justify-start"
               size="sm"
               type="submit"
             >

@@ -167,8 +167,8 @@ export type ProjectGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type ProjectGroupByOutputType = {
   id: string
   name: string
-  description: string | null
-  liveLink: string | null
+  description: string
+  liveLink: string
   codeLink: string | null
   userId: string
   createdAt: Date
@@ -199,8 +199,8 @@ export type ProjectWhereInput = {
   NOT?: Prisma.ProjectWhereInput | Prisma.ProjectWhereInput[]
   id?: Prisma.StringFilter<"Project"> | string
   name?: Prisma.StringFilter<"Project"> | string
-  description?: Prisma.StringNullableFilter<"Project"> | string | null
-  liveLink?: Prisma.StringNullableFilter<"Project"> | string | null
+  description?: Prisma.StringFilter<"Project"> | string
+  liveLink?: Prisma.StringFilter<"Project"> | string
   codeLink?: Prisma.StringNullableFilter<"Project"> | string | null
   userId?: Prisma.StringFilter<"Project"> | string
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -215,8 +215,8 @@ export type ProjectWhereInput = {
 export type ProjectOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  description?: Prisma.SortOrderInput | Prisma.SortOrder
-  liveLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrder
+  liveLink?: Prisma.SortOrder
   codeLink?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -234,8 +234,8 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ProjectWhereInput[]
   NOT?: Prisma.ProjectWhereInput | Prisma.ProjectWhereInput[]
   name?: Prisma.StringFilter<"Project"> | string
-  description?: Prisma.StringNullableFilter<"Project"> | string | null
-  liveLink?: Prisma.StringNullableFilter<"Project"> | string | null
+  description?: Prisma.StringFilter<"Project"> | string
+  liveLink?: Prisma.StringFilter<"Project"> | string
   codeLink?: Prisma.StringNullableFilter<"Project"> | string | null
   userId?: Prisma.StringFilter<"Project"> | string
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -250,8 +250,8 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
 export type ProjectOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  description?: Prisma.SortOrderInput | Prisma.SortOrder
-  liveLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrder
+  liveLink?: Prisma.SortOrder
   codeLink?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -267,8 +267,8 @@ export type ProjectScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ProjectScalarWhereWithAggregatesInput | Prisma.ProjectScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Project"> | string
   name?: Prisma.StringWithAggregatesFilter<"Project"> | string
-  description?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
-  liveLink?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
+  description?: Prisma.StringWithAggregatesFilter<"Project"> | string
+  liveLink?: Prisma.StringWithAggregatesFilter<"Project"> | string
   codeLink?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   userId?: Prisma.StringWithAggregatesFilter<"Project"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
@@ -278,8 +278,8 @@ export type ProjectScalarWhereWithAggregatesInput = {
 export type ProjectCreateInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -293,8 +293,8 @@ export type ProjectCreateInput = {
 export type ProjectUncheckedCreateInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   userId: string
   createdAt?: Date | string
@@ -308,8 +308,8 @@ export type ProjectUncheckedCreateInput = {
 export type ProjectUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -323,8 +323,8 @@ export type ProjectUpdateInput = {
 export type ProjectUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -338,8 +338,8 @@ export type ProjectUncheckedUpdateInput = {
 export type ProjectCreateManyInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   userId: string
   createdAt?: Date | string
@@ -349,8 +349,8 @@ export type ProjectCreateManyInput = {
 export type ProjectUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -359,8 +359,8 @@ export type ProjectUpdateManyMutationInput = {
 export type ProjectUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -516,8 +516,8 @@ export type ProjectUpdateOneRequiredWithoutVotesNestedInput = {
 export type ProjectCreateWithoutUserInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -530,8 +530,8 @@ export type ProjectCreateWithoutUserInput = {
 export type ProjectUncheckedCreateWithoutUserInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -573,8 +573,8 @@ export type ProjectScalarWhereInput = {
   NOT?: Prisma.ProjectScalarWhereInput | Prisma.ProjectScalarWhereInput[]
   id?: Prisma.StringFilter<"Project"> | string
   name?: Prisma.StringFilter<"Project"> | string
-  description?: Prisma.StringNullableFilter<"Project"> | string | null
-  liveLink?: Prisma.StringNullableFilter<"Project"> | string | null
+  description?: Prisma.StringFilter<"Project"> | string
+  liveLink?: Prisma.StringFilter<"Project"> | string
   codeLink?: Prisma.StringNullableFilter<"Project"> | string | null
   userId?: Prisma.StringFilter<"Project"> | string
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -584,8 +584,8 @@ export type ProjectScalarWhereInput = {
 export type ProjectCreateWithoutTechStackInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -598,8 +598,8 @@ export type ProjectCreateWithoutTechStackInput = {
 export type ProjectUncheckedCreateWithoutTechStackInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   userId: string
   createdAt?: Date | string
@@ -628,8 +628,8 @@ export type ProjectUpdateToOneWithWhereWithoutTechStackInput = {
 export type ProjectUpdateWithoutTechStackInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -642,8 +642,8 @@ export type ProjectUpdateWithoutTechStackInput = {
 export type ProjectUncheckedUpdateWithoutTechStackInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -656,8 +656,8 @@ export type ProjectUncheckedUpdateWithoutTechStackInput = {
 export type ProjectCreateWithoutListProjectsInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -670,8 +670,8 @@ export type ProjectCreateWithoutListProjectsInput = {
 export type ProjectUncheckedCreateWithoutListProjectsInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   userId: string
   createdAt?: Date | string
@@ -700,8 +700,8 @@ export type ProjectUpdateToOneWithWhereWithoutListProjectsInput = {
 export type ProjectUpdateWithoutListProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -714,8 +714,8 @@ export type ProjectUpdateWithoutListProjectsInput = {
 export type ProjectUncheckedUpdateWithoutListProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -728,8 +728,8 @@ export type ProjectUncheckedUpdateWithoutListProjectsInput = {
 export type ProjectCreateWithoutSavedByInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -742,8 +742,8 @@ export type ProjectCreateWithoutSavedByInput = {
 export type ProjectUncheckedCreateWithoutSavedByInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   userId: string
   createdAt?: Date | string
@@ -772,8 +772,8 @@ export type ProjectUpdateToOneWithWhereWithoutSavedByInput = {
 export type ProjectUpdateWithoutSavedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -786,8 +786,8 @@ export type ProjectUpdateWithoutSavedByInput = {
 export type ProjectUncheckedUpdateWithoutSavedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -800,8 +800,8 @@ export type ProjectUncheckedUpdateWithoutSavedByInput = {
 export type ProjectCreateWithoutVotesInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -814,8 +814,8 @@ export type ProjectCreateWithoutVotesInput = {
 export type ProjectUncheckedCreateWithoutVotesInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   userId: string
   createdAt?: Date | string
@@ -844,8 +844,8 @@ export type ProjectUpdateToOneWithWhereWithoutVotesInput = {
 export type ProjectUpdateWithoutVotesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -858,8 +858,8 @@ export type ProjectUpdateWithoutVotesInput = {
 export type ProjectUncheckedUpdateWithoutVotesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -872,8 +872,8 @@ export type ProjectUncheckedUpdateWithoutVotesInput = {
 export type ProjectCreateManyUserInput = {
   id?: string
   name: string
-  description?: string | null
-  liveLink?: string | null
+  description: string
+  liveLink: string
   codeLink?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -882,8 +882,8 @@ export type ProjectCreateManyUserInput = {
 export type ProjectUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -896,8 +896,8 @@ export type ProjectUpdateWithoutUserInput = {
 export type ProjectUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -910,8 +910,8 @@ export type ProjectUncheckedUpdateWithoutUserInput = {
 export type ProjectUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  liveLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1055,8 +1055,8 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
-    description: string | null
-    liveLink: string | null
+    description: string
+    liveLink: string
     codeLink: string | null
     userId: string
     createdAt: Date

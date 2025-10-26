@@ -101,15 +101,21 @@ model TechStack {
   @@map("tech_stack")
 }
 
+enum ListVisibility {
+  PUBLIC
+  UNLISTED
+}
+
 model List {
-  id           String        @id @default(cuid())
+  id           String         @id @default(cuid())
   name         String
   description  String?
+  visibility   ListVisibility @default(UNLISTED)
   userId       String
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   listProjects ListProject[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   @@map("list")
 }

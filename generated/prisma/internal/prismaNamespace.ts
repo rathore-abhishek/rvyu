@@ -1284,6 +1284,7 @@ export const ListScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
+  visibility: 'visibility',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1387,6 +1388,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ListVisibility'
+ */
+export type EnumListVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ListVisibility'>
+    
+
+
+/**
+ * Reference to a field of type 'ListVisibility[]'
+ */
+export type ListEnumListVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ListVisibility[]'>
     
 
 
