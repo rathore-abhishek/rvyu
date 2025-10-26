@@ -1,24 +1,28 @@
 "use client";
 
+import { Globe, Loader, UnList } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { createList } from "../lib/actionts";
-import { newListSchema } from "../lib/validation";
-import { NewList } from "../lib/types";
-import { toast } from "sonner";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Globe, Link2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+import { createList } from "../lib/actionts";
+import { NewList } from "../lib/types";
+import { newListSchema } from "../lib/validation";
 
 interface CreateListFormContentProps {
   onSuccess?: () => void;
   onCancel?: () => void;
 }
 
-export function CreateListFormContent({ onSuccess, onCancel }: CreateListFormContentProps) {
+export function CreateListFormContent({
+  onSuccess,
+  onCancel,
+}: CreateListFormContentProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -123,13 +127,15 @@ export function CreateListFormContent({ onSuccess, onCancel }: CreateListFormCon
             <div className="flex gap-2">
               <Button
                 type="button"
-                variant={field.state.value === "UNLISTED" ? "default" : "outline"}
+                variant={
+                  field.state.value === "UNLISTED" ? "default" : "outline"
+                }
                 size="sm"
                 onClick={() => field.handleChange("UNLISTED")}
                 disabled={isPending}
                 className="flex-1"
               >
-                <Link2 className="h-4 w-4" />
+                <UnList className="h-4 w-4" />
                 Unlisted
               </Button>
               <Button
@@ -152,7 +158,9 @@ export function CreateListFormContent({ onSuccess, onCancel }: CreateListFormCon
         <Button
           type="button"
           variant="outline"
-          onClick={() => (onCancel ? onCancel() : router.push("/dashboard/lists"))}
+          onClick={() =>
+            onCancel ? onCancel() : router.push("/dashboard/lists")
+          }
           disabled={isPending}
           className="flex-1"
         >
@@ -161,7 +169,7 @@ export function CreateListFormContent({ onSuccess, onCancel }: CreateListFormCon
         <Button type="submit" disabled={isPending} className="flex-1">
           {isPending ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader className="h-4 w-4 animate-spin" />
               Creating...
             </>
           ) : (

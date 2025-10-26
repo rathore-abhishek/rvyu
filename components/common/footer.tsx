@@ -1,8 +1,7 @@
-import React from "react";
-import Link from "next/link";
+import { Github, Heart, Mail } from "@/components/icons";
 import Image from "next/image";
-import { Github, Mail } from "lucide-react";
-import Heart from "../icons/heart";
+import Link from "next/link";
+import React from "react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

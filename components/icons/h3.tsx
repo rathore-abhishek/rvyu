@@ -2,7 +2,7 @@ import React from "react";
 
 type Props = React.ComponentProps<"svg">;
 
-const Error = (props: Props) => {
+const H3 = (props: Props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -13,23 +13,28 @@ const Error = (props: Props) => {
       {...props}
     >
       <path
-        d="M13.9248 21H10.0752C5.44476 21 3.12955 21 2.27636 19.4939C1.42317 17.9879 2.60736 15.9914 4.97574 11.9985L6.90057 8.75333C9.17559 4.91778 10.3131 3 12 3C13.6869 3 14.8244 4.91777 17.0994 8.75332L19.0243 11.9985C21.3926 15.9914 22.5768 17.9879 21.7236 19.4939C20.8704 21 18.5552 21 13.9248 21Z"
+        d="M3.5 5V19"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       ></path>
       <path
-        opacity="0.4"
-        d="M12 9V13.5"
+        d="M13.5 5V19"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       ></path>
       <path
-        opacity="0.4"
-        d="M12 16.9922V17.0022"
+        d="M16.5 17C16.5 18.1046 17.3954 19 18.5 19C19.6046 19 20.5 18.1046 20.5 17C20.5 15.8954 19.6046 15 18.5 15C19.6046 15 20.5 14.1046 20.5 13C20.5 11.8954 19.6046 11 18.5 11C17.3954 11 16.5 11.8954 16.5 13"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></path>
+      <path
+        d="M3.5 12L13.5 12"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
@@ -39,4 +44,4 @@ const Error = (props: Props) => {
   );
 };
 
-export default Error;
+export default H3;

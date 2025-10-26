@@ -1,10 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
+import { signInSocial, signUp } from "@/actions/auth";
+import {
+  EyeClose,
+  EyeOpen,
+  Github,
+  Google,
+  Lock,
+  Mail,
+  Tick,
+  User,
+} from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   InputGroup,
   InputGroupAddon,
@@ -12,18 +20,14 @@ import {
   InputGroupInput,
   InputGroupText,
 } from "@/components/ui/input-group";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { signUp, signInSocial } from "@/actions/auth";
-import { Lock, Mail, User } from "@/components/icons";
-import Tick from "@/components/icons/tick";
-import Github from "@/components/icons/github";
-import Google from "@/components/icons/google";
-import EyeOpen from "@/components/icons/eye-open";
-import EyeClose from "@/components/icons/eye-close";
-import { useForm } from "@tanstack/react-form";
-import { signUpWithConfirmSchema } from "@/validation/auth";
 import { SignUpWithConfirmSchema } from "@/types/auth";
+import { signUpWithConfirmSchema } from "@/validation/auth";
+import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
+import Link from "next/link";
+import { useState } from "react";
 import { toast } from "sonner";
 
 const SignUp = () => {

@@ -1,25 +1,31 @@
 "use client";
 
 import {
+  CodeLink,
+  Globe,
+  Link as LinkIcon,
+  ProjectLock,
+} from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Globe, Lock, ExternalLink, Code } from "lucide-react";
-import Image from "next/image";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import { TextStyle } from "@tiptap/extension-text-style";
-import { FontFamily } from "@tiptap/extension-font-family";
-import Link from "@tiptap/extension-link";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { FontFamily } from "@tiptap/extension-font-family";
+import Link from "@tiptap/extension-link";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Image from "next/image";
+
 import { PlatformPreview } from "./platform-preview";
 
 interface ProjectDetailModalProps {
@@ -132,7 +138,7 @@ export function ProjectDetailModal({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span className="inline-flex">
-                    <Lock className="text-muted-foreground h-5 w-5 shrink-0" />
+                    <ProjectLock className="text-muted-foreground h-5 w-5 shrink-0" />
                   </span>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -155,7 +161,7 @@ export function ProjectDetailModal({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <ExternalLink className="h-3.5 w-3.5" />
+                <LinkIcon className="h-3.5 w-3.5" />
                 Live Demo
               </a>
             </Button>
@@ -166,7 +172,7 @@ export function ProjectDetailModal({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Code className="h-3.5 w-3.5" />
+                  <CodeLink className="h-3.5 w-3.5" />
                   Code
                 </a>
               </Button>

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import { Twitter, MessageSquare, Users } from "lucide-react";
+import { Discord, PeerList, X } from "@/components/icons/";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Image from "next/image";
+import { useState } from "react";
 
 interface PlatformPreviewProps {
   liveLink: string;
@@ -80,15 +80,15 @@ export function PlatformPreview({
     <Tabs defaultValue="twitter" className="w-full">
       <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="twitter" className="gap-1.5">
-          <Twitter className="h-3.5 w-3.5" />
+          <X className="h-3.5 w-3.5" />
           Twitter
         </TabsTrigger>
         <TabsTrigger value="discord" className="gap-1.5">
-          <MessageSquare className="h-3.5 w-3.5" />
+          <Discord className="h-3.5 w-3.5" />
           Discord
         </TabsTrigger>
         <TabsTrigger value="peerlist" className="gap-1.5">
-          <Users className="h-3.5 w-3.5" />
+          <PeerList className="h-3.5 w-3.5" />
           Peerlist
         </TabsTrigger>
       </TabsList>
@@ -248,13 +248,13 @@ export function PlatformPreview({
               </div>
             </div>
             <div className="bg-muted relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md">
-              {discordImage && !discordImageError ? (
+              {peerlistImage && !peerlistImageError ? (
                 <Image
-                  src={discordImage}
-                  alt={discordTitle}
+                  src={peerlistImage}
+                  alt={peerlistTitle}
                   fill
                   className="object-cover"
-                  onError={() => setDiscordImageError(true)}
+                  onError={() => setPeerlistImageError(true)}
                 />
               ) : (
                 <div className="bg-muted flex h-full items-center justify-center">

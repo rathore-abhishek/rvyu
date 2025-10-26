@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, Calendar, Delete, Edit } from "@/components/icons";
+import { Error as ErrorIcon, Globe, Loader, NoList, UnList } from "@/components/icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,6 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Empty,
   EmptyContent,
@@ -20,23 +21,20 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { deleteList, getLists } from "../lib/actionts";
-import { toast } from "sonner";
-import { formatDate } from "../lib/utis";
-import Edit from "@/components/icons/edit";
-import Delete from "@/components/icons/delete";
-import Calendar from "@/components/icons/calendar";
-import ArrowRight from "@/components/icons/arrow-right";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { ListsGridSkeleton } from "./lists-grid-skeleton";
-import { AlertCircle, FolderOpen, Loader2, Globe, Link2 } from "lucide-react";
-import { useRouter } from "@bprogress/next/app";
-import { CreateListCard } from "./create-list-card";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useRouter } from "@bprogress/next/app";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
+
+import { deleteList, getLists } from "../lib/actionts";
+import { formatDate } from "../lib/utis";
+import { CreateListCard } from "./create-list-card";
+import { ListsGridSkeleton } from "./lists-grid-skeleton";
 
 export function ListsGrid() {
   const {
@@ -58,6 +56,7 @@ export function ListsGrid() {
     id: string;
     name: string;
   } | null>(null);
+  const [isManualRetrying, setIsManualRetrying] = useState(false);
 
   const { mutate: deleteListMutation, isPending: isDeleting } = useMutation({
     mutationFn: deleteList,
@@ -97,8 +96,8 @@ export function ListsGrid() {
     router.push(`/dashboard/lists/${id}/edit`);
   };
 
-  // Loading state - only show skeleton on initial load without data
-  if (isLoading && !lists) {
+  // Loading state - show skeleton on initial load or manual retry
+  if ((isLoading && !lists) || isManualRetrying) {
     return <ListsGridSkeleton />;
   }
 
@@ -108,7 +107,7 @@ export function ListsGrid() {
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <AlertCircle className="text-destructive" />
+            <ErrorIcon className="text-destructive" />
           </EmptyMedia>
           <EmptyTitle>Failed to load lists</EmptyTitle>
           <EmptyDescription>
@@ -118,7 +117,14 @@ export function ListsGrid() {
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Button onClick={() => refetch()} variant="outline">
+          <Button
+            onClick={async () => {
+              setIsManualRetrying(true);
+              await refetch();
+              setIsManualRetrying(false);
+            }}
+            variant="outline"
+          >
             Try Again
           </Button>
         </EmptyContent>
@@ -132,7 +138,7 @@ export function ListsGrid() {
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <FolderOpen />
+            <NoList />
           </EmptyMedia>
           <EmptyTitle>No lists yet</EmptyTitle>
           <EmptyDescription>
@@ -182,7 +188,7 @@ export function ListsGrid() {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <span className="inline-flex">
-                              <Link2 className="text-muted-foreground h-4 w-4 shrink-0" />
+                              <UnList className="text-muted-foreground h-4 w-4 shrink-0" />
                             </span>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -269,7 +275,7 @@ export function ListsGrid() {
             >
               {isDeleting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader className="h-4 w-4 animate-spin" />
                   Deleting...
                 </>
               ) : (

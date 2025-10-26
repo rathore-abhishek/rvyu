@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "@bprogress/next/app";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import Image from "next/image";
-import { motion, AnimatePresence } from "motion/react";
-import { Button } from "@/components/ui/button";
+import { Calendar, Delete, Edit } from "@/components/icons";
+import {
+  CodeLink,
+  Error as ErrorIcon,
+  Globe,
+  Link,
+  Loader,
+  Lock,
+} from "@/components/icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   Empty,
   EmptyDescription,
@@ -24,26 +27,22 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { getProjects, deleteProject } from "../lib/actions";
-import { formatDate } from "../lib/utils";
-import { CreateProjectCard } from "./create-project-card";
-import { ProjectsGridSkeleton } from "./projects-grid-skeleton";
-import {
-  Globe,
-  Lock,
-  Loader2,
-  AlertCircle,
-  ExternalLink,
-  Code,
-} from "lucide-react";
-import Edit from "@/components/icons/edit";
-import Delete from "@/components/icons/delete";
-import Calendar from "@/components/icons/calendar";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useRouter } from "@bprogress/next/app";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "motion/react";
+import Image from "next/image";
+import { useState } from "react";
+import { toast } from "sonner";
+
+import { deleteProject, getProjects } from "../lib/actions";
+import { formatDate } from "../lib/utils";
+import { CreateProjectCard } from "./create-project-card";
+import { ProjectsGridSkeleton } from "./projects-grid-skeleton";
 
 export function ProjectsGrid() {
   const router = useRouter();
@@ -54,6 +53,7 @@ export function ProjectsGrid() {
     name: string;
   } | null>(null);
   const [hoveredTech, setHoveredTech] = useState<string | null>(null);
+  const [isManualRetrying, setIsManualRetrying] = useState(false);
 
   const {
     data: projects,
@@ -100,7 +100,8 @@ export function ProjectsGrid() {
     router.push(`/dashboard/projects/${id}`);
   };
 
-  if (isLoading) {
+  // Loading state - show skeleton on initial load or manual retry
+  if ((isLoading && !projects) || isManualRetrying) {
     return <ProjectsGridSkeleton />;
   }
 
@@ -109,14 +110,23 @@ export function ProjectsGrid() {
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <AlertCircle className="text-destructive" />
+            <ErrorIcon className="text-destructive" />
           </EmptyMedia>
           <EmptyTitle>Failed to load projects</EmptyTitle>
           <EmptyDescription>
             {error?.message || "Something went wrong"}
           </EmptyDescription>
         </EmptyHeader>
-        <Button onClick={() => refetch()}>Try Again</Button>
+        <Button
+          variant={"outline"}
+          onClick={async () => {
+            setIsManualRetrying(true);
+            await refetch();
+            setIsManualRetrying(false);
+          }}
+        >
+          Try Again
+        </Button>
       </Empty>
     );
   }
@@ -345,16 +355,17 @@ export function ProjectsGrid() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <a
-                            href={`/dashboard/projects/${project.codeLink}`}
+                            href={project.codeLink}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <Button
                               size="icon-sm"
                               variant="ghost"
                               className="text-muted-foreground hover:text-primary shrink-0 rounded-lg"
                             >
-                              <Code className="h-3.5 w-3.5" />
+                              <CodeLink className="h-3.5 w-3.5" />
                             </Button>
                           </a>
                         </TooltipTrigger>
@@ -367,16 +378,17 @@ export function ProjectsGrid() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <a
-                            href={`/dashboard/projects/${project.liveLink}`}
+                            href={project.liveLink}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <Button
                               size="icon-sm"
                               variant="ghost"
                               className="text-muted-foreground hover:text-primary shrink-0 rounded-lg"
                             >
-                              <ExternalLink className="h-3.5 w-3.5" />
+                              <Link className="h-3.5 w-3.5" />
                             </Button>
                           </a>
                         </TooltipTrigger>
@@ -420,7 +432,7 @@ export function ProjectsGrid() {
             >
               {isDeleting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader className="h-4 w-4 animate-spin" />
                   Deleting...
                 </>
               ) : (

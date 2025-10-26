@@ -1,5 +1,4 @@
-import ArrowRight from "@/components/icons/arrow-right";
-import Home from "@/components/icons/home";
+import { ArrowRight, Home, NotFound as NotFoundIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -10,7 +9,6 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import Link from "next/link";
-import NotFoundIcon from "@/components/icons/not-found";
 
 const NotFound = () => {
   return (

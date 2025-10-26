@@ -1,40 +1,39 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import { TextStyle } from "@tiptap/extension-text-style";
-import { FontFamily } from "@tiptap/extension-font-family";
-import Link from "@tiptap/extension-link";
-import { Button } from "./button";
 import {
-  Heading1,
-  Heading2,
-  Heading3,
+  BlackQuote,
   Bold,
+  H1,
+  H2,
+  H3,
   Italic,
   List,
-  ListOrdered,
-  Strikethrough,
-  Code,
-  Quote,
-  Undo,
+  NumberList,
   Redo,
-  Type,
-  Link2,
+  StrikeThrough,
+  Undo,
   Unlink,
-} from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
+  UrlLink,
+} from "@/components/icons";
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
-import { Kbd, KbdGroup } from "./kbd";
-import { Input } from "./input";
+import { FontFamily } from "@tiptap/extension-font-family";
+import Link from "@tiptap/extension-link";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { useCallback, useEffect, useState } from "react";
+
+import { Button } from "./button";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "./dialog";
+import { Input } from "./input";
+import { Kbd, KbdGroup } from "./kbd";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 interface RichTextEditorProps {
   value?: string;
@@ -206,35 +205,11 @@ const RichTextEditor = ({
               disabled={disabled}
               className="h-8 w-8"
             >
-              <Strikethrough className="h-4 w-4" />
+              <StrikeThrough className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
             <p>Strikethrough</p>
-          </TooltipContent>
-        </Tooltip>
-
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              variant={editor.isActive("code") ? "secondary" : "ghost"}
-              size="icon-sm"
-              onClick={() => editor.chain().focus().toggleCode().run()}
-              disabled={disabled}
-              className="h-8 w-8"
-            >
-              <Code className="h-4 w-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <div className="flex items-center gap-2">
-              Code
-              <KbdGroup>
-                <Kbd>Ctrl</Kbd>
-                <Kbd>E</Kbd>
-              </KbdGroup>
-            </div>
           </TooltipContent>
         </Tooltip>
 
@@ -255,7 +230,7 @@ const RichTextEditor = ({
               disabled={disabled}
               className="h-8 w-8"
             >
-              <Link2 className="h-4 w-4" />
+              <UrlLink className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
@@ -312,7 +287,7 @@ const RichTextEditor = ({
               disabled={disabled}
               className="h-8 w-8"
             >
-              <ListOrdered className="h-4 w-4" />
+              <NumberList className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
@@ -330,7 +305,7 @@ const RichTextEditor = ({
               disabled={disabled}
               className="h-8 w-8"
             >
-              <Quote className="h-4 w-4" />
+              <BlackQuote className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
@@ -346,22 +321,22 @@ const RichTextEditor = ({
             <Button
               type="button"
               variant={
-                editor.isActive("textStyle", { fontFamily: "font-serif" })
+                editor.isActive("textStyle", { fontFamily: "ui-sans-serif, system-ui, sans-serif" })
                   ? "secondary"
                   : "ghost"
               }
               size="icon-sm"
               onClick={() =>
-                editor.chain().focus().setFontFamily("font-serif").run()
+                editor.chain().focus().setFontFamily("ui-sans-serif, system-ui, sans-serif").run()
               }
               disabled={disabled}
               className="h-8 w-8"
             >
-              <Type className="h-4 w-4 font-serif" />
+              <span className="font-sans text-lg font-semibold">T</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="font-serif">Serif Font</p>
+            <p className="font-sans">Sans-serif Font</p>
           </TooltipContent>
         </Tooltip>
 
@@ -370,22 +345,22 @@ const RichTextEditor = ({
             <Button
               type="button"
               variant={
-                editor.isActive("textStyle", { fontFamily: "font-sans" })
+                editor.isActive("textStyle", { fontFamily: "ui-serif, Georgia, serif" })
                   ? "secondary"
                   : "ghost"
               }
               size="icon-sm"
               onClick={() =>
-                editor.chain().focus().setFontFamily("font-sans").run()
+                editor.chain().focus().setFontFamily("ui-serif, Georgia, serif").run()
               }
               disabled={disabled}
               className="h-8 w-8"
             >
-              <Type className="h-4 w-4 font-sans" />
+              <span className="font-serif text-lg font-semibold">T</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="font-sans">Sans-serif Font</p>
+            <p className="font-serif tracking-wider">Serif Font</p>
           </TooltipContent>
         </Tooltip>
 
@@ -457,7 +432,7 @@ const RichTextEditor = ({
               disabled={disabled}
               className="h-8 w-8"
             >
-              <Heading1 className="h-4 w-4" />
+              <H1 className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
@@ -479,7 +454,7 @@ const RichTextEditor = ({
               disabled={disabled}
               className="h-8 w-8"
             >
-              <Heading2 className="h-4 w-4" />
+              <H2 className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
@@ -501,7 +476,7 @@ const RichTextEditor = ({
               disabled={disabled}
               className="h-8 w-8"
             >
-              <Heading3 className="h-4 w-4" />
+              <H3 className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>

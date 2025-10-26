@@ -1,24 +1,25 @@
 "use client";
 
+import { Globe, Loader, ProjectLock } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import RichTextEditor from "@/components/ui/rich-text-editor";
 import { Textarea } from "@/components/ui/textarea";
+import { validateWithSchema } from "@/validation";
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+
 import { createProject } from "../lib/actions";
+import { NewProject } from "../lib/types";
 import {
   newProjectSchema,
   newProjectWithoutTechStackSchema,
 } from "../lib/validation";
-import { NewProject } from "../lib/types";
-import { toast } from "sonner";
-import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Globe, Lock } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { TechStackInput } from "./tech-stack-input";
-import RichTextEditor from "@/components/ui/rich-text-editor";
-import { validateWithSchema } from "@/validation";
 
 interface CreateProjectFormContentProps {
   onSuccess?: () => void;
@@ -243,7 +244,7 @@ export function CreateProjectFormContent({
                 disabled={isPending}
                 className="flex-1"
               >
-                <Lock className="h-4 w-4" />
+                <ProjectLock className="h-4 w-4" />
                 Private
               </Button>
               <Button
@@ -277,7 +278,7 @@ export function CreateProjectFormContent({
         <Button type="submit" disabled={isPending} className="flex-1">
           {isPending ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader className="h-4 w-4 animate-spin" />
               Creating...
             </>
           ) : (

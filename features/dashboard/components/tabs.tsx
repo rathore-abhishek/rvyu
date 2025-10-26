@@ -1,9 +1,9 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { FolderCode, List } from "@/components/icons";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Folder, FileCode } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function DashboardTabs() {
   const pathname = usePathname();
@@ -14,13 +14,13 @@ export function DashboardTabs() {
       <TabsList>
         <TabsTrigger value="lists" asChild>
           <Link href="/dashboard/lists">
-            <Folder className="h-4 w-4" />
+            <FolderCode className="h-4 w-4" />
             Lists
           </Link>
         </TabsTrigger>
         <TabsTrigger value="projects" asChild>
           <Link href="/dashboard/projects">
-            <FileCode className="h-4 w-4" />
+            <List className="h-4 w-4" />
             Projects
           </Link>
         </TabsTrigger>

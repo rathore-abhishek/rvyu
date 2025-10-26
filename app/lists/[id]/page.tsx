@@ -1,7 +1,5 @@
-import React from "react";
+import { Calendar, Plus } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import Plus from "@/components/icons/plus";
-import Calendar from "@/components/icons/calendar";
 import Image from "next/image";
 
 const ListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
@@ -11,7 +9,8 @@ const ListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
   const listData = {
     id,
     name: "Frontend Development Projects",
-    description: "A curated list of outstanding frontend development projects for review and feedback",
+    description:
+      "A curated list of outstanding frontend development projects for review and feedback",
     createdAt: new Date(),
     projectsCount: 12,
   };
@@ -21,7 +20,8 @@ const ListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
     {
       id: "1",
       name: "Portfolio Website Redesign",
-      description: "Modern portfolio website built with Next.js and Tailwind CSS featuring smooth animations",
+      description:
+        "Modern portfolio website built with Next.js and Tailwind CSS featuring smooth animations",
       submittedBy: {
         name: "John Doe",
         avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John",
@@ -29,13 +29,15 @@ const ListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
       submittedAt: new Date(),
       status: "pending",
       url: "https://example.com",
-      ogImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop",
+      ogImage:
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop",
       techStack: ["Next.js", "Tailwind CSS", "TypeScript"],
     },
     {
       id: "2",
       name: "E-commerce Dashboard",
-      description: "Admin dashboard for managing products, orders, and customers with real-time analytics",
+      description:
+        "Admin dashboard for managing products, orders, and customers with real-time analytics",
       submittedBy: {
         name: "Jane Smith",
         avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jane",
@@ -43,13 +45,15 @@ const ListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
       submittedAt: new Date(),
       status: "reviewed",
       url: "https://example.com",
-      ogImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop",
+      ogImage:
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop",
       techStack: ["React", "Node.js", "MongoDB"],
     },
     {
       id: "3",
       name: "Task Management App",
-      description: "Collaborative task management application with drag-and-drop functionality",
+      description:
+        "Collaborative task management application with drag-and-drop functionality",
       submittedBy: {
         name: "Mike Johnson",
         avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
@@ -57,7 +61,8 @@ const ListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
       submittedAt: new Date(),
       status: "pending",
       url: "https://example.com",
-      ogImage: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&h=400&fit=crop",
+      ogImage:
+        "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&h=400&fit=crop",
       techStack: ["Vue.js", "Firebase", "Vuetify"],
     },
   ];
@@ -93,7 +98,10 @@ const ListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
             </span>
           </div>
           <div className="text-muted-foreground text-sm">
-            <span className="font-semibold text-foreground">{submittedProjects.length}</span> submitted projects
+            <span className="text-foreground font-semibold">
+              {submittedProjects.length}
+            </span>{" "}
+            submitted projects
           </div>
         </div>
       </div>
@@ -130,7 +138,7 @@ const ListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
                 <div className="from-primary/5 absolute inset-0 bg-linear-to-br via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                 {/* Open Graph Image */}
-                <div className="relative aspect-video w-full overflow-hidden bg-muted">
+                <div className="bg-muted relative aspect-video w-full overflow-hidden">
                   <Image
                     src={project.ogImage}
                     alt={project.name}
@@ -147,7 +155,9 @@ const ListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
                           : "bg-muted/90 text-foreground"
                       }`}
                     >
-                      {project.status === "reviewed" ? "Reviewed" : "Pending Review"}
+                      {project.status === "reviewed"
+                        ? "Reviewed"
+                        : "Pending Review"}
                     </span>
                   </div>
                 </div>
@@ -181,7 +191,7 @@ const ListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
                   <div className="flex items-center justify-between border-t pt-3">
                     {/* User info */}
                     <div className="flex items-center gap-2">
-                      <div className="relative h-6 w-6 overflow-hidden rounded-full bg-muted">
+                      <div className="bg-muted relative h-6 w-6 overflow-hidden rounded-full">
                         <Image
                           src={project.submittedBy.avatar}
                           alt={project.submittedBy.name}

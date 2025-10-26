@@ -1,9 +1,17 @@
 "use client";
 
-import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
+import { signIn, signInSocial } from "@/actions/auth";
+import {
+  EyeClose,
+  EyeOpen,
+  Github,
+  Google,
+  Lock,
+  Mail,
+  Tick,
+} from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   InputGroup,
   InputGroupAddon,
@@ -11,20 +19,15 @@ import {
   InputGroupInput,
   InputGroupText,
 } from "@/components/ui/input-group";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { signIn, signInSocial } from "@/actions/auth";
 import { SignInSchema } from "@/types/auth";
-import { useForm } from "@tanstack/react-form";
 import { signInSchema } from "@/validation/auth";
-import Tick from "@/components/icons/tick";
-import { Lock, Mail } from "@/components/icons";
-import Github from "@/components/icons/github";
-import Google from "@/components/icons/google";
-import EyeOpen from "@/components/icons/eye-open";
-import EyeClose from "@/components/icons/eye-close";
+import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);

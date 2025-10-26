@@ -1,14 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { LogOut, ChevronRight } from "lucide-react";
+import { logout } from "@/actions/auth";
+import { ArrowRight, Logout } from "@/components/icons";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { logout } from "@/actions/auth";
 import {
   Sheet,
   SheetContent,
@@ -16,8 +12,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Dashboard, List, SidebarOpen } from "../icons";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+
+import { Dashboard, List, SidebarOpen } from "../icons";
 
 interface MobileNavProps {
   user: {
@@ -91,7 +92,7 @@ export function MobileNav({ user }: MobileNavProps) {
                     {user.email}
                   </p>
                 </div>
-                <ChevronRight className="text-muted-foreground h-4 w-4" />
+                <ArrowRight className="text-muted-foreground h-4 w-4" />
               </div>
             </div>
             <Separator />
@@ -139,7 +140,7 @@ export function MobileNav({ user }: MobileNavProps) {
                     type="submit"
                     className="text-destructive hover:bg-destructive/10 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all"
                   >
-                    <LogOut className="h-5 w-5" />
+                    <Logout className="h-5 w-5" />
                     <span>Sign Out</span>
                   </button>
                 </form>

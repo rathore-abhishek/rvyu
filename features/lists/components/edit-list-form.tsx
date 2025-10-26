@@ -1,17 +1,18 @@
 "use client";
 
+import { Globe, Loader, UnList } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { editList } from "../lib/actionts";
-import { newListSchema } from "../lib/validation";
-import { NewList } from "../lib/types";
-import { toast } from "sonner";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Globe, Link2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+import { editList } from "../lib/actionts";
+import { NewList } from "../lib/types";
+import { newListSchema } from "../lib/validation";
 
 interface EditListFormContentProps {
   initialData: {
@@ -144,7 +145,7 @@ export function EditListFormContent({
                 disabled={isPending}
                 className="flex-1"
               >
-                <Link2 className="h-4 w-4" />
+                <UnList className="h-4 w-4" />
                 Unlisted
               </Button>
               <Button
@@ -166,7 +167,9 @@ export function EditListFormContent({
         <Button
           type="button"
           variant="outline"
-          onClick={() => (onCancel ? onCancel() : router.push("/dashboard/lists"))}
+          onClick={() =>
+            onCancel ? onCancel() : router.push("/dashboard/lists")
+          }
           disabled={isPending}
           className="flex-1"
         >
@@ -175,7 +178,7 @@ export function EditListFormContent({
         <Button type="submit" disabled={isPending} className="flex-1">
           {isPending ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader className="h-4 w-4 animate-spin" />
               Updating...
             </>
           ) : (

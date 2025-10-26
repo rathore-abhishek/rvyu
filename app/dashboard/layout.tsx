@@ -1,6 +1,12 @@
 import { getUser } from "@/actions/user";
-import { DashboardTabs } from "../../features/dashboard/components/tabs";
-import { DashboardHeader } from "../../features/dashboard/components/header";
+import { FolderCode, List, Login, Plus } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Empty,
   EmptyDescription,
@@ -8,10 +14,9 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Button } from "@/components/ui/button";
-import { Plus, LogIn, FolderPlus, Boxes } from "lucide-react";
+import { DashboardHeader } from "@/features/dashboard/components/header";
+import { DashboardTabs } from "@/features/dashboard/components/tabs";
 import Link from "next/link";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const DashboardLayout = async ({
   children,
@@ -28,7 +33,7 @@ const DashboardLayout = async ({
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <LogIn />
+              <Login />
             </EmptyMedia>
             <EmptyTitle>Authentication Required</EmptyTitle>
             <EmptyDescription>
@@ -38,7 +43,7 @@ const DashboardLayout = async ({
           <div className="flex gap-2">
             <Button asChild>
               <Link href="/auth/login">
-                <LogIn className="h-4 w-4" />
+                <Login className="h-4 w-4" />
                 Log In
               </Link>
             </Button>
@@ -62,14 +67,20 @@ const DashboardLayout = async ({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
-                <Link href="/dashboard/projects/create" className="flex items-center gap-2">
-                  <Boxes className="h-4 w-4" />
+                <Link
+                  href="/dashboard/projects/create"
+                  className="flex items-center gap-2"
+                >
+                  <FolderCode className="h-4 w-4" />
                   New Project
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/dashboard/lists/create" className="flex items-center gap-2">
-                  <FolderPlus className="h-4 w-4" />
+                <Link
+                  href="/dashboard/lists/create"
+                  className="flex items-center gap-2"
+                >
+                  <List className="h-4 w-4" />
                   New List
                 </Link>
               </DropdownMenuItem>
