@@ -217,6 +217,7 @@ export type ListProjectWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"ListProject"> | Date | string
   list?: Prisma.XOR<Prisma.ListScalarRelationFilter, Prisma.ListWhereInput>
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
+  votes?: Prisma.ListProjectVoteListRelationFilter
 }
 
 export type ListProjectOrderByWithRelationInput = {
@@ -227,6 +228,7 @@ export type ListProjectOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   list?: Prisma.ListOrderByWithRelationInput
   project?: Prisma.ProjectOrderByWithRelationInput
+  votes?: Prisma.ListProjectVoteOrderByRelationAggregateInput
 }
 
 export type ListProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -241,6 +243,7 @@ export type ListProjectWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"ListProject"> | Date | string
   list?: Prisma.XOR<Prisma.ListScalarRelationFilter, Prisma.ListWhereInput>
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
+  votes?: Prisma.ListProjectVoteListRelationFilter
 }, "id" | "listId_projectId">
 
 export type ListProjectOrderByWithAggregationInput = {
@@ -273,6 +276,7 @@ export type ListProjectCreateInput = {
   createdAt?: Date | string
   list: Prisma.ListCreateNestedOneWithoutListProjectsInput
   project: Prisma.ProjectCreateNestedOneWithoutListProjectsInput
+  votes?: Prisma.ListProjectVoteCreateNestedManyWithoutListProjectInput
 }
 
 export type ListProjectUncheckedCreateInput = {
@@ -281,6 +285,7 @@ export type ListProjectUncheckedCreateInput = {
   projectId: string
   order?: number
   createdAt?: Date | string
+  votes?: Prisma.ListProjectVoteUncheckedCreateNestedManyWithoutListProjectInput
 }
 
 export type ListProjectUpdateInput = {
@@ -289,6 +294,7 @@ export type ListProjectUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   list?: Prisma.ListUpdateOneRequiredWithoutListProjectsNestedInput
   project?: Prisma.ProjectUpdateOneRequiredWithoutListProjectsNestedInput
+  votes?: Prisma.ListProjectVoteUpdateManyWithoutListProjectNestedInput
 }
 
 export type ListProjectUncheckedUpdateInput = {
@@ -297,6 +303,7 @@ export type ListProjectUncheckedUpdateInput = {
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  votes?: Prisma.ListProjectVoteUncheckedUpdateManyWithoutListProjectNestedInput
 }
 
 export type ListProjectCreateManyInput = {
@@ -366,6 +373,11 @@ export type ListProjectMinOrderByAggregateInput = {
 
 export type ListProjectSumOrderByAggregateInput = {
   order?: Prisma.SortOrder
+}
+
+export type ListProjectScalarRelationFilter = {
+  is?: Prisma.ListProjectWhereInput
+  isNot?: Prisma.ListProjectWhereInput
 }
 
 export type ListProjectCreateNestedManyWithoutProjectInput = {
@@ -460,11 +472,26 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type ListProjectCreateNestedOneWithoutVotesInput = {
+  create?: Prisma.XOR<Prisma.ListProjectCreateWithoutVotesInput, Prisma.ListProjectUncheckedCreateWithoutVotesInput>
+  connectOrCreate?: Prisma.ListProjectCreateOrConnectWithoutVotesInput
+  connect?: Prisma.ListProjectWhereUniqueInput
+}
+
+export type ListProjectUpdateOneRequiredWithoutVotesNestedInput = {
+  create?: Prisma.XOR<Prisma.ListProjectCreateWithoutVotesInput, Prisma.ListProjectUncheckedCreateWithoutVotesInput>
+  connectOrCreate?: Prisma.ListProjectCreateOrConnectWithoutVotesInput
+  upsert?: Prisma.ListProjectUpsertWithoutVotesInput
+  connect?: Prisma.ListProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ListProjectUpdateToOneWithWhereWithoutVotesInput, Prisma.ListProjectUpdateWithoutVotesInput>, Prisma.ListProjectUncheckedUpdateWithoutVotesInput>
+}
+
 export type ListProjectCreateWithoutProjectInput = {
   id?: string
   order?: number
   createdAt?: Date | string
   list: Prisma.ListCreateNestedOneWithoutListProjectsInput
+  votes?: Prisma.ListProjectVoteCreateNestedManyWithoutListProjectInput
 }
 
 export type ListProjectUncheckedCreateWithoutProjectInput = {
@@ -472,6 +499,7 @@ export type ListProjectUncheckedCreateWithoutProjectInput = {
   listId: string
   order?: number
   createdAt?: Date | string
+  votes?: Prisma.ListProjectVoteUncheckedCreateNestedManyWithoutListProjectInput
 }
 
 export type ListProjectCreateOrConnectWithoutProjectInput = {
@@ -516,6 +544,7 @@ export type ListProjectCreateWithoutListInput = {
   order?: number
   createdAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutListProjectsInput
+  votes?: Prisma.ListProjectVoteCreateNestedManyWithoutListProjectInput
 }
 
 export type ListProjectUncheckedCreateWithoutListInput = {
@@ -523,6 +552,7 @@ export type ListProjectUncheckedCreateWithoutListInput = {
   projectId: string
   order?: number
   createdAt?: Date | string
+  votes?: Prisma.ListProjectVoteUncheckedCreateNestedManyWithoutListProjectInput
 }
 
 export type ListProjectCreateOrConnectWithoutListInput = {
@@ -551,6 +581,54 @@ export type ListProjectUpdateManyWithWhereWithoutListInput = {
   data: Prisma.XOR<Prisma.ListProjectUpdateManyMutationInput, Prisma.ListProjectUncheckedUpdateManyWithoutListInput>
 }
 
+export type ListProjectCreateWithoutVotesInput = {
+  id?: string
+  order?: number
+  createdAt?: Date | string
+  list: Prisma.ListCreateNestedOneWithoutListProjectsInput
+  project: Prisma.ProjectCreateNestedOneWithoutListProjectsInput
+}
+
+export type ListProjectUncheckedCreateWithoutVotesInput = {
+  id?: string
+  listId: string
+  projectId: string
+  order?: number
+  createdAt?: Date | string
+}
+
+export type ListProjectCreateOrConnectWithoutVotesInput = {
+  where: Prisma.ListProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ListProjectCreateWithoutVotesInput, Prisma.ListProjectUncheckedCreateWithoutVotesInput>
+}
+
+export type ListProjectUpsertWithoutVotesInput = {
+  update: Prisma.XOR<Prisma.ListProjectUpdateWithoutVotesInput, Prisma.ListProjectUncheckedUpdateWithoutVotesInput>
+  create: Prisma.XOR<Prisma.ListProjectCreateWithoutVotesInput, Prisma.ListProjectUncheckedCreateWithoutVotesInput>
+  where?: Prisma.ListProjectWhereInput
+}
+
+export type ListProjectUpdateToOneWithWhereWithoutVotesInput = {
+  where?: Prisma.ListProjectWhereInput
+  data: Prisma.XOR<Prisma.ListProjectUpdateWithoutVotesInput, Prisma.ListProjectUncheckedUpdateWithoutVotesInput>
+}
+
+export type ListProjectUpdateWithoutVotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  list?: Prisma.ListUpdateOneRequiredWithoutListProjectsNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutListProjectsNestedInput
+}
+
+export type ListProjectUncheckedUpdateWithoutVotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  listId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type ListProjectCreateManyProjectInput = {
   id?: string
   listId: string
@@ -563,6 +641,7 @@ export type ListProjectUpdateWithoutProjectInput = {
   order?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   list?: Prisma.ListUpdateOneRequiredWithoutListProjectsNestedInput
+  votes?: Prisma.ListProjectVoteUpdateManyWithoutListProjectNestedInput
 }
 
 export type ListProjectUncheckedUpdateWithoutProjectInput = {
@@ -570,6 +649,7 @@ export type ListProjectUncheckedUpdateWithoutProjectInput = {
   listId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  votes?: Prisma.ListProjectVoteUncheckedUpdateManyWithoutListProjectNestedInput
 }
 
 export type ListProjectUncheckedUpdateManyWithoutProjectInput = {
@@ -591,6 +671,7 @@ export type ListProjectUpdateWithoutListInput = {
   order?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutListProjectsNestedInput
+  votes?: Prisma.ListProjectVoteUpdateManyWithoutListProjectNestedInput
 }
 
 export type ListProjectUncheckedUpdateWithoutListInput = {
@@ -598,6 +679,7 @@ export type ListProjectUncheckedUpdateWithoutListInput = {
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  votes?: Prisma.ListProjectVoteUncheckedUpdateManyWithoutListProjectNestedInput
 }
 
 export type ListProjectUncheckedUpdateManyWithoutListInput = {
@@ -608,6 +690,35 @@ export type ListProjectUncheckedUpdateManyWithoutListInput = {
 }
 
 
+/**
+ * Count Type ListProjectCountOutputType
+ */
+
+export type ListProjectCountOutputType = {
+  votes: number
+}
+
+export type ListProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  votes?: boolean | ListProjectCountOutputTypeCountVotesArgs
+}
+
+/**
+ * ListProjectCountOutputType without action
+ */
+export type ListProjectCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ListProjectCountOutputType
+   */
+  select?: Prisma.ListProjectCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ListProjectCountOutputType without action
+ */
+export type ListProjectCountOutputTypeCountVotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ListProjectVoteWhereInput
+}
+
 
 export type ListProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -617,6 +728,8 @@ export type ListProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   createdAt?: boolean
   list?: boolean | Prisma.ListDefaultArgs<ExtArgs>
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  votes?: boolean | Prisma.ListProject$votesArgs<ExtArgs>
+  _count?: boolean | Prisma.ListProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["listProject"]>
 
 export type ListProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -651,6 +764,8 @@ export type ListProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type ListProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   list?: boolean | Prisma.ListDefaultArgs<ExtArgs>
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  votes?: boolean | Prisma.ListProject$votesArgs<ExtArgs>
+  _count?: boolean | Prisma.ListProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ListProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   list?: boolean | Prisma.ListDefaultArgs<ExtArgs>
@@ -666,6 +781,7 @@ export type $ListProjectPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     list: Prisma.$ListPayload<ExtArgs>
     project: Prisma.$ProjectPayload<ExtArgs>
+    votes: Prisma.$ListProjectVotePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1069,6 +1185,7 @@ export interface Prisma__ListProjectClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   list<T extends Prisma.ListDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ListDefaultArgs<ExtArgs>>): Prisma.Prisma__ListClient<runtime.Types.Result.GetResult<Prisma.$ListPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  votes<T extends Prisma.ListProject$votesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ListProject$votesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ListProjectVotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1496,6 +1613,30 @@ export type ListProjectDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many ListProjects to delete.
    */
   limit?: number
+}
+
+/**
+ * ListProject.votes
+ */
+export type ListProject$votesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ListProjectVote
+   */
+  select?: Prisma.ListProjectVoteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ListProjectVote
+   */
+  omit?: Prisma.ListProjectVoteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ListProjectVoteInclude<ExtArgs> | null
+  where?: Prisma.ListProjectVoteWhereInput
+  orderBy?: Prisma.ListProjectVoteOrderByWithRelationInput | Prisma.ListProjectVoteOrderByWithRelationInput[]
+  cursor?: Prisma.ListProjectVoteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ListProjectVoteScalarFieldEnum | Prisma.ListProjectVoteScalarFieldEnum[]
 }
 
 /**

@@ -1,4 +1,4 @@
-import { ModalWrapper } from "../../modal-wrapper";
+import { ModalWrapper } from "../../../../../components/common/modal-wrapper";
 import { CreateListModalClient } from "./create-modal-client";
 
 export default function CreateListModal() {

@@ -22,7 +22,7 @@ model User {
   projects      Project[]
   lists         List[]
   savedProjects SavedProject[]
-  votes         Vote[]
+  listVotes     ListProjectVote[]
 
   @@map("user")
 }
@@ -73,19 +73,20 @@ model Verification {
 }
 
 model Project {
-  id            String         @id @default(cuid())
+  id            String            @id @default(cuid())
   name          String
   description   String
+  body          Json?
   liveLink      String
   codeLink      String?
+  visibility    ProjectVisibility @default(PRIVATE)
   userId        String
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   techStack     TechStack[]
   savedBy       SavedProject[]
-  votes         Vote[]
   listProjects  ListProject[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
 
   @@map("project")
 }
@@ -99,6 +100,11 @@ model TechStack {
   createdAt DateTime @default(now())
 
   @@map("tech_stack")
+}
+
+enum ProjectVisibility {
+  PRIVATE
+  PUBLIC
 }
 
 enum ListVisibility {
@@ -121,13 +127,14 @@ model List {
 }
 
 model ListProject {
-  id        String   @id @default(cuid())
+  id        String            @id @default(cuid())
   listId    String
   projectId String
-  list      List     @relation(fields: [listId], references: [id], onDelete: Cascade)
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
+  list      List              @relation(fields: [listId], references: [id], onDelete: Cascade)
+  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  votes     ListProjectVote[]
+  order     Int               @default(0)
+  createdAt DateTime          @default(now())
 
   @@unique([listId, projectId])
   @@map("list_project")
@@ -145,16 +152,16 @@ model SavedProject {
   @@map("saved_project")
 }
 
-model Vote {
-  id        String   @id @default(cuid())
-  userId    String
-  projectId String
-  value     Int      // 1 for upvote, -1 for downvote
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model ListProjectVote {
+  id            String      @id @default(cuid())
+  userId        String
+  listProjectId String
+  value         Int         // 1 for upvote, -1 for downvote
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listProject   ListProject @relation(fields: [listProjectId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
-  @@unique([userId, projectId])
-  @@map("vote")
+  @@unique([userId, listProjectId])
+  @@map("list_project_vote")
 }

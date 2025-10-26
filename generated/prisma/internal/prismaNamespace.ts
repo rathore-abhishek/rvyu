@@ -398,7 +398,7 @@ export const ModelName = {
   List: 'List',
   ListProject: 'ListProject',
   SavedProject: 'SavedProject',
-  Vote: 'Vote'
+  ListProjectVote: 'ListProjectVote'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -414,7 +414,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "project" | "techStack" | "list" | "listProject" | "savedProject" | "vote"
+    modelProps: "user" | "session" | "account" | "verification" | "project" | "techStack" | "list" | "listProject" | "savedProject" | "listProjectVote"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1084,77 +1084,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Vote: {
-      payload: Prisma.$VotePayload<ExtArgs>
-      fields: Prisma.VoteFieldRefs
+    ListProjectVote: {
+      payload: Prisma.$ListProjectVotePayload<ExtArgs>
+      fields: Prisma.ListProjectVoteFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.VoteFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VotePayload> | null
+          args: Prisma.ListProjectVoteFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListProjectVotePayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.VoteFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VotePayload>
+          args: Prisma.ListProjectVoteFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListProjectVotePayload>
         }
         findFirst: {
-          args: Prisma.VoteFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VotePayload> | null
+          args: Prisma.ListProjectVoteFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListProjectVotePayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.VoteFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VotePayload>
+          args: Prisma.ListProjectVoteFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListProjectVotePayload>
         }
         findMany: {
-          args: Prisma.VoteFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VotePayload>[]
+          args: Prisma.ListProjectVoteFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListProjectVotePayload>[]
         }
         create: {
-          args: Prisma.VoteCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VotePayload>
+          args: Prisma.ListProjectVoteCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListProjectVotePayload>
         }
         createMany: {
-          args: Prisma.VoteCreateManyArgs<ExtArgs>
+          args: Prisma.ListProjectVoteCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.VoteCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VotePayload>[]
+          args: Prisma.ListProjectVoteCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListProjectVotePayload>[]
         }
         delete: {
-          args: Prisma.VoteDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VotePayload>
+          args: Prisma.ListProjectVoteDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListProjectVotePayload>
         }
         update: {
-          args: Prisma.VoteUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VotePayload>
+          args: Prisma.ListProjectVoteUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListProjectVotePayload>
         }
         deleteMany: {
-          args: Prisma.VoteDeleteManyArgs<ExtArgs>
+          args: Prisma.ListProjectVoteDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.VoteUpdateManyArgs<ExtArgs>
+          args: Prisma.ListProjectVoteUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.VoteUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VotePayload>[]
+          args: Prisma.ListProjectVoteUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListProjectVotePayload>[]
         }
         upsert: {
-          args: Prisma.VoteUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VotePayload>
+          args: Prisma.ListProjectVoteUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListProjectVotePayload>
         }
         aggregate: {
-          args: Prisma.VoteAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateVote>
+          args: Prisma.ListProjectVoteAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateListProjectVote>
         }
         groupBy: {
-          args: Prisma.VoteGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.VoteGroupByOutputType>[]
+          args: Prisma.ListProjectVoteGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ListProjectVoteGroupByOutputType>[]
         }
         count: {
-          args: Prisma.VoteCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.VoteCountAggregateOutputType> | number
+          args: Prisma.ListProjectVoteCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ListProjectVoteCountAggregateOutputType> | number
         }
       }
     }
@@ -1259,8 +1259,10 @@ export const ProjectScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
+  body: 'body',
   liveLink: 'liveLink',
   codeLink: 'codeLink',
+  visibility: 'visibility',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1314,16 +1316,16 @@ export const SavedProjectScalarFieldEnum = {
 export type SavedProjectScalarFieldEnum = (typeof SavedProjectScalarFieldEnum)[keyof typeof SavedProjectScalarFieldEnum]
 
 
-export const VoteScalarFieldEnum = {
+export const ListProjectVoteScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  projectId: 'projectId',
+  listProjectId: 'listProjectId',
   value: 'value',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type VoteScalarFieldEnum = (typeof VoteScalarFieldEnum)[keyof typeof VoteScalarFieldEnum]
+export type ListProjectVoteScalarFieldEnum = (typeof ListProjectVoteScalarFieldEnum)[keyof typeof ListProjectVoteScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1332,6 +1334,14 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -1348,6 +1358,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -1388,6 +1407,34 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'ProjectVisibility'
+ */
+export type EnumProjectVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectVisibility'>
+    
+
+
+/**
+ * Reference to a field of type 'ProjectVisibility[]'
+ */
+export type ListEnumProjectVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProjectVisibility[]'>
     
 
 
@@ -1528,7 +1575,7 @@ export type GlobalOmitConfig = {
   list?: Prisma.ListOmit
   listProject?: Prisma.ListProjectOmit
   savedProject?: Prisma.SavedProjectOmit
-  vote?: Prisma.VoteOmit
+  listProjectVote?: Prisma.ListProjectVoteOmit
 }
 
 /* Types for Logging */

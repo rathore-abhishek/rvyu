@@ -1,5 +1,5 @@
 import { ListsGrid } from "@/features/lists/components";
-import { ModalWrapper } from "../../@modal/modal-wrapper";
+import { ModalWrapper } from "../../../../components/common/modal-wrapper";
 import { CreateListFormContent } from "@/features/lists/components";
 
 export default function CreateListPage() {

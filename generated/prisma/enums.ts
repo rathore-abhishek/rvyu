@@ -8,6 +8,14 @@
 * 🟢 You can import this file directly.
 */
 
+export const ProjectVisibility = {
+  PRIVATE: 'PRIVATE',
+  PUBLIC: 'PUBLIC'
+} as const
+
+export type ProjectVisibility = (typeof ProjectVisibility)[keyof typeof ProjectVisibility]
+
+
 export const ListVisibility = {
   PUBLIC: 'PUBLIC',
   UNLISTED: 'UNLISTED'

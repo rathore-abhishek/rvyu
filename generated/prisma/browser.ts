@@ -62,7 +62,7 @@ export type ListProject = Prisma.ListProjectModel
  */
 export type SavedProject = Prisma.SavedProjectModel
 /**
- * Model Vote
+ * Model ListProjectVote
  * 
  */
-export type Vote = Prisma.VoteModel
+export type ListProjectVote = Prisma.ListProjectVoteModel

@@ -202,7 +202,7 @@ export type UserWhereInput = {
   projects?: Prisma.ProjectListRelationFilter
   lists?: Prisma.ListListRelationFilter
   savedProjects?: Prisma.SavedProjectListRelationFilter
-  votes?: Prisma.VoteListRelationFilter
+  listVotes?: Prisma.ListProjectVoteListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -218,7 +218,7 @@ export type UserOrderByWithRelationInput = {
   projects?: Prisma.ProjectOrderByRelationAggregateInput
   lists?: Prisma.ListOrderByRelationAggregateInput
   savedProjects?: Prisma.SavedProjectOrderByRelationAggregateInput
-  votes?: Prisma.VoteOrderByRelationAggregateInput
+  listVotes?: Prisma.ListProjectVoteOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -237,7 +237,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   projects?: Prisma.ProjectListRelationFilter
   lists?: Prisma.ListListRelationFilter
   savedProjects?: Prisma.SavedProjectListRelationFilter
-  votes?: Prisma.VoteListRelationFilter
+  listVotes?: Prisma.ListProjectVoteListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -279,7 +279,7 @@ export type UserCreateInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
   lists?: Prisma.ListCreateNestedManyWithoutUserInput
   savedProjects?: Prisma.SavedProjectCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -295,7 +295,7 @@ export type UserUncheckedCreateInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.ListUncheckedCreateNestedManyWithoutUserInput
   savedProjects?: Prisma.SavedProjectUncheckedCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteUncheckedCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -311,7 +311,7 @@ export type UserUpdateInput = {
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
   lists?: Prisma.ListUpdateManyWithoutUserNestedInput
   savedProjects?: Prisma.SavedProjectUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -327,7 +327,7 @@ export type UserUncheckedUpdateInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.ListUncheckedUpdateManyWithoutUserNestedInput
   savedProjects?: Prisma.SavedProjectUncheckedUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUncheckedUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -481,18 +481,18 @@ export type UserUpdateOneRequiredWithoutSavedProjectsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSavedProjectsInput, Prisma.UserUpdateWithoutSavedProjectsInput>, Prisma.UserUncheckedUpdateWithoutSavedProjectsInput>
 }
 
-export type UserCreateNestedOneWithoutVotesInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutVotesInput, Prisma.UserUncheckedCreateWithoutVotesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVotesInput
+export type UserCreateNestedOneWithoutListVotesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutListVotesInput, Prisma.UserUncheckedCreateWithoutListVotesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutListVotesInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutVotesNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutVotesInput, Prisma.UserUncheckedCreateWithoutVotesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVotesInput
-  upsert?: Prisma.UserUpsertWithoutVotesInput
+export type UserUpdateOneRequiredWithoutListVotesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutListVotesInput, Prisma.UserUncheckedCreateWithoutListVotesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutListVotesInput
+  upsert?: Prisma.UserUpsertWithoutListVotesInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutVotesInput, Prisma.UserUpdateWithoutVotesInput>, Prisma.UserUncheckedUpdateWithoutVotesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutListVotesInput, Prisma.UserUpdateWithoutListVotesInput>, Prisma.UserUncheckedUpdateWithoutListVotesInput>
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -507,7 +507,7 @@ export type UserCreateWithoutSessionsInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
   lists?: Prisma.ListCreateNestedManyWithoutUserInput
   savedProjects?: Prisma.SavedProjectCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -522,7 +522,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.ListUncheckedCreateNestedManyWithoutUserInput
   savedProjects?: Prisma.SavedProjectUncheckedCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteUncheckedCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -553,7 +553,7 @@ export type UserUpdateWithoutSessionsInput = {
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
   lists?: Prisma.ListUpdateManyWithoutUserNestedInput
   savedProjects?: Prisma.SavedProjectUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -568,7 +568,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.ListUncheckedUpdateManyWithoutUserNestedInput
   savedProjects?: Prisma.SavedProjectUncheckedUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUncheckedUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -583,7 +583,7 @@ export type UserCreateWithoutAccountsInput = {
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
   lists?: Prisma.ListCreateNestedManyWithoutUserInput
   savedProjects?: Prisma.SavedProjectCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -598,7 +598,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.ListUncheckedCreateNestedManyWithoutUserInput
   savedProjects?: Prisma.SavedProjectUncheckedCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteUncheckedCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -629,7 +629,7 @@ export type UserUpdateWithoutAccountsInput = {
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
   lists?: Prisma.ListUpdateManyWithoutUserNestedInput
   savedProjects?: Prisma.SavedProjectUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -644,7 +644,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.ListUncheckedUpdateManyWithoutUserNestedInput
   savedProjects?: Prisma.SavedProjectUncheckedUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUncheckedUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProjectsInput = {
@@ -659,7 +659,7 @@ export type UserCreateWithoutProjectsInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   lists?: Prisma.ListCreateNestedManyWithoutUserInput
   savedProjects?: Prisma.SavedProjectCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProjectsInput = {
@@ -674,7 +674,7 @@ export type UserUncheckedCreateWithoutProjectsInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.ListUncheckedCreateNestedManyWithoutUserInput
   savedProjects?: Prisma.SavedProjectUncheckedCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteUncheckedCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProjectsInput = {
@@ -705,7 +705,7 @@ export type UserUpdateWithoutProjectsInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   lists?: Prisma.ListUpdateManyWithoutUserNestedInput
   savedProjects?: Prisma.SavedProjectUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -720,7 +720,7 @@ export type UserUncheckedUpdateWithoutProjectsInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.ListUncheckedUpdateManyWithoutUserNestedInput
   savedProjects?: Prisma.SavedProjectUncheckedUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUncheckedUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutListsInput = {
@@ -735,7 +735,7 @@ export type UserCreateWithoutListsInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
   savedProjects?: Prisma.SavedProjectCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutListsInput = {
@@ -750,7 +750,7 @@ export type UserUncheckedCreateWithoutListsInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
   savedProjects?: Prisma.SavedProjectUncheckedCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteUncheckedCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutListsInput = {
@@ -781,7 +781,7 @@ export type UserUpdateWithoutListsInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
   savedProjects?: Prisma.SavedProjectUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutListsInput = {
@@ -796,7 +796,7 @@ export type UserUncheckedUpdateWithoutListsInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
   savedProjects?: Prisma.SavedProjectUncheckedUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUncheckedUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSavedProjectsInput = {
@@ -811,7 +811,7 @@ export type UserCreateWithoutSavedProjectsInput = {
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
   lists?: Prisma.ListCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSavedProjectsInput = {
@@ -826,7 +826,7 @@ export type UserUncheckedCreateWithoutSavedProjectsInput = {
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.ListUncheckedCreateNestedManyWithoutUserInput
-  votes?: Prisma.VoteUncheckedCreateNestedManyWithoutUserInput
+  listVotes?: Prisma.ListProjectVoteUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSavedProjectsInput = {
@@ -857,7 +857,7 @@ export type UserUpdateWithoutSavedProjectsInput = {
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
   lists?: Prisma.ListUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSavedProjectsInput = {
@@ -872,10 +872,10 @@ export type UserUncheckedUpdateWithoutSavedProjectsInput = {
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.ListUncheckedUpdateManyWithoutUserNestedInput
-  votes?: Prisma.VoteUncheckedUpdateManyWithoutUserNestedInput
+  listVotes?: Prisma.ListProjectVoteUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutVotesInput = {
+export type UserCreateWithoutListVotesInput = {
   id?: string
   email: string
   name?: string | null
@@ -890,7 +890,7 @@ export type UserCreateWithoutVotesInput = {
   savedProjects?: Prisma.SavedProjectCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutVotesInput = {
+export type UserUncheckedCreateWithoutListVotesInput = {
   id?: string
   email: string
   name?: string | null
@@ -905,23 +905,23 @@ export type UserUncheckedCreateWithoutVotesInput = {
   savedProjects?: Prisma.SavedProjectUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutVotesInput = {
+export type UserCreateOrConnectWithoutListVotesInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutVotesInput, Prisma.UserUncheckedCreateWithoutVotesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutListVotesInput, Prisma.UserUncheckedCreateWithoutListVotesInput>
 }
 
-export type UserUpsertWithoutVotesInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutVotesInput, Prisma.UserUncheckedUpdateWithoutVotesInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutVotesInput, Prisma.UserUncheckedCreateWithoutVotesInput>
+export type UserUpsertWithoutListVotesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutListVotesInput, Prisma.UserUncheckedUpdateWithoutListVotesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutListVotesInput, Prisma.UserUncheckedCreateWithoutListVotesInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutVotesInput = {
+export type UserUpdateToOneWithWhereWithoutListVotesInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutVotesInput, Prisma.UserUncheckedUpdateWithoutVotesInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutListVotesInput, Prisma.UserUncheckedUpdateWithoutListVotesInput>
 }
 
-export type UserUpdateWithoutVotesInput = {
+export type UserUpdateWithoutListVotesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -936,7 +936,7 @@ export type UserUpdateWithoutVotesInput = {
   savedProjects?: Prisma.SavedProjectUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutVotesInput = {
+export type UserUncheckedUpdateWithoutListVotesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -962,7 +962,7 @@ export type UserCountOutputType = {
   projects: number
   lists: number
   savedProjects: number
-  votes: number
+  listVotes: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -971,7 +971,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   projects?: boolean | UserCountOutputTypeCountProjectsArgs
   lists?: boolean | UserCountOutputTypeCountListsArgs
   savedProjects?: boolean | UserCountOutputTypeCountSavedProjectsArgs
-  votes?: boolean | UserCountOutputTypeCountVotesArgs
+  listVotes?: boolean | UserCountOutputTypeCountListVotesArgs
 }
 
 /**
@@ -1022,8 +1022,8 @@ export type UserCountOutputTypeCountSavedProjectsArgs<ExtArgs extends runtime.Ty
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountVotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.VoteWhereInput
+export type UserCountOutputTypeCountListVotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ListProjectVoteWhereInput
 }
 
 
@@ -1040,7 +1040,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   projects?: boolean | Prisma.User$projectsArgs<ExtArgs>
   lists?: boolean | Prisma.User$listsArgs<ExtArgs>
   savedProjects?: boolean | Prisma.User$savedProjectsArgs<ExtArgs>
-  votes?: boolean | Prisma.User$votesArgs<ExtArgs>
+  listVotes?: boolean | Prisma.User$listVotesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1081,7 +1081,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   projects?: boolean | Prisma.User$projectsArgs<ExtArgs>
   lists?: boolean | Prisma.User$listsArgs<ExtArgs>
   savedProjects?: boolean | Prisma.User$savedProjectsArgs<ExtArgs>
-  votes?: boolean | Prisma.User$votesArgs<ExtArgs>
+  listVotes?: boolean | Prisma.User$listVotesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1095,7 +1095,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     projects: Prisma.$ProjectPayload<ExtArgs>[]
     lists: Prisma.$ListPayload<ExtArgs>[]
     savedProjects: Prisma.$SavedProjectPayload<ExtArgs>[]
-    votes: Prisma.$VotePayload<ExtArgs>[]
+    listVotes: Prisma.$ListProjectVotePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1504,7 +1504,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   projects<T extends Prisma.User$projectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   lists<T extends Prisma.User$listsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$listsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ListPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   savedProjects<T extends Prisma.User$savedProjectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$savedProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavedProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  votes<T extends Prisma.User$votesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$votesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  listVotes<T extends Prisma.User$listVotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$listVotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ListProjectVotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2049,27 +2049,27 @@ export type User$savedProjectsArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
- * User.votes
+ * User.listVotes
  */
-export type User$votesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$listVotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Vote
+   * Select specific fields to fetch from the ListProjectVote
    */
-  select?: Prisma.VoteSelect<ExtArgs> | null
+  select?: Prisma.ListProjectVoteSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Vote
+   * Omit specific fields from the ListProjectVote
    */
-  omit?: Prisma.VoteOmit<ExtArgs> | null
+  omit?: Prisma.ListProjectVoteOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.VoteInclude<ExtArgs> | null
-  where?: Prisma.VoteWhereInput
-  orderBy?: Prisma.VoteOrderByWithRelationInput | Prisma.VoteOrderByWithRelationInput[]
-  cursor?: Prisma.VoteWhereUniqueInput
+  include?: Prisma.ListProjectVoteInclude<ExtArgs> | null
+  where?: Prisma.ListProjectVoteWhereInput
+  orderBy?: Prisma.ListProjectVoteOrderByWithRelationInput | Prisma.ListProjectVoteOrderByWithRelationInput[]
+  cursor?: Prisma.ListProjectVoteWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.VoteScalarFieldEnum | Prisma.VoteScalarFieldEnum[]
+  distinct?: Prisma.ListProjectVoteScalarFieldEnum | Prisma.ListProjectVoteScalarFieldEnum[]
 }
 
 /**

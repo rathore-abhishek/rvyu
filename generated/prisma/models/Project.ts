@@ -29,6 +29,7 @@ export type ProjectMinAggregateOutputType = {
   description: string | null
   liveLink: string | null
   codeLink: string | null
+  visibility: $Enums.ProjectVisibility | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -40,6 +41,7 @@ export type ProjectMaxAggregateOutputType = {
   description: string | null
   liveLink: string | null
   codeLink: string | null
+  visibility: $Enums.ProjectVisibility | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -49,8 +51,10 @@ export type ProjectCountAggregateOutputType = {
   id: number
   name: number
   description: number
+  body: number
   liveLink: number
   codeLink: number
+  visibility: number
   userId: number
   createdAt: number
   updatedAt: number
@@ -64,6 +68,7 @@ export type ProjectMinAggregateInputType = {
   description?: true
   liveLink?: true
   codeLink?: true
+  visibility?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -75,6 +80,7 @@ export type ProjectMaxAggregateInputType = {
   description?: true
   liveLink?: true
   codeLink?: true
+  visibility?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -84,8 +90,10 @@ export type ProjectCountAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  body?: true
   liveLink?: true
   codeLink?: true
+  visibility?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -168,8 +176,10 @@ export type ProjectGroupByOutputType = {
   id: string
   name: string
   description: string
+  body: runtime.JsonValue | null
   liveLink: string
   codeLink: string | null
+  visibility: $Enums.ProjectVisibility
   userId: string
   createdAt: Date
   updatedAt: Date
@@ -200,15 +210,16 @@ export type ProjectWhereInput = {
   id?: Prisma.StringFilter<"Project"> | string
   name?: Prisma.StringFilter<"Project"> | string
   description?: Prisma.StringFilter<"Project"> | string
+  body?: Prisma.JsonNullableFilter<"Project">
   liveLink?: Prisma.StringFilter<"Project"> | string
   codeLink?: Prisma.StringNullableFilter<"Project"> | string | null
+  visibility?: Prisma.EnumProjectVisibilityFilter<"Project"> | $Enums.ProjectVisibility
   userId?: Prisma.StringFilter<"Project"> | string
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   techStack?: Prisma.TechStackListRelationFilter
   savedBy?: Prisma.SavedProjectListRelationFilter
-  votes?: Prisma.VoteListRelationFilter
   listProjects?: Prisma.ListProjectListRelationFilter
 }
 
@@ -216,15 +227,16 @@ export type ProjectOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  body?: Prisma.SortOrderInput | Prisma.SortOrder
   liveLink?: Prisma.SortOrder
   codeLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   techStack?: Prisma.TechStackOrderByRelationAggregateInput
   savedBy?: Prisma.SavedProjectOrderByRelationAggregateInput
-  votes?: Prisma.VoteOrderByRelationAggregateInput
   listProjects?: Prisma.ListProjectOrderByRelationAggregateInput
 }
 
@@ -235,15 +247,16 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ProjectWhereInput | Prisma.ProjectWhereInput[]
   name?: Prisma.StringFilter<"Project"> | string
   description?: Prisma.StringFilter<"Project"> | string
+  body?: Prisma.JsonNullableFilter<"Project">
   liveLink?: Prisma.StringFilter<"Project"> | string
   codeLink?: Prisma.StringNullableFilter<"Project"> | string | null
+  visibility?: Prisma.EnumProjectVisibilityFilter<"Project"> | $Enums.ProjectVisibility
   userId?: Prisma.StringFilter<"Project"> | string
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   techStack?: Prisma.TechStackListRelationFilter
   savedBy?: Prisma.SavedProjectListRelationFilter
-  votes?: Prisma.VoteListRelationFilter
   listProjects?: Prisma.ListProjectListRelationFilter
 }, "id">
 
@@ -251,8 +264,10 @@ export type ProjectOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  body?: Prisma.SortOrderInput | Prisma.SortOrder
   liveLink?: Prisma.SortOrder
   codeLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -268,8 +283,10 @@ export type ProjectScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Project"> | string
   name?: Prisma.StringWithAggregatesFilter<"Project"> | string
   description?: Prisma.StringWithAggregatesFilter<"Project"> | string
+  body?: Prisma.JsonNullableWithAggregatesFilter<"Project">
   liveLink?: Prisma.StringWithAggregatesFilter<"Project"> | string
   codeLink?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
+  visibility?: Prisma.EnumProjectVisibilityWithAggregatesFilter<"Project"> | $Enums.ProjectVisibility
   userId?: Prisma.StringWithAggregatesFilter<"Project"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
@@ -279,14 +296,15 @@ export type ProjectCreateInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProjectsInput
   techStack?: Prisma.TechStackCreateNestedManyWithoutProjectInput
   savedBy?: Prisma.SavedProjectCreateNestedManyWithoutProjectInput
-  votes?: Prisma.VoteCreateNestedManyWithoutProjectInput
   listProjects?: Prisma.ListProjectCreateNestedManyWithoutProjectInput
 }
 
@@ -294,14 +312,15 @@ export type ProjectUncheckedCreateInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   techStack?: Prisma.TechStackUncheckedCreateNestedManyWithoutProjectInput
   savedBy?: Prisma.SavedProjectUncheckedCreateNestedManyWithoutProjectInput
-  votes?: Prisma.VoteUncheckedCreateNestedManyWithoutProjectInput
   listProjects?: Prisma.ListProjectUncheckedCreateNestedManyWithoutProjectInput
 }
 
@@ -309,14 +328,15 @@ export type ProjectUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProjectsNestedInput
   techStack?: Prisma.TechStackUpdateManyWithoutProjectNestedInput
   savedBy?: Prisma.SavedProjectUpdateManyWithoutProjectNestedInput
-  votes?: Prisma.VoteUpdateManyWithoutProjectNestedInput
   listProjects?: Prisma.ListProjectUpdateManyWithoutProjectNestedInput
 }
 
@@ -324,14 +344,15 @@ export type ProjectUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   techStack?: Prisma.TechStackUncheckedUpdateManyWithoutProjectNestedInput
   savedBy?: Prisma.SavedProjectUncheckedUpdateManyWithoutProjectNestedInput
-  votes?: Prisma.VoteUncheckedUpdateManyWithoutProjectNestedInput
   listProjects?: Prisma.ListProjectUncheckedUpdateManyWithoutProjectNestedInput
 }
 
@@ -339,8 +360,10 @@ export type ProjectCreateManyInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -350,8 +373,10 @@ export type ProjectUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -360,8 +385,10 @@ export type ProjectUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -381,8 +408,10 @@ export type ProjectCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  body?: Prisma.SortOrder
   liveLink?: Prisma.SortOrder
   codeLink?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -394,6 +423,7 @@ export type ProjectMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   liveLink?: Prisma.SortOrder
   codeLink?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -405,6 +435,7 @@ export type ProjectMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   liveLink?: Prisma.SortOrder
   codeLink?: Prisma.SortOrder
+  visibility?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -457,6 +488,10 @@ export type ProjectUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.ProjectScalarWhereInput | Prisma.ProjectScalarWhereInput[]
 }
 
+export type EnumProjectVisibilityFieldUpdateOperationsInput = {
+  set?: $Enums.ProjectVisibility
+}
+
 export type ProjectCreateNestedOneWithoutTechStackInput = {
   create?: Prisma.XOR<Prisma.ProjectCreateWithoutTechStackInput, Prisma.ProjectUncheckedCreateWithoutTechStackInput>
   connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutTechStackInput
@@ -499,31 +534,18 @@ export type ProjectUpdateOneRequiredWithoutSavedByNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutSavedByInput, Prisma.ProjectUpdateWithoutSavedByInput>, Prisma.ProjectUncheckedUpdateWithoutSavedByInput>
 }
 
-export type ProjectCreateNestedOneWithoutVotesInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutVotesInput, Prisma.ProjectUncheckedCreateWithoutVotesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutVotesInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneRequiredWithoutVotesNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutVotesInput, Prisma.ProjectUncheckedCreateWithoutVotesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutVotesInput
-  upsert?: Prisma.ProjectUpsertWithoutVotesInput
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutVotesInput, Prisma.ProjectUpdateWithoutVotesInput>, Prisma.ProjectUncheckedUpdateWithoutVotesInput>
-}
-
 export type ProjectCreateWithoutUserInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
   techStack?: Prisma.TechStackCreateNestedManyWithoutProjectInput
   savedBy?: Prisma.SavedProjectCreateNestedManyWithoutProjectInput
-  votes?: Prisma.VoteCreateNestedManyWithoutProjectInput
   listProjects?: Prisma.ListProjectCreateNestedManyWithoutProjectInput
 }
 
@@ -531,13 +553,14 @@ export type ProjectUncheckedCreateWithoutUserInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
   techStack?: Prisma.TechStackUncheckedCreateNestedManyWithoutProjectInput
   savedBy?: Prisma.SavedProjectUncheckedCreateNestedManyWithoutProjectInput
-  votes?: Prisma.VoteUncheckedCreateNestedManyWithoutProjectInput
   listProjects?: Prisma.ListProjectUncheckedCreateNestedManyWithoutProjectInput
 }
 
@@ -574,8 +597,10 @@ export type ProjectScalarWhereInput = {
   id?: Prisma.StringFilter<"Project"> | string
   name?: Prisma.StringFilter<"Project"> | string
   description?: Prisma.StringFilter<"Project"> | string
+  body?: Prisma.JsonNullableFilter<"Project">
   liveLink?: Prisma.StringFilter<"Project"> | string
   codeLink?: Prisma.StringNullableFilter<"Project"> | string | null
+  visibility?: Prisma.EnumProjectVisibilityFilter<"Project"> | $Enums.ProjectVisibility
   userId?: Prisma.StringFilter<"Project"> | string
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -585,13 +610,14 @@ export type ProjectCreateWithoutTechStackInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProjectsInput
   savedBy?: Prisma.SavedProjectCreateNestedManyWithoutProjectInput
-  votes?: Prisma.VoteCreateNestedManyWithoutProjectInput
   listProjects?: Prisma.ListProjectCreateNestedManyWithoutProjectInput
 }
 
@@ -599,13 +625,14 @@ export type ProjectUncheckedCreateWithoutTechStackInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   savedBy?: Prisma.SavedProjectUncheckedCreateNestedManyWithoutProjectInput
-  votes?: Prisma.VoteUncheckedCreateNestedManyWithoutProjectInput
   listProjects?: Prisma.ListProjectUncheckedCreateNestedManyWithoutProjectInput
 }
 
@@ -629,13 +656,14 @@ export type ProjectUpdateWithoutTechStackInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProjectsNestedInput
   savedBy?: Prisma.SavedProjectUpdateManyWithoutProjectNestedInput
-  votes?: Prisma.VoteUpdateManyWithoutProjectNestedInput
   listProjects?: Prisma.ListProjectUpdateManyWithoutProjectNestedInput
 }
 
@@ -643,13 +671,14 @@ export type ProjectUncheckedUpdateWithoutTechStackInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   savedBy?: Prisma.SavedProjectUncheckedUpdateManyWithoutProjectNestedInput
-  votes?: Prisma.VoteUncheckedUpdateManyWithoutProjectNestedInput
   listProjects?: Prisma.ListProjectUncheckedUpdateManyWithoutProjectNestedInput
 }
 
@@ -657,28 +686,30 @@ export type ProjectCreateWithoutListProjectsInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProjectsInput
   techStack?: Prisma.TechStackCreateNestedManyWithoutProjectInput
   savedBy?: Prisma.SavedProjectCreateNestedManyWithoutProjectInput
-  votes?: Prisma.VoteCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutListProjectsInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   techStack?: Prisma.TechStackUncheckedCreateNestedManyWithoutProjectInput
   savedBy?: Prisma.SavedProjectUncheckedCreateNestedManyWithoutProjectInput
-  votes?: Prisma.VoteUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutListProjectsInput = {
@@ -701,41 +732,44 @@ export type ProjectUpdateWithoutListProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProjectsNestedInput
   techStack?: Prisma.TechStackUpdateManyWithoutProjectNestedInput
   savedBy?: Prisma.SavedProjectUpdateManyWithoutProjectNestedInput
-  votes?: Prisma.VoteUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutListProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   techStack?: Prisma.TechStackUncheckedUpdateManyWithoutProjectNestedInput
   savedBy?: Prisma.SavedProjectUncheckedUpdateManyWithoutProjectNestedInput
-  votes?: Prisma.VoteUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutSavedByInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProjectsInput
   techStack?: Prisma.TechStackCreateNestedManyWithoutProjectInput
-  votes?: Prisma.VoteCreateNestedManyWithoutProjectInput
   listProjects?: Prisma.ListProjectCreateNestedManyWithoutProjectInput
 }
 
@@ -743,13 +777,14 @@ export type ProjectUncheckedCreateWithoutSavedByInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   techStack?: Prisma.TechStackUncheckedCreateNestedManyWithoutProjectInput
-  votes?: Prisma.VoteUncheckedCreateNestedManyWithoutProjectInput
   listProjects?: Prisma.ListProjectUncheckedCreateNestedManyWithoutProjectInput
 }
 
@@ -773,13 +808,14 @@ export type ProjectUpdateWithoutSavedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProjectsNestedInput
   techStack?: Prisma.TechStackUpdateManyWithoutProjectNestedInput
-  votes?: Prisma.VoteUpdateManyWithoutProjectNestedInput
   listProjects?: Prisma.ListProjectUpdateManyWithoutProjectNestedInput
 }
 
@@ -787,85 +823,14 @@ export type ProjectUncheckedUpdateWithoutSavedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   techStack?: Prisma.TechStackUncheckedUpdateManyWithoutProjectNestedInput
-  votes?: Prisma.VoteUncheckedUpdateManyWithoutProjectNestedInput
-  listProjects?: Prisma.ListProjectUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutVotesInput = {
-  id?: string
-  name: string
-  description: string
-  liveLink: string
-  codeLink?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutProjectsInput
-  techStack?: Prisma.TechStackCreateNestedManyWithoutProjectInput
-  savedBy?: Prisma.SavedProjectCreateNestedManyWithoutProjectInput
-  listProjects?: Prisma.ListProjectCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutVotesInput = {
-  id?: string
-  name: string
-  description: string
-  liveLink: string
-  codeLink?: string | null
-  userId: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  techStack?: Prisma.TechStackUncheckedCreateNestedManyWithoutProjectInput
-  savedBy?: Prisma.SavedProjectUncheckedCreateNestedManyWithoutProjectInput
-  listProjects?: Prisma.ListProjectUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutVotesInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutVotesInput, Prisma.ProjectUncheckedCreateWithoutVotesInput>
-}
-
-export type ProjectUpsertWithoutVotesInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutVotesInput, Prisma.ProjectUncheckedUpdateWithoutVotesInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutVotesInput, Prisma.ProjectUncheckedCreateWithoutVotesInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutVotesInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutVotesInput, Prisma.ProjectUncheckedUpdateWithoutVotesInput>
-}
-
-export type ProjectUpdateWithoutVotesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
-  codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutProjectsNestedInput
-  techStack?: Prisma.TechStackUpdateManyWithoutProjectNestedInput
-  savedBy?: Prisma.SavedProjectUpdateManyWithoutProjectNestedInput
-  listProjects?: Prisma.ListProjectUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutVotesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.StringFieldUpdateOperationsInput | string
-  liveLink?: Prisma.StringFieldUpdateOperationsInput | string
-  codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  techStack?: Prisma.TechStackUncheckedUpdateManyWithoutProjectNestedInput
-  savedBy?: Prisma.SavedProjectUncheckedUpdateManyWithoutProjectNestedInput
   listProjects?: Prisma.ListProjectUncheckedUpdateManyWithoutProjectNestedInput
 }
 
@@ -873,8 +838,10 @@ export type ProjectCreateManyUserInput = {
   id?: string
   name: string
   description: string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink: string
   codeLink?: string | null
+  visibility?: $Enums.ProjectVisibility
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -883,13 +850,14 @@ export type ProjectUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   techStack?: Prisma.TechStackUpdateManyWithoutProjectNestedInput
   savedBy?: Prisma.SavedProjectUpdateManyWithoutProjectNestedInput
-  votes?: Prisma.VoteUpdateManyWithoutProjectNestedInput
   listProjects?: Prisma.ListProjectUpdateManyWithoutProjectNestedInput
 }
 
@@ -897,13 +865,14 @@ export type ProjectUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   techStack?: Prisma.TechStackUncheckedUpdateManyWithoutProjectNestedInput
   savedBy?: Prisma.SavedProjectUncheckedUpdateManyWithoutProjectNestedInput
-  votes?: Prisma.VoteUncheckedUpdateManyWithoutProjectNestedInput
   listProjects?: Prisma.ListProjectUncheckedUpdateManyWithoutProjectNestedInput
 }
 
@@ -911,8 +880,10 @@ export type ProjectUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   liveLink?: Prisma.StringFieldUpdateOperationsInput | string
   codeLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  visibility?: Prisma.EnumProjectVisibilityFieldUpdateOperationsInput | $Enums.ProjectVisibility
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -925,14 +896,12 @@ export type ProjectUncheckedUpdateManyWithoutUserInput = {
 export type ProjectCountOutputType = {
   techStack: number
   savedBy: number
-  votes: number
   listProjects: number
 }
 
 export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   techStack?: boolean | ProjectCountOutputTypeCountTechStackArgs
   savedBy?: boolean | ProjectCountOutputTypeCountSavedByArgs
-  votes?: boolean | ProjectCountOutputTypeCountVotesArgs
   listProjects?: boolean | ProjectCountOutputTypeCountListProjectsArgs
 }
 
@@ -963,13 +932,6 @@ export type ProjectCountOutputTypeCountSavedByArgs<ExtArgs extends runtime.Types
 /**
  * ProjectCountOutputType without action
  */
-export type ProjectCountOutputTypeCountVotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.VoteWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
 export type ProjectCountOutputTypeCountListProjectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ListProjectWhereInput
 }
@@ -979,15 +941,16 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   id?: boolean
   name?: boolean
   description?: boolean
+  body?: boolean
   liveLink?: boolean
   codeLink?: boolean
+  visibility?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   techStack?: boolean | Prisma.Project$techStackArgs<ExtArgs>
   savedBy?: boolean | Prisma.Project$savedByArgs<ExtArgs>
-  votes?: boolean | Prisma.Project$votesArgs<ExtArgs>
   listProjects?: boolean | Prisma.Project$listProjectsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
@@ -996,8 +959,10 @@ export type ProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   name?: boolean
   description?: boolean
+  body?: boolean
   liveLink?: boolean
   codeLink?: boolean
+  visibility?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1008,8 +973,10 @@ export type ProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   name?: boolean
   description?: boolean
+  body?: boolean
   liveLink?: boolean
   codeLink?: boolean
+  visibility?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1020,19 +987,20 @@ export type ProjectSelectScalar = {
   id?: boolean
   name?: boolean
   description?: boolean
+  body?: boolean
   liveLink?: boolean
   codeLink?: boolean
+  visibility?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "liveLink" | "codeLink" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "body" | "liveLink" | "codeLink" | "visibility" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
 export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   techStack?: boolean | Prisma.Project$techStackArgs<ExtArgs>
   savedBy?: boolean | Prisma.Project$savedByArgs<ExtArgs>
-  votes?: boolean | Prisma.Project$votesArgs<ExtArgs>
   listProjects?: boolean | Prisma.Project$listProjectsArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1049,15 +1017,16 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     user: Prisma.$UserPayload<ExtArgs>
     techStack: Prisma.$TechStackPayload<ExtArgs>[]
     savedBy: Prisma.$SavedProjectPayload<ExtArgs>[]
-    votes: Prisma.$VotePayload<ExtArgs>[]
     listProjects: Prisma.$ListProjectPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     description: string
+    body: runtime.JsonValue | null
     liveLink: string
     codeLink: string | null
+    visibility: $Enums.ProjectVisibility
     userId: string
     createdAt: Date
     updatedAt: Date
@@ -1458,7 +1427,6 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   techStack<T extends Prisma.Project$techStackArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$techStackArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TechStackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   savedBy<T extends Prisma.Project$savedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$savedByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavedProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  votes<T extends Prisma.Project$votesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$votesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   listProjects<T extends Prisma.Project$listProjectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$listProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ListProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1492,8 +1460,10 @@ export interface ProjectFieldRefs {
   readonly id: Prisma.FieldRef<"Project", 'String'>
   readonly name: Prisma.FieldRef<"Project", 'String'>
   readonly description: Prisma.FieldRef<"Project", 'String'>
+  readonly body: Prisma.FieldRef<"Project", 'Json'>
   readonly liveLink: Prisma.FieldRef<"Project", 'String'>
   readonly codeLink: Prisma.FieldRef<"Project", 'String'>
+  readonly visibility: Prisma.FieldRef<"Project", 'ProjectVisibility'>
   readonly userId: Prisma.FieldRef<"Project", 'String'>
   readonly createdAt: Prisma.FieldRef<"Project", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Project", 'DateTime'>
@@ -1938,30 +1908,6 @@ export type Project$savedByArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.SavedProjectScalarFieldEnum | Prisma.SavedProjectScalarFieldEnum[]
-}
-
-/**
- * Project.votes
- */
-export type Project$votesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Vote
-   */
-  select?: Prisma.VoteSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Vote
-   */
-  omit?: Prisma.VoteOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.VoteInclude<ExtArgs> | null
-  where?: Prisma.VoteWhereInput
-  orderBy?: Prisma.VoteOrderByWithRelationInput | Prisma.VoteOrderByWithRelationInput[]
-  cursor?: Prisma.VoteWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.VoteScalarFieldEnum | Prisma.VoteScalarFieldEnum[]
 }
 
 /**

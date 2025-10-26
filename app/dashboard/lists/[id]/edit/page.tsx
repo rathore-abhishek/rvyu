@@ -1,5 +1,5 @@
 import { ListsGrid } from "@/features/lists/components";
-import { ModalWrapper } from "../../../@modal/modal-wrapper";
+import { ModalWrapper } from "../../../../../components/common/modal-wrapper";
 import { getLists } from "@/features/lists/lib/actionts";
 import { EditListFormContent } from "@/features/lists/components";
 
@@ -19,7 +19,10 @@ export default async function EditListPage({
   return (
     <>
       <ListsGrid />
-      <ModalWrapper title="Edit list" description="Update your review list details.">
+      <ModalWrapper
+        title="Edit list"
+        description="Update your review list details."
+      >
         <EditListFormContent
           initialData={{
             id: list.id,

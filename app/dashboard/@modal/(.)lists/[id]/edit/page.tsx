@@ -1,4 +1,4 @@
-import { ModalWrapper } from "../../../modal-wrapper";
+import { ModalWrapper } from "../../../../../../components/common/modal-wrapper";
 import { getLists } from "@/features/lists/lib/actionts";
 import { EditListModalClient } from "./edit-modal-client";
 

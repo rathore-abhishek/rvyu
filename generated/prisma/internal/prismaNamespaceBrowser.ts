@@ -57,7 +57,7 @@ export const ModelName = {
   List: 'List',
   ListProject: 'ListProject',
   SavedProject: 'SavedProject',
-  Vote: 'Vote'
+  ListProjectVote: 'ListProjectVote'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -138,8 +138,10 @@ export const ProjectScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
+  body: 'body',
   liveLink: 'liveLink',
   codeLink: 'codeLink',
+  visibility: 'visibility',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -193,16 +195,16 @@ export const SavedProjectScalarFieldEnum = {
 export type SavedProjectScalarFieldEnum = (typeof SavedProjectScalarFieldEnum)[keyof typeof SavedProjectScalarFieldEnum]
 
 
-export const VoteScalarFieldEnum = {
+export const ListProjectVoteScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  projectId: 'projectId',
+  listProjectId: 'listProjectId',
   value: 'value',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type VoteScalarFieldEnum = (typeof VoteScalarFieldEnum)[keyof typeof VoteScalarFieldEnum]
+export type ListProjectVoteScalarFieldEnum = (typeof ListProjectVoteScalarFieldEnum)[keyof typeof ListProjectVoteScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -211,6 +213,14 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -227,4 +237,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
