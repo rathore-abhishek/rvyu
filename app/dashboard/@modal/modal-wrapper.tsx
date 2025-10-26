@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -21,15 +22,20 @@ export function ModalWrapper({
   description,
 }: ModalWrapperProps) {
   const router = useRouter();
+  const [open, setOpen] = useState(true);
 
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      router.back();
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      setOpen(false);
+      // Wait for the exit animation to complete before navigating
+      setTimeout(() => {
+        router.back();
+      }, 200); // Match this with dialog animation duration
     }
   };
 
   return (
-    <Dialog open onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="font-serif text-xl leading-none tracking-wider">
