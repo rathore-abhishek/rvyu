@@ -16,12 +16,28 @@ interface ProjectDetailModalClientProps {
     createdAt: Date;
     updatedAt: Date;
   };
-  ogImage?: string | null;
+  metadata: {
+    openGraph: {
+      title: string | null;
+      description: string | null;
+      image: string | null;
+    };
+    twitter: {
+      card: string | null;
+      title: string | null;
+      description: string | null;
+      image: string | null;
+    };
+    html: {
+      title: string | null;
+      description: string | null;
+    };
+  } | null;
 }
 
 export function ProjectDetailModalClient({
   project,
-  ogImage,
+  metadata,
 }: ProjectDetailModalClientProps) {
   const router = useRouter();
 
@@ -30,7 +46,7 @@ export function ProjectDetailModalClient({
       project={project}
       open={true}
       onClose={() => router.back()}
-      ogImage={ogImage}
+      metadata={metadata}
     />
   );
 }

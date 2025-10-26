@@ -17,12 +17,28 @@ interface ProjectDetailPageClientProps {
     createdAt: Date;
     updatedAt: Date;
   };
-  ogImage?: string | null;
+  metadata: {
+    openGraph: {
+      title: string | null;
+      description: string | null;
+      image: string | null;
+    };
+    twitter: {
+      card: string | null;
+      title: string | null;
+      description: string | null;
+      image: string | null;
+    };
+    html: {
+      title: string | null;
+      description: string | null;
+    };
+  } | null;
 }
 
 export function ProjectDetailPageClient({
   project,
-  ogImage,
+  metadata,
 }: ProjectDetailPageClientProps) {
   const router = useRouter();
 
@@ -33,7 +49,7 @@ export function ProjectDetailPageClient({
         project={project}
         open={true}
         onClose={() => router.push("/dashboard/projects")}
-        ogImage={ogImage}
+        metadata={metadata}
       />
     </div>
   );

@@ -1,7 +1,10 @@
 "use client";
 
-import { useEditor, EditorContent, Editor } from "@tiptap/react";
+import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { FontFamily } from "@tiptap/extension-font-family";
+import Link from "@tiptap/extension-link";
 import { Button } from "./button";
 import {
   Heading1,
@@ -16,11 +19,22 @@ import {
   Quote,
   Undo,
   Redo,
+  Type,
+  Link2,
+  Unlink,
 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 import { Kbd, KbdGroup } from "./kbd";
+import { Input } from "./input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "./dialog";
 
 interface RichTextEditorProps {
   value?: string;
@@ -40,6 +54,10 @@ const RichTextEditor = ({
 
   // Track editor focus state
   const [isFocused, setIsFocused] = useState(false);
+
+  // Link dialog state
+  const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
 
   // Parse JSON content safely
   const parseContent = useCallback((val: string) => {
@@ -62,6 +80,17 @@ const RichTextEditor = ({
       StarterKit.configure({
         heading: {
           levels: [1, 2, 3],
+        },
+      }),
+      TextStyle,
+      FontFamily.configure({
+        types: ["textStyle"],
+      }),
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class:
+            "text-primary underline underline-offset-2 hover:text-primary/80 cursor-pointer",
         },
       }),
     ],
@@ -211,6 +240,49 @@ const RichTextEditor = ({
 
         <div className="bg-border mx-1 h-6 w-px" />
 
+        {/* Link */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant={editor.isActive("link") ? "secondary" : "ghost"}
+              size="icon-sm"
+              onClick={() => {
+                const previousUrl = editor.getAttributes("link").href || "";
+                setLinkUrl(previousUrl);
+                setIsLinkDialogOpen(true);
+              }}
+              disabled={disabled}
+              className="h-8 w-8"
+            >
+              <Link2 className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Add Link</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => editor.chain().focus().unsetLink().run()}
+              disabled={disabled || !editor.isActive("link")}
+              className="h-8 w-8"
+            >
+              <Unlink className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Remove Link</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <div className="bg-border mx-1 h-6 w-px" />
+
         {/* Lists */}
         <Tooltip>
           <TooltipTrigger asChild>
@@ -263,6 +335,57 @@ const RichTextEditor = ({
           </TooltipTrigger>
           <TooltipContent>
             <p>Blockquote</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <div className="bg-border mx-1 h-6 w-px" />
+
+        {/* Font Family */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant={
+                editor.isActive("textStyle", { fontFamily: "font-serif" })
+                  ? "secondary"
+                  : "ghost"
+              }
+              size="icon-sm"
+              onClick={() =>
+                editor.chain().focus().setFontFamily("font-serif").run()
+              }
+              disabled={disabled}
+              className="h-8 w-8"
+            >
+              <Type className="h-4 w-4 font-serif" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="font-serif">Serif Font</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant={
+                editor.isActive("textStyle", { fontFamily: "font-sans" })
+                  ? "secondary"
+                  : "ghost"
+              }
+              size="icon-sm"
+              onClick={() =>
+                editor.chain().focus().setFontFamily("font-sans").run()
+              }
+              disabled={disabled}
+              className="h-8 w-8"
+            >
+              <Type className="h-4 w-4 font-sans" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="font-sans">Sans-serif Font</p>
           </TooltipContent>
         </Tooltip>
 
@@ -389,6 +512,65 @@ const RichTextEditor = ({
 
       {/* Editor Content */}
       <EditorContent editor={editor} />
+
+      {/* Link Dialog */}
+      <Dialog open={isLinkDialogOpen} onOpenChange={setIsLinkDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Insert Link</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Input
+              placeholder="https://example.com"
+              value={linkUrl}
+              onChange={(e) => setLinkUrl(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (linkUrl) {
+                    editor
+                      .chain()
+                      .focus()
+                      .extendMarkRange("link")
+                      .setLink({ href: linkUrl })
+                      .run();
+                  }
+                  setIsLinkDialogOpen(false);
+                  setLinkUrl("");
+                }
+              }}
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsLinkDialogOpen(false);
+                setLinkUrl("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (linkUrl) {
+                  editor
+                    .chain()
+                    .focus()
+                    .extendMarkRange("link")
+                    .setLink({ href: linkUrl })
+                    .run();
+                }
+                setIsLinkDialogOpen(false);
+                setLinkUrl("");
+              }}
+            >
+              Insert
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

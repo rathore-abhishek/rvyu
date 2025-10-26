@@ -1,5 +1,7 @@
-import { getProjectById } from "@/features/projects/lib/actions";
-import { getOGImage } from "@/features/projects/lib/og-image";
+import {
+  getProjectById,
+  getSiteMetadata,
+} from "@/features/projects/lib/actions";
 import { ProjectDetailModalClient } from "./detail-modal-client";
 
 export default async function ProjectDetailModal({
@@ -14,8 +16,8 @@ export default async function ProjectDetailModal({
     return null;
   }
 
-  // Fetch OG image
-  const ogImage = await getOGImage(project.liveLink);
+  // Fetch site metadata
+  const metadata = await getSiteMetadata(project.liveLink);
 
   return (
     <ProjectDetailModalClient
@@ -26,7 +28,7 @@ export default async function ProjectDetailModal({
             ? project.body
             : JSON.stringify(project.body),
       }}
-      ogImage={ogImage}
+      metadata={metadata}
     />
   );
 }

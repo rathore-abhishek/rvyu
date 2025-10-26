@@ -1,5 +1,7 @@
-import { getProjectById } from "@/features/projects/lib/actions";
-import { getOGImage } from "@/features/projects/lib/og-image";
+import {
+  getProjectById,
+  getSiteMetadata,
+} from "@/features/projects/lib/actions";
 import { notFound } from "next/navigation";
 import { ProjectDetailPageClient } from "./page-client";
 
@@ -15,8 +17,8 @@ export default async function ProjectDetailPage({
     notFound();
   }
 
-  // Fetch OG image
-  const ogImage = await getOGImage(project.liveLink);
+  // Fetch site metadata
+  const metadata = await getSiteMetadata(project.liveLink);
 
   return (
     <ProjectDetailPageClient
@@ -27,7 +29,7 @@ export default async function ProjectDetailPage({
             ? project.body
             : JSON.stringify(project.body),
       }}
-      ogImage={ogImage}
+      metadata={metadata}
     />
   );
 }

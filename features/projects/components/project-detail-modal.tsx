@@ -1,14 +1,26 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Globe, Lock, ExternalLink, Code, Calendar } from "lucide-react";
+import { Globe, Lock, ExternalLink, Code } from "lucide-react";
 import Image from "next/image";
-import { formatDate } from "../lib/utils";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useState } from "react";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { FontFamily } from "@tiptap/extension-font-family";
+import Link from "@tiptap/extension-link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { PlatformPreview } from "./platform-preview";
 
 interface ProjectDetailModalProps {
   project: {
@@ -25,16 +37,31 @@ interface ProjectDetailModalProps {
   } | null;
   open: boolean;
   onClose: () => void;
-  ogImage?: string | null;
+  metadata: {
+    openGraph: {
+      title: string | null;
+      description: string | null;
+      image: string | null;
+    };
+    twitter: {
+      card: string | null;
+      title: string | null;
+      description: string | null;
+      image: string | null;
+    };
+    html: {
+      title: string | null;
+      description: string | null;
+    };
+  } | null;
 }
 
 export function ProjectDetailModal({
   project,
   open,
   onClose,
-  ogImage,
+  metadata,
 }: ProjectDetailModalProps) {
-  const [imageError, setImageError] = useState(false);
   // Parse body content for display
   const bodyContent = project?.body
     ? (() => {
@@ -54,6 +81,19 @@ export function ProjectDetailModal({
           levels: [1, 2, 3],
         },
       }),
+      TextStyle,
+      FontFamily.configure({
+        types: ["textStyle"],
+      }),
+      Link.configure({
+        openOnClick: true,
+        HTMLAttributes: {
+          class:
+            "text-primary underline underline-offset-2 hover:text-primary cursor-pointer",
+          target: "_blank",
+          rel: "noopener noreferrer",
+        },
+      }),
     ],
     content: bodyContent,
     immediatelyRender: false,
@@ -62,58 +102,70 @@ export function ProjectDetailModal({
   if (!project) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto p-0">
-        {/* Hero Image Section */}
-        {ogImage && !imageError && (
-          <div className="relative h-48 w-full overflow-hidden border-b">
-            <Image
-              src={ogImage}
-              alt={project.name}
-              fill
-              className="object-cover"
-              onError={() => setImageError(true)}
-              priority
-            />
+    <Dialog
+      open={open}
+      onOpenChange={onClose}
+      key={open ? project.id : "closed"}
+    >
+      <DialogContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <DialogTitle className="font-serif text-2xl leading-tight tracking-wider">
+              {project.name}
+            </DialogTitle>
+            {project.visibility === "PUBLIC" ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex">
+                    <Globe className="text-primary h-5 w-5 shrink-0" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Public</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex">
+                    <Lock className="text-muted-foreground h-5 w-5 shrink-0" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Private</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
           </div>
-        )}
+          <DialogDescription className="text-muted-foreground text-start text-sm leading-relaxed">
+            {project.description}
+          </DialogDescription>
+        </DialogHeader>
 
-        {/* Content Section */}
-        <div className="space-y-4 p-6">
-          {/* Header */}
-          <div className="space-y-3">
-            <div className="flex items-start justify-between gap-3">
-              <h2 className="text-xl font-semibold tracking-tight">
-                {project.name}
-              </h2>
-              {project.visibility === "PUBLIC" ? (
-                <span className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs">
-                  <Globe className="h-3 w-3" />
-                  Public
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs">
-                  <Lock className="h-3 w-3" />
-                  Private
-                </span>
-              )}
-            </div>
-            <p className="text-muted-foreground text-sm">
-              {project.description}
-            </p>
-          </div>
-
+        <div className="space-y-5">
           {/* Action Buttons */}
           <div className="flex gap-2">
-            <Button asChild size="sm" className="flex-1">
-              <a href={project.liveLink} target="_blank" rel="noopener noreferrer">
+            <Button asChild size="sm">
+              <a
+                href={project.liveLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <ExternalLink className="h-3.5 w-3.5" />
                 Live Demo
               </a>
             </Button>
             {project.codeLink && (
-              <Button asChild variant="outline" size="sm" className="flex-1">
-                <a href={project.codeLink} target="_blank" rel="noopener noreferrer">
+              <Button asChild variant="outline" size="sm">
+                <a
+                  href={project.codeLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Code className="h-3.5 w-3.5" />
                   Code
                 </a>
@@ -121,16 +173,13 @@ export function ProjectDetailModal({
             )}
           </div>
 
-          <Separator />
-
           {/* Tech Stack */}
-          <div className="space-y-2">
-            <h3 className="text-xs font-medium text-muted-foreground">Tech Stack</h3>
+          {project.techStack.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {project.techStack.map((tech) => (
                 <div
                   key={tech.id}
-                  className="flex items-center gap-2 rounded-md border bg-muted/30 px-2.5 py-1.5 text-xs"
+                  className="bg-muted/30 inline-flex items-center gap-2 rounded-lg border px-3 py-1.5"
                 >
                   {tech.image && (
                     <Image
@@ -141,39 +190,27 @@ export function ProjectDetailModal({
                       className="rounded-sm"
                     />
                   )}
-                  <span>{tech.label}</span>
+                  <span className="text-xs font-medium">{tech.label}</span>
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Rich Content Body */}
-          {bodyContent && editor && (
-            <>
-              <Separator />
-              <div className="space-y-2">
-                <h3 className="text-xs font-medium text-muted-foreground">Details</h3>
-                <div className="prose dark:prose-invert prose-sm max-w-none rounded-md border bg-muted/20 p-4 text-sm break-all overflow-x-hidden">
-                  <EditorContent editor={editor} />
-                </div>
-              </div>
-            </>
           )}
 
-          {/* Metadata */}
-          <div className="flex items-center gap-3 border-t pt-3 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <Calendar className="h-3 w-3" />
-              <span>{formatDate(project.createdAt)}</span>
+          {/* Rich Content */}
+          {bodyContent && editor && (
+            <div className="prose dark:prose-invert prose-sm max-w-none text-sm">
+              <EditorContent editor={editor} />
             </div>
-            {project.updatedAt.getTime() !== project.createdAt.getTime() && (
-              <>
-                <span>•</span>
-                <span>Updated {formatDate(project.updatedAt)}</span>
-              </>
-            )}
-          </div>
+          )}
         </div>
+
+        {/* Platform Previews */}
+        <PlatformPreview
+          liveLink={project.liveLink}
+          projectName={project.name}
+          projectDescription={project.description}
+          metadata={metadata}
+        />
       </DialogContent>
     </Dialog>
   );

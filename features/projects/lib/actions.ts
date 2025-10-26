@@ -149,3 +149,98 @@ export async function deleteProject(id: string) {
 
   revalidatePath("/dashboard/projects");
 }
+
+export async function getSiteMetadata(url: string): Promise<{
+  openGraph: {
+    title: string | null;
+    description: string | null;
+    image: string | null;
+  };
+  twitter: {
+    card: string | null;
+    title: string | null;
+    description: string | null;
+    image: string | null;
+  };
+  html: {
+    title: string | null;
+    description: string | null;
+  };
+} | null> {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; MetadataFetcher/1.0)",
+      },
+      next: { revalidate: 86400 }, // Cache for 24 hours
+    });
+
+    if (!response.ok) return null;
+
+    const html = await response.text();
+
+    // Extract Open Graph metadata
+    const ogTitle = html.match(
+      /<meta\s+property=["']og:title["']\s+content=["']([^"']+)["']/i,
+    );
+    const ogDescription = html.match(
+      /<meta\s+property=["']og:description["']\s+content=["']([^"']+)["']/i,
+    );
+    const ogImage = html.match(
+      /<meta\s+property=["']og:image["']\s+content=["']([^"']+)["']/i,
+    );
+
+    // Extract Twitter Card metadata
+    const twitterCard = html.match(
+      /<meta\s+name=["']twitter:card["']\s+content=["']([^"']+)["']/i,
+    );
+    const twitterTitle = html.match(
+      /<meta\s+name=["']twitter:title["']\s+content=["']([^"']+)["']/i,
+    );
+    const twitterDescription = html.match(
+      /<meta\s+name=["']twitter:description["']\s+content=["']([^"']+)["']/i,
+    );
+    const twitterImage = html.match(
+      /<meta\s+name=["']twitter:image["']\s+content=["']([^"']+)["']/i,
+    );
+
+    // Helper function to decode HTML entities
+    const decodeHtmlEntities = (text: string | null): string | null => {
+      if (!text) return null;
+      return text
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'")
+        .replace(/&apos;/g, "'");
+    };
+
+    // Extract HTML metadata
+    const htmlTitle = html.match(/<title>([^<]+)<\/title>/i);
+    const htmlDescription = html.match(
+      /<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i,
+    );
+
+    return {
+      openGraph: {
+        title: decodeHtmlEntities(ogTitle?.[1] || null),
+        description: decodeHtmlEntities(ogDescription?.[1] || null),
+        image: ogImage?.[1] || null,
+      },
+      twitter: {
+        card: twitterCard?.[1] || null,
+        title: decodeHtmlEntities(twitterTitle?.[1] || null),
+        description: decodeHtmlEntities(twitterDescription?.[1] || null),
+        image: twitterImage?.[1] || null,
+      },
+      html: {
+        title: decodeHtmlEntities(htmlTitle?.[1] || null),
+        description: decodeHtmlEntities(htmlDescription?.[1] || null),
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching site metadata:", error);
+    return null;
+  }
+}
