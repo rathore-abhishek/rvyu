@@ -12,7 +12,7 @@ import Link from "next/link";
 
 const NotFound = () => {
   return (
-    <div className="container mx-auto flex min-h-[80vh] max-w-3xl items-center justify-center px-3 py-12">
+    <div className="container mx-auto flex py-16 max-w-3xl items-center justify-center px-3">
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon" className="mb-4">
