@@ -1,7 +1,5 @@
 import Footer from "@/components/common/footer";
 import Navbar from "@/components/common/navbar";
-// import "ldrs/react/Squircle.css";
-
 import ProgessProvider from "@/components/providers/progess-provider";
 import TanstackQueryProvider from "@/components/providers/tanstack-query-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
