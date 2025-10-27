@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
-import { Instrument_Serif, DM_Sans } from "next/font/google";
-import "./globals.css";
-import "ldrs/react/Squircle.css";
+import Footer from "@/components/common/footer";
+import Navbar from "@/components/common/navbar";
+// import "ldrs/react/Squircle.css";
 
 import ProgessProvider from "@/components/providers/progess-provider";
-import Navbar from "@/components/common/navbar";
-import { ThemeProvider } from "@/components/providers/theme-provider";
 import TanstackQueryProvider from "@/components/providers/tanstack-query-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import Footer from "@/components/common/footer";
+import type { Metadata } from "next";
+import { DM_Sans, Instrument_Serif } from "next/font/google";
+
+import "./globals.css";
 
 const serif = Instrument_Serif({
   variable: "--font-serif",
