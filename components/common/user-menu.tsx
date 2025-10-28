@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,18 +10,28 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { logout } from "@/actions/auth";
-import Link from "next/link";
 import { Logout, User } from "../icons";
+import { ProfileDialog } from "@/components/profile/profile-dialog";
 
 interface UserMenuProps {
   user: {
+    id: string;
     name: string;
     email: string;
     image?: string | null;
+    bio?: string | null;
+    github?: string | null;
+    twitter?: string | null;
+    linkedin?: string | null;
+    peerlist?: string | null;
+    portfolio?: string | null;
   };
 }
 
 export function UserMenu({ user }: UserMenuProps) {
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  
   const initials =
     user.name
       ?.split(" ")
@@ -29,7 +40,13 @@ export function UserMenu({ user }: UserMenuProps) {
       .toUpperCase() || user.email[0].toUpperCase();
 
   return (
-    <Popover>
+    <>
+      <ProfileDialog
+        open={profileOpen}
+        onOpenChange={setProfileOpen}
+        user={user}
+      />
+      <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
@@ -59,12 +76,13 @@ export function UserMenu({ user }: UserMenuProps) {
             variant="ghost"
             className="w-full justify-start"
             size="sm"
-            asChild
+            onClick={() => {
+              setPopoverOpen(false);
+              setProfileOpen(true);
+            }}
           >
-            <Link href="/dashboard">
-              <User className="mr-2" />
-              Profile
-            </Link>
+            <User className="mr-2" />
+            Profile
           </Button>
           <form action={logout}>
             <Button
@@ -80,5 +98,6 @@ export function UserMenu({ user }: UserMenuProps) {
         </div>
       </PopoverContent>
     </Popover>
+    </>
   );
 }

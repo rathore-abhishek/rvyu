@@ -22,18 +22,7 @@ const Navbar = async () => {
 
         {/* Mobile Menu */}
         <div className="relative md:hidden">
-          <MobileNav
-            user={
-              user
-                ? {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    image: user.image,
-                  }
-                : null
-            }
-          />
+          <MobileNav user={user} />
         </div>
 
         {/* Logo */}

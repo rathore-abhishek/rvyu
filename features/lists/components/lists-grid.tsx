@@ -1,7 +1,13 @@
 "use client";
 
 import { ArrowRight, Calendar, Delete, Edit } from "@/components/icons";
-import { Error as ErrorIcon, Globe, Loader, NoList, UnList } from "@/components/icons";
+import {
+  Error as ErrorIcon,
+  Globe,
+  Loader,
+  NoList,
+  UnList,
+} from "@/components/icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,14 +32,18 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useRouter } from "@bprogress/next/app";
+import { useProgress } from "@bprogress/next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { deleteList, getLists } from "../lib/actionts";
+import { List } from "../lib/types";
 import { formatDate } from "../lib/utis";
 import { CreateListCard } from "./create-list-card";
+import { CreateListDialog } from "./create-list-dialog";
+import { EditListDialog } from "./edit-list-dialog";
 import { ListsGridSkeleton } from "./lists-grid-skeleton";
 
 export function ListsGrid() {
@@ -46,16 +56,17 @@ export function ListsGrid() {
   } = useQuery({
     queryKey: ["lists"],
     queryFn: getLists,
-    staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
-    gcTime: 10 * 60 * 1000, // Cache for 10 minutes
   });
-  const router = useRouter();
   const queryClient = useQueryClient();
+  const { start, stop } = useProgress();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [listToDelete, setListToDelete] = useState<{
     id: string;
     name: string;
   } | null>(null);
+  const [listToEdit, setListToEdit] = useState<List | null>(null);
   const [isManualRetrying, setIsManualRetrying] = useState(false);
 
   const { mutate: deleteListMutation, isPending: isDeleting } = useMutation({
@@ -74,10 +85,6 @@ export function ListsGrid() {
     },
   });
 
-  const handleCardClick = (id: string) => {
-    router.push(`/lists/${id}`);
-  };
-
   const handleDeleteClick = (e: React.MouseEvent, id: string, name: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -90,10 +97,13 @@ export function ListsGrid() {
     deleteListMutation({ id: listToDelete.id });
   };
 
-  const handleEdit = (e: React.MouseEvent, id: string) => {
+  const handleEdit = (e: React.MouseEvent, list: List) => {
     e.preventDefault();
     e.stopPropagation();
-    router.push(`/dashboard/lists/${id}/edit`);
+    start();
+    setListToEdit(list);
+    setEditDialogOpen(true);
+    stop();
   };
 
   // Loading state - show skeleton on initial load or manual retry
@@ -153,12 +163,34 @@ export function ListsGrid() {
   // Success state - show lists
   return (
     <>
+      <CreateListDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
+      {listToEdit && (
+        <EditListDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          initialData={{
+            id: listToEdit.id,
+            name: listToEdit.name,
+            description: listToEdit.description || "",
+            visibility: listToEdit.visibility,
+          }}
+        />
+      )}
       <div className="grid auto-rows-fr gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <CreateListCard />
-        {lists.map(({ id, name, description, createdAt, visibility }) => (
-          <article
-            key={id}
-            onClick={() => handleCardClick(id)}
+        <CreateListCard
+          onClick={() => {
+            start();
+            setCreateDialogOpen(true);
+            stop();
+          }}
+        />
+        {lists.map((list) => (
+          <Link
+            key={list.id}
+            href={`/lists/${list.id}`}
             className="group bg-card hover:shadow-primary/5 relative flex cursor-pointer flex-col overflow-hidden rounded-xl border"
           >
             {/* Gradient overlay on hover */}
@@ -171,9 +203,9 @@ export function ListsGrid() {
                   <div className="min-w-0 flex-1">
                     <div className="mb-2 flex items-center gap-2">
                       <h3 className="text-lg leading-tight font-semibold tracking-tight transition-colors">
-                        {name}
+                        {list.name}
                       </h3>
-                      {visibility === "PUBLIC" ? (
+                      {list.visibility === "PUBLIC" ? (
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <span className="inline-flex">
@@ -197,9 +229,9 @@ export function ListsGrid() {
                         </Tooltip>
                       )}
                     </div>
-                    {description && (
+                    {list.description && (
                       <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
-                        {description}
+                        {list.description}
                       </p>
                     )}
                   </div>
@@ -209,7 +241,7 @@ export function ListsGrid() {
                     <Button
                       size="icon-sm"
                       variant="ghost"
-                      onClick={(e) => handleEdit(e, id)}
+                      onClick={(e) => handleEdit(e, list)}
                       className="text-muted-foreground shrink-0 rounded-lg"
                     >
                       <Edit />
@@ -217,7 +249,7 @@ export function ListsGrid() {
                     <Button
                       size="icon-sm"
                       variant="ghost"
-                      onClick={(e) => handleDeleteClick(e, id, name)}
+                      onClick={(e) => handleDeleteClick(e, list.id, list.name)}
                       className="text-destructive lg:text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 rounded-lg"
                     >
                       <Delete />
@@ -231,7 +263,7 @@ export function ListsGrid() {
                 <div className="flex items-center justify-between">
                   <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
                     <Calendar className="h-3.5 w-3.5 shrink-0" />
-                    <span>{formatDate(createdAt)}</span>
+                    <span>{formatDate(list.createdAt)}</span>
                   </div>
 
                   {/* Arrow indicator - hidden on mobile, shows on desktop hover */}
@@ -242,7 +274,7 @@ export function ListsGrid() {
                 </div>
               </div>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
 

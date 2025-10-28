@@ -32,7 +32,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useRouter } from "@bprogress/next/app";
+import { useProgress } from "@bprogress/next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
@@ -40,20 +40,30 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { deleteProject, getProjects } from "../lib/actions";
+import { Project } from "../lib/types";
 import { formatDate } from "../lib/utils";
 import { CreateProjectCard } from "./create-project-card";
+import { CreateProjectDialog } from "./create-project-dialog";
+import { EditProjectDialog } from "./edit-project-dialog";
+import { ProjectDetailModal } from "./project-detail-modal";
 import { ProjectsGridSkeleton } from "./projects-grid-skeleton";
 
 export function ProjectsGrid() {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<{
     id: string;
     name: string;
   } | null>(null);
+  const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
+  const [projectToView, setProjectToView] = useState<Project | null>(null);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [hoveredTech, setHoveredTech] = useState<string | null>(null);
   const [isManualRetrying, setIsManualRetrying] = useState(false);
+
+  const { start, stop } = useProgress();
 
   const {
     data: projects,
@@ -79,9 +89,12 @@ export function ProjectsGrid() {
     },
   });
 
-  const handleEdit = (e: React.MouseEvent, id: string) => {
+  const handleEdit = (e: React.MouseEvent, project: Project) => {
     e.stopPropagation();
-    router.push(`/dashboard/projects/${id}/edit`);
+    start();
+    setProjectToEdit(project);
+    setEditDialogOpen(true);
+    stop();
   };
 
   const handleDeleteClick = (e: React.MouseEvent, id: string, name: string) => {
@@ -96,8 +109,11 @@ export function ProjectsGrid() {
     }
   };
 
-  const handleCardClick = (id: string) => {
-    router.push(`/dashboard/projects/${id}`);
+  const handleCardClick = (project: Project) => {
+    start();
+    setProjectToView(project);
+    setDetailDialogOpen(true);
+    stop();
   };
 
   // Loading state - show skeleton on initial load or manual retry
@@ -133,21 +149,80 @@ export function ProjectsGrid() {
 
   if (!projects || projects.length === 0) {
     return (
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <CreateProjectCard />
-      </div>
+      <>
+        <CreateProjectDialog
+          open={createDialogOpen}
+          onOpenChange={setCreateDialogOpen}
+        />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <CreateProjectCard
+            onClick={() => {
+              start();
+              setCreateDialogOpen(true);
+              stop();
+            }}
+          />
+        </div>
+      </>
     );
   }
 
   return (
     <>
+      <CreateProjectDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
+      {projectToEdit && (
+        <EditProjectDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          initialData={{
+            id: projectToEdit.id,
+            name: projectToEdit.name,
+            description: projectToEdit.description,
+            body:
+              typeof projectToEdit.body === "string"
+                ? projectToEdit.body
+                : JSON.stringify(projectToEdit.body),
+            liveLink: projectToEdit.liveLink,
+            codeLink: projectToEdit.codeLink,
+            visibility: projectToEdit.visibility,
+            techStack: projectToEdit.techStack,
+          }}
+        />
+      )}
+      {projectToView && (
+        <ProjectDetailModal
+          project={{
+            ...projectToView,
+            body:
+              typeof projectToView.body === "string"
+                ? projectToView.body
+                : JSON.stringify(projectToView.body),
+          }}
+          open={detailDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setDetailDialogOpen(false);
+              setProjectToView(null);
+            }
+          }}
+        />
+      )}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <CreateProjectCard />
+        <CreateProjectCard
+          onClick={() => {
+            start();
+            setCreateDialogOpen(true);
+            stop();
+          }}
+        />
 
         {projects.map((project) => (
           <article
             key={project.id}
-            onClick={() => handleCardClick(project.id)}
+            onClick={() => handleCardClick(project)}
             className="group bg-card hover:shadow-primary/5 relative flex cursor-pointer flex-col overflow-hidden rounded-xl border"
           >
             {/* Gradient overlay on hover */}
@@ -196,7 +271,7 @@ export function ProjectsGrid() {
                     <Button
                       size="icon-sm"
                       variant="ghost"
-                      onClick={(e) => handleEdit(e, project.id)}
+                      onClick={(e) => handleEdit(e, project)}
                       className="text-muted-foreground shrink-0 rounded-lg"
                     >
                       <Edit />

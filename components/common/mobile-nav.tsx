@@ -17,6 +17,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { ProfileDialog } from "@/components/profile/profile-dialog";
 
 import { Dashboard, List, SidebarOpen } from "../icons";
 
@@ -26,11 +27,18 @@ interface MobileNavProps {
     name: string;
     email: string;
     image?: string | null;
+    bio?: string | null;
+    github?: string | null;
+    twitter?: string | null;
+    linkedin?: string | null;
+    peerlist?: string | null;
+    portfolio?: string | null;
   } | null;
 }
 
 export function MobileNav({ user }: MobileNavProps) {
   const [open, setOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const pathname = usePathname();
 
   const getInitials = (name: string) => {
@@ -50,7 +58,15 @@ export function MobileNav({ user }: MobileNavProps) {
   };
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <>
+      {user && (
+        <ProfileDialog
+          open={profileOpen}
+          onOpenChange={setProfileOpen}
+          user={user}
+        />
+      )}
+      <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden">
           <SidebarOpen className="h-5 w-5" />
@@ -78,7 +94,13 @@ export function MobileNav({ user }: MobileNavProps) {
         {/* User Profile Section */}
         {user && (
           <>
-            <div className="bg-accent px-6 py-4">
+            <button
+              onClick={() => {
+                setOpen(false);
+                setProfileOpen(true);
+              }}
+              className="bg-accent hover:bg-accent/80 w-full px-6 py-4 text-left transition-colors"
+            >
               <div className="flex items-center gap-3">
                 <Avatar className="border-background h-12 w-12 border-2">
                   <AvatarImage src={user.image || ""} alt={user.name} />
@@ -94,7 +116,7 @@ export function MobileNav({ user }: MobileNavProps) {
                 </div>
                 <ArrowRight className="text-muted-foreground h-4 w-4" />
               </div>
-            </div>
+            </button>
             <Separator />
           </>
         )}
@@ -173,5 +195,6 @@ export function MobileNav({ user }: MobileNavProps) {
         </nav>
       </SheetContent>
     </Sheet>
+    </>
   );
 }

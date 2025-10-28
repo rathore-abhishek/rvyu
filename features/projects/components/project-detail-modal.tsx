@@ -42,31 +42,13 @@ interface ProjectDetailModalProps {
     updatedAt: Date;
   } | null;
   open: boolean;
-  onClose: () => void;
-  metadata: {
-    openGraph: {
-      title: string | null;
-      description: string | null;
-      image: string | null;
-    };
-    twitter: {
-      card: string | null;
-      title: string | null;
-      description: string | null;
-      image: string | null;
-    };
-    html: {
-      title: string | null;
-      description: string | null;
-    };
-  } | null;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function ProjectDetailModal({
   project,
   open,
-  onClose,
-  metadata,
+  onOpenChange,
 }: ProjectDetailModalProps) {
   // Parse body content for display
   const bodyContent = project?.body
@@ -105,13 +87,11 @@ export function ProjectDetailModal({
     immediatelyRender: false,
   });
 
-  if (!project) return null;
-
   return (
     <Dialog
       open={open}
-      onOpenChange={onClose}
-      key={open ? project.id : "closed"}
+      onOpenChange={onOpenChange}
+      key={open ? project?.id : "closed"}
     >
       <DialogContent
         onOpenAutoFocus={(e) => {
@@ -121,9 +101,9 @@ export function ProjectDetailModal({
         <DialogHeader>
           <div className="flex items-center gap-3">
             <DialogTitle className="font-serif text-2xl leading-tight tracking-wider">
-              {project.name}
+              {project?.name}
             </DialogTitle>
-            {project.visibility === "PUBLIC" ? (
+            {project?.visibility === "PUBLIC" ? (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span className="inline-flex">
@@ -148,7 +128,7 @@ export function ProjectDetailModal({
             )}
           </div>
           <DialogDescription className="text-muted-foreground text-start text-sm leading-relaxed">
-            {project.description}
+            {project?.description}
           </DialogDescription>
         </DialogHeader>
 
@@ -157,7 +137,7 @@ export function ProjectDetailModal({
           <div className="flex gap-2">
             <Button asChild size="sm">
               <a
-                href={project.liveLink}
+                href={project?.liveLink || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -165,10 +145,10 @@ export function ProjectDetailModal({
                 Live Demo
               </a>
             </Button>
-            {project.codeLink && (
+            {project?.codeLink && (
               <Button asChild variant="outline" size="sm">
                 <a
-                  href={project.codeLink}
+                  href={project?.codeLink || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -180,7 +160,7 @@ export function ProjectDetailModal({
           </div>
 
           {/* Tech Stack */}
-          {project.techStack.length > 0 && (
+          {project?.techStack && project.techStack.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {project.techStack.map((tech) => (
                 <div
@@ -211,12 +191,7 @@ export function ProjectDetailModal({
         </div>
 
         {/* Platform Previews */}
-        <PlatformPreview
-          liveLink={project.liveLink}
-          projectName={project.name}
-          projectDescription={project.description}
-          metadata={metadata}
-        />
+        {project && <PlatformPreview liveLink={project.liveLink} />}
       </DialogContent>
     </Dialog>
   );

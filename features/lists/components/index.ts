@@ -1,5 +1,5 @@
-export { CreateListFormContent } from "./create-list-form";
-export { EditListFormContent } from "./edit-list-form";
-export {} from "./create-list-card";
+export { CreateListDialog } from "./create-list-dialog";
+export { EditListDialog } from "./edit-list-dialog";
+export { CreateListCard } from "./create-list-card";
 export { ListsGrid } from "./lists-grid";
 export { ListsGridSkeleton } from "./lists-grid-skeleton";

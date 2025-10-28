@@ -3,7 +3,8 @@
 import { getUser } from "@/actions/user";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { NewProject } from "./types";
+
+import { NewProject, Project, ProjectMetadata } from "./types";
 
 export async function getProjects() {
   const user = await getUser();
@@ -150,23 +151,9 @@ export async function deleteProject(id: string) {
   revalidatePath("/dashboard/projects");
 }
 
-export async function getSiteMetadata(url: string): Promise<{
-  openGraph: {
-    title: string | null;
-    description: string | null;
-    image: string | null;
-  };
-  twitter: {
-    card: string | null;
-    title: string | null;
-    description: string | null;
-    image: string | null;
-  };
-  html: {
-    title: string | null;
-    description: string | null;
-  };
-} | null> {
+export async function getSiteMetadata(
+  url: string,
+): Promise<ProjectMetadata | null> {
   try {
     const response = await fetch(url, {
       headers: {

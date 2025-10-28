@@ -1,12 +1,6 @@
 import { getUser } from "@/actions/user";
-import { FolderCode, List, Login, Plus } from "@/components/icons";
+import { Login } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Empty,
   EmptyDescription,
@@ -16,14 +10,13 @@ import {
 } from "@/components/ui/empty";
 import { DashboardHeader } from "@/features/dashboard/components/header";
 import { DashboardTabs } from "@/features/dashboard/components/tabs";
+import { DashboardCreateMenu } from "@/features/dashboard/components/dashboard-create-menu";
 import Link from "next/link";
 
 const DashboardLayout = async ({
   children,
-  modal,
 }: {
   children: React.ReactNode;
-  modal: React.ReactNode;
 }) => {
   const user = await getUser();
 
@@ -58,38 +51,10 @@ const DashboardLayout = async ({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <DashboardHeader />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm">
-                <Plus />
-                Create
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link
-                  href="/dashboard/projects/create"
-                  className="flex items-center gap-2"
-                >
-                  <FolderCode className="h-4 w-4" />
-                  New Project
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link
-                  href="/dashboard/lists/create"
-                  className="flex items-center gap-2"
-                >
-                  <List className="h-4 w-4" />
-                  New List
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <DashboardCreateMenu />
         </div>
         <DashboardTabs />
         {children}
-        {modal}
       </div>
     </div>
   );
