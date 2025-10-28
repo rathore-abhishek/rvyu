@@ -1,8 +1,9 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 
 type Props = React.ComponentProps<"svg">;
 
-const Loader = (props: Props) => {
+const Loader = ({ className, ...props }: Props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -14,6 +15,7 @@ const Loader = (props: Props) => {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      className={cn("animate-spin", className)}
       {...props}
     >
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />

@@ -296,7 +296,7 @@ export function EditProjectDialog({
             <Button type="submit" disabled={isPending} className="flex-1">
               {isPending ? (
                 <>
-                  <Loader className="h-4 w-4 animate-spin" />
+                  <Loader className="w-4n h-4" />
                   Updating...
                 </>
               ) : (

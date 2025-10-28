@@ -118,9 +118,7 @@ export function ProfileDialog({
           {/* Basic Information */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">
-                Name <span className="text-destructive">*</span>
-              </Label>
+              <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
                 name="name"

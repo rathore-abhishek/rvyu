@@ -56,7 +56,7 @@ export function CreateProjectDialog({
         ...form.state.values,
         techStack,
       };
-      const { success, errors, data} = validateWithSchema(
+      const { success, errors, data } = validateWithSchema(
         newProjectSchema,
         projectData,
       );
@@ -258,7 +258,9 @@ export function CreateProjectDialog({
                   </Button>
                   <Button
                     type="button"
-                    variant={field.state.value === "PUBLIC" ? "default" : "outline"}
+                    variant={
+                      field.state.value === "PUBLIC" ? "default" : "outline"
+                    }
                     size="sm"
                     onClick={() => field.handleChange("PUBLIC")}
                     disabled={isPending}
@@ -285,7 +287,7 @@ export function CreateProjectDialog({
             <Button type="submit" disabled={isPending} className="flex-1">
               {isPending ? (
                 <>
-                  <Loader className="h-4 w-4 animate-spin" />
+                  <Loader className="h-4 w-4" />
                   Creating...
                 </>
               ) : (

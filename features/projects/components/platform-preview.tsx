@@ -1,6 +1,7 @@
 "use client";
 
-import { Discord, PeerList, X } from "@/components/icons/";
+import { Discord, Loader, PeerList, X } from "@/components/icons/";
+import NoImage from "@/components/icons/no-image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +19,13 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
   const [discordImageError, setDiscordImageError] = useState(false);
   const [peerlistImageError, setPeerlistImageError] = useState(false);
 
-  // Fetch metadata using TanStack Query
+  // ✅ new loading states for images
+  const [twitterImageLoading, setTwitterImageLoading] = useState(true);
+  const [discordImageLoading, setDiscordImageLoading] = useState(true);
+  const [peerlistImageLoading, setPeerlistImageLoading] = useState(true);
+  const [faviconLoading, setFaviconLoading] = useState(true);
+
+  // Fetch metadata
   const { data: metadata, isLoading } = useQuery({
     queryKey: ["project-metadata", liveLink],
     queryFn: () => getSiteMetadata(liveLink),
@@ -74,10 +81,9 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
         </TabsTrigger>
       </TabsList>
 
-      {/* Twitter Card */}
+      {/* ---------------- TWITTER ---------------- */}
       <TabsContent value="twitter" className="mt-3">
         {isLoading ? (
-          // Twitter skeleton - summary_large_image style
           <div className="flex flex-col gap-1">
             <Skeleton className="aspect-2/1 w-full rounded-xl" />
             <Skeleton className="h-3 w-32" />
@@ -85,32 +91,27 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
         ) : (
           <>
             {metadata?.twitter.card === "summary_large_image" ? (
-              // Large Image Card (summary_large_image) - Twitter Style
               <div className="flex flex-col gap-1">
                 <div className="relative aspect-2/1 w-full overflow-hidden rounded-xl">
                   {twitterImage && !twitterImageError ? (
-                    <Image
-                      src={twitterImage}
-                      alt={twitterTitle || "Twitter Image Title"}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                      onError={() => setTwitterImageError(true)}
-                    />
+                    <>
+                      {twitterImageLoading && (
+                        <Loader className="text-muted-foreground size-3.5" />
+                      )}
+                      <Image
+                        src={twitterImage}
+                        alt={twitterTitle || "Twitter Image Title"}
+                        fill
+                        className={`object-cover transition-opacity duration-300 ${
+                          twitterImageLoading ? "opacity-0" : "opacity-100"
+                        }`}
+                        onError={() => setTwitterImageError(true)}
+                        onLoadingComplete={() => setTwitterImageLoading(false)}
+                      />
+                    </>
                   ) : (
-                    <div className="flex h-full items-center justify-center">
-                      <svg
-                        className="h-12 w-12 text-[rgb(113,118,123)]"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
+                    <div className="flex h-full w-full items-center justify-center">
+                      <NoImage className="text-muted-foreground" />
                     </div>
                   )}
                   <p className="text-muted-foreground bg-muted absolute bottom-3 left-2 line-clamp-1 rounded-lg px-2.5 py-1 text-[13px] leading-4">
@@ -122,33 +123,32 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
                 </p>
               </div>
             ) : (
-              // Summary Card (default/summary) - Twitter Style
               <div className="group border-border overflow-hidden rounded-2xl border">
                 <div className="bg-muted/10 flex">
                   <div className="bg-muted relative h-[125px] w-[125px] shrink-0">
                     {twitterImage && !twitterImageError ? (
-                      <Image
-                        src={twitterImage}
-                        alt={twitterTitle || "Twitter Image Title"}
-                        fill
-                        className="object-cover"
-                        onError={() => setTwitterImageError(true)}
-                      />
+                      <>
+                        {twitterImageLoading && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Loader className="text-muted-foreground size-3.5" />
+                          </div>
+                        )}
+                        <Image
+                          src={twitterImage}
+                          alt={twitterTitle || "Twitter Image Title"}
+                          fill
+                          className={`object-cover transition-opacity duration-300 ${
+                            twitterImageLoading ? "opacity-0" : "opacity-100"
+                          }`}
+                          onError={() => setTwitterImageError(true)}
+                          onLoadingComplete={() =>
+                            setTwitterImageLoading(false)
+                          }
+                        />
+                      </>
                     ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <svg
-                          className="text-muted-foreground h-8 w-8"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <NoImage className="text-muted-foreground" />
                       </div>
                     )}
                   </div>
@@ -170,7 +170,7 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
         )}
       </TabsContent>
 
-      {/* Discord Embed */}
+      {/* ---------------- DISCORD ---------------- */}
       <TabsContent value="discord" className="mt-3">
         {isLoading ? (
           <div className="bg-muted/10 border-l-primary rounded-md border border-l-4 p-3">
@@ -186,7 +186,7 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
           </div>
         ) : (
           <div className="bg-muted/10 border-l-primary rounded-md border border-l-4 p-3">
-            <div className="flex gap-3">
+            <div className="flex items-center gap-3">
               <div className="flex-1 space-y-1">
                 <p className="text-primary text-sm font-semibold">
                   {discordTitle}
@@ -195,42 +195,40 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
                   {discordDescription}
                 </p>
               </div>
-              <div className="bg-muted relative h-20 w-20 shrink-0 overflow-hidden rounded-md">
+
+              <div className="bg-muted relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md">
                 {discordImage && !discordImageError ? (
-                  <Image
-                    src={discordImage}
-                    alt={discordTitle || "Discord Image Title"}
-                    fill
-                    className="object-cover"
-                    onError={() => setDiscordImageError(true)}
-                  />
+                  <>
+                    {discordImageLoading && (
+                      <Loader className="text-muted-foreground absolute size-3.5" />
+                    )}
+                    <Image
+                      src={discordImage}
+                      alt={discordTitle || "Discord Image Title"}
+                      width={200}
+                      height={200}
+                      className={`h-full w-full object-contain transition-opacity duration-300 ${
+                        discordImageLoading ? "opacity-0" : "opacity-100"
+                      }`}
+                      onError={() => {
+                        setDiscordImageError(true);
+                        setDiscordImageLoading(false);
+                      }}
+                      onLoadingComplete={() => setDiscordImageLoading(false)}
+                    />
+                  </>
                 ) : (
-                    <div className="bg-muted flex h-full items-center justify-center">
-                      <svg
-                        className="text-muted-foreground h-6 w-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </div>
-                  )}
-                </div>
+                  <NoImage className="text-muted-foreground" />
+                )}
               </div>
             </div>
+          </div>
         )}
       </TabsContent>
 
-      {/* Peerlist Card */}
+      {/* ---------------- PEERLIST ---------------- */}
       <TabsContent value="peerlist" className="mt-3">
         {isLoading ? (
-          // Peerlist skeleton
           <div className="group border-border overflow-hidden rounded-2xl border">
             <div className="bg-muted/10 flex items-center px-3">
               <div className="flex flex-1 flex-col justify-center gap-2 py-5 pr-3">
@@ -247,7 +245,7 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
           </div>
         ) : (
           <div className="group border-border overflow-hidden rounded-2xl border">
-            <div className="bg-muted/10 flex items-center px-3">
+            <div className="bg-muted/10 flex items-center p-3">
               <div className="flex flex-1 flex-col justify-center gap-1 py-5 pr-3">
                 <p className="text-accent-foreground line-clamp-1 text-[15px] leading-5 font-normal">
                   {peerlistTitle}
@@ -256,48 +254,57 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
                   {peerlistDescription}
                 </p>
                 <div className="flex flex-1 items-end gap-1.5">
-                  <Image
-                    src={faviconUrl}
-                    alt={`${hostname} favicon`}
-                    width={12}
-                    height={12}
-                    className="rounded-sm"
-                    unoptimized
-                  />
+                  <div className="relative h-3 w-3">
+                    {faviconLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Loader className="text-muted-foreground size-2" />
+                      </div>
+                    )}
+                    <Image
+                      src={faviconUrl}
+                      alt={`${hostname} favicon`}
+                      width={12}
+                      height={12}
+                      className={`rounded-sm transition-opacity duration-300 ${
+                        faviconLoading ? "opacity-0" : "opacity-100"
+                      }`}
+                      unoptimized
+                      onLoadingComplete={() => setFaviconLoading(false)}
+                    />
+                  </div>
                   <p className="text-muted-foreground line-clamp-1 text-[12px] leading-4">
                     {hostname}
                   </p>
                 </div>
               </div>
+
               <div className="bg-muted relative flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md">
                 {peerlistImage && !peerlistImageError ? (
-                  <Image
-                    src={peerlistImage!}
-                    alt={peerlistTitle || "Peerlist Image Title"}
-                    fill
-                    className="object-cover"
-                    onError={() => setPeerlistImageError(true)}
-                  />
+                  <>
+                    {peerlistImageLoading && (
+                      <Loader className="text-muted-foreground absolute size-3.5" />
+                    )}
+                    <Image
+                      src={peerlistImage}
+                      alt={peerlistTitle || "Peerlist Image Title"}
+                      width={200}
+                      height={200}
+                      className={`h-full w-full object-contain transition-opacity duration-300 ${
+                        peerlistImageLoading ? "opacity-0" : "opacity-100"
+                      }`}
+                      onError={() => {
+                        setPeerlistImageError(true);
+                        setPeerlistImageLoading(false);
+                      }}
+                      onLoadingComplete={() => setPeerlistImageLoading(false)}
+                    />
+                  </>
                 ) : (
-                    <div className="bg-muted flex h-full items-center justify-center">
-                      <svg
-                        className="text-muted-foreground h-6 w-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </div>
-                  )}
-                </div>
+                  <NoImage className="text-muted-foreground" />
+                )}
               </div>
             </div>
+          </div>
         )}
       </TabsContent>
     </Tabs>

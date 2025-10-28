@@ -73,7 +73,9 @@ export function EditListDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit list</DialogTitle>
-          <DialogDescription>Update your review list details.</DialogDescription>
+          <DialogDescription>
+            Update your review list details.
+          </DialogDescription>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -157,7 +159,9 @@ export function EditListDialog({
                   </Button>
                   <Button
                     type="button"
-                    variant={field.state.value === "PUBLIC" ? "default" : "outline"}
+                    variant={
+                      field.state.value === "PUBLIC" ? "default" : "outline"
+                    }
                     size="sm"
                     onClick={() => field.handleChange("PUBLIC")}
                     disabled={isPending}
@@ -183,7 +187,7 @@ export function EditListDialog({
             <Button type="submit" disabled={isPending} className="flex-1">
               {isPending ? (
                 <>
-                  <Loader className="h-4 w-4 animate-spin" />
+                  <Loader className="h-4 w-4" />
                   Updating...
                 </>
               ) : (

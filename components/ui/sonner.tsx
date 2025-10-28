@@ -2,7 +2,8 @@
 
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
-import { Tick, Info, Warning, Error, Loader } from "../icons";
+
+import { Error, Info, Loader, Tick, Warning } from "../icons";
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
@@ -17,7 +18,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         info: <Info className="size-4 text-blue-400" />,
         warning: <Warning className="size-4 text-yellow-400" />,
         error: <Error className="size-4 text-red-400" />,
-        loading: <Loader className="size-4 animate-spin" />,
+        loading: <Loader className="size-4" />,
       }}
       toastOptions={{
         classNames: {
