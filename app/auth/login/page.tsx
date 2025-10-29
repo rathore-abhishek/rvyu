@@ -6,9 +6,9 @@ import {
   EyeOpen,
   Github,
   Google,
+  Loader,
   Lock,
   Mail,
-  Tick,
 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,13 +23,16 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { SignInSchema } from "@/types/auth";
 import { signInSchema } from "@/validation/auth";
+import { useRouter } from "@bprogress/next";
 import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
 const Login = () => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm({
@@ -48,10 +51,15 @@ const Login = () => {
   const {
     mutateAsync: signInMutation,
     isPending,
-    isSuccess,
     error,
   } = useMutation({
     mutationFn: signIn,
+    onSuccess: () => {
+      // Invalidate user query to update navbar
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      toast.success("Successfully logged in!");
+      router.push("/dashboard");
+    },
     onError: (error) => {
       toast.error(error.message || "Something went wrong!");
     },
@@ -77,27 +85,6 @@ const Login = () => {
             {error && (
               <div className="border-destructive/20 bg-destructive/10 rounded-lg border p-4">
                 <p className="text-destructive text-sm">{error.message}</p>
-              </div>
-            )}
-
-            {isSuccess && (
-              <div className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-4">
-                <div className="flex items-start gap-3">
-                  <Tick className="mt-0.5 h-5 w-5 shrink-0 text-blue-600 dark:text-blue-400" />
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                      Login Email Sent!
-                    </p>
-                    <p className="text-xs text-blue-600/80 dark:text-blue-400/80">
-                      We&apos;ve sent a login verification email to{" "}
-                      <span className="font-semibold">
-                        {form.state.values.email}
-                      </span>
-                      . Please check your inbox and click the link to complete
-                      sign in.
-                    </p>
-                  </div>
-                </div>
               </div>
             )}
 
@@ -178,6 +165,7 @@ const Login = () => {
               </form.Field>
 
               <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending && <Loader />}
                 {isPending ? "Signing In..." : "Sign In"}
               </Button>
             </form>

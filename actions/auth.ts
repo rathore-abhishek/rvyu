@@ -7,6 +7,8 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { getUser } from "./user";
+
 export async function signInSocial(provider: "google" | "github") {
   const { url, redirect: shouldRedirect } = await auth.api.signInSocial({
     body: { provider: provider, callbackURL: "/dashboard" },
@@ -26,23 +28,16 @@ export async function signIn({
 }) {
   validateOrThrow(signInSchema, { email, password });
 
-  console.log(email, password);
-
   const { user } = await auth.api.signInEmail({
     body: { email, password },
     headers: await headers(),
   });
 
-  console.log(user);
-
   if (!user) {
     throw new Error("Failed to sign in");
   }
 
-  auth.api.sendVerificationEmail({
-    body: { email, callbackURL: "/dashboard" },
-    headers: await headers(),
-  });
+  return user;
 }
 
 export async function signUp({
@@ -77,4 +72,19 @@ export async function logout() {
   });
 
   revalidatePath("/dashboard");
+}
+
+export async function resendVerificationEmail() {
+  const user = await getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  await auth.api.sendVerificationEmail({
+    body: { email: user.email, callbackURL: "/dashboard" },
+    headers: await headers(),
+  });
+
+  return { success: true };
 }
