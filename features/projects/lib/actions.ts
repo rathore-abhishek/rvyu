@@ -4,7 +4,7 @@ import { getUser } from "@/actions/user";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-import { NewProject, Project, ProjectMetadata } from "./types";
+import { NewProject, ProjectMetadata } from "./types";
 
 export async function getProjects() {
   const user = await getUser();
@@ -13,11 +13,20 @@ export async function getProjects() {
     throw new Error("Unauthorized");
   }
 
+  // Fetch minimal data for grid display - exclude body field for performance
   const projects = await prisma.project.findMany({
     where: {
       userId: user.id,
     },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      liveLink: true,
+      codeLink: true,
+      visibility: true,
+      createdAt: true,
+      updatedAt: true,
       techStack: {
         select: {
           id: true,

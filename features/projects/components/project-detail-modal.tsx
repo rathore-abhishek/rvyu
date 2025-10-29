@@ -2,6 +2,7 @@
 
 import {
   CodeLink,
+  Error as ErrorIcon,
   Globe,
   Link as LinkIcon,
   ProjectLock,
@@ -14,52 +15,55 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useQuery } from "@tanstack/react-query";
+import { Content } from "@tiptap/core";
 import { FontFamily } from "@tiptap/extension-font-family";
 import Link from "@tiptap/extension-link";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
+import { getProjectById } from "../lib/actions";
 import { PlatformPreview } from "./platform-preview";
 
 interface ProjectDetailModalProps {
-  project: {
-    id: string;
-    name: string;
-    description: string;
-    body?: string | null;
-    liveLink: string;
-    codeLink?: string | null;
-    visibility: "PUBLIC" | "PRIVATE";
-    techStack: { id: string; label: string; image?: string | null }[];
-    createdAt: Date;
-    updatedAt: Date;
-  } | null;
+  projectId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 export function ProjectDetailModal({
-  project,
+  projectId,
   open,
   onOpenChange,
 }: ProjectDetailModalProps) {
-  // Parse body content for display
+  const [isManualRetrying, setIsManualRetrying] = useState(false);
+
+  const {
+    data: project,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["project", projectId],
+    queryFn: () => getProjectById(projectId!),
+    enabled: !!projectId && open,
+  });
+
   const bodyContent = project?.body
-    ? (() => {
-        try {
-          return JSON.parse(project.body);
-        } catch {
-          return null;
-        }
-      })()
-    : null;
+    ? typeof project.body === "string"
+      ? (JSON.parse(project.body) as Content)
+      : (project.body as Content)
+    : undefined;
 
   const editor = useEditor({
     editable: false,
@@ -83,21 +87,90 @@ export function ProjectDetailModal({
         },
       }),
     ],
-    content: bodyContent,
     immediatelyRender: false,
   });
 
+  // Update editor content when bodyContent changes
+  useEffect(() => {
+    if (editor && bodyContent) {
+      editor.commands.setContent(bodyContent);
+    }
+  }, [editor, bodyContent]);
+
+  // Loading state
+  if ((isLoading && !project) || isManualRetrying) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="sr-only">Loading project...</DialogTitle>
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="h-5 w-5 rounded-full" />
+            </div>
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </DialogHeader>
+
+          <div className="space-y-5">
+            {/* Action Buttons Skeleton */}
+            <div className="flex gap-2">
+              <Skeleton className="h-9 w-32" />
+              <Skeleton className="h-9 w-24" />
+            </div>
+
+            {/* Tech Stack Skeleton */}
+            <div className="flex flex-wrap gap-2">
+              <Skeleton className="h-8 w-20" />
+              <Skeleton className="h-8 w-24" />
+              <Skeleton className="h-8 w-28" />
+              <Skeleton className="h-8 w-20" />
+            </div>
+
+            {/* Rich Content Skeleton */}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-4/5" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogTitle className="sr-only">Error loading project</DialogTitle>
+          <div className="flex flex-col items-center justify-center py-12">
+            <ErrorIcon className="text-destructive mb-4 h-8 w-8" />
+            <p className="text-muted-foreground mb-4 text-sm">
+              {error?.message || "Failed to load project"}
+            </p>
+            <Button
+              variant="outline"
+              onClick={async () => {
+                setIsManualRetrying(true);
+                await refetch();
+                setIsManualRetrying(false);
+              }}
+            >
+              Try Again
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-      key={open ? project?.id : "closed"}
-    >
-      <DialogContent
-        onOpenAutoFocus={(e) => {
-          e.preventDefault();
-        }}
-      >
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
         <DialogHeader>
           <div className="flex items-center gap-3">
             <DialogTitle className="font-serif text-2xl leading-tight tracking-wider">

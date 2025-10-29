@@ -29,7 +29,6 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
   const { data: metadata, isLoading } = useQuery({
     queryKey: ["project-metadata", liveLink],
     queryFn: () => getSiteMetadata(liveLink),
-    staleTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   // Twitter uses twitter-specific metadata with fallbacks
@@ -106,7 +105,7 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
                           twitterImageLoading ? "opacity-0" : "opacity-100"
                         }`}
                         onError={() => setTwitterImageError(true)}
-                        onLoadingComplete={() => setTwitterImageLoading(false)}
+                        onLoad={() => setTwitterImageLoading(false)}
                       />
                     </>
                   ) : (
@@ -141,9 +140,7 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
                             twitterImageLoading ? "opacity-0" : "opacity-100"
                           }`}
                           onError={() => setTwitterImageError(true)}
-                          onLoadingComplete={() =>
-                            setTwitterImageLoading(false)
-                          }
+                          onLoad={() => setTwitterImageLoading(false)}
                         />
                       </>
                     ) : (
@@ -214,7 +211,7 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
                         setDiscordImageError(true);
                         setDiscordImageLoading(false);
                       }}
-                      onLoadingComplete={() => setDiscordImageLoading(false)}
+                      onLoad={() => setDiscordImageLoading(false)}
                     />
                   </>
                 ) : (
@@ -269,7 +266,7 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
                         faviconLoading ? "opacity-0" : "opacity-100"
                       }`}
                       unoptimized
-                      onLoadingComplete={() => setFaviconLoading(false)}
+                      onLoad={() => setFaviconLoading(false)}
                     />
                   </div>
                   <p className="text-muted-foreground line-clamp-1 text-[12px] leading-4">
@@ -296,7 +293,7 @@ export function PlatformPreview({ liveLink }: PlatformPreviewProps) {
                         setPeerlistImageError(true);
                         setPeerlistImageLoading(false);
                       }}
-                      onLoadingComplete={() => setPeerlistImageLoading(false)}
+                      onLoad={() => setPeerlistImageLoading(false)}
                     />
                   </>
                 ) : (

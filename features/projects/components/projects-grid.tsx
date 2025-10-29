@@ -40,7 +40,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { deleteProject, getProjects } from "../lib/actions";
-import { Project } from "../lib/types";
 import { formatDate } from "../lib/utils";
 import { CreateProjectCard } from "./create-project-card";
 import { CreateProjectDialog } from "./create-project-dialog";
@@ -57,8 +56,8 @@ export function ProjectsGrid() {
     id: string;
     name: string;
   } | null>(null);
-  const [projectToEdit, setProjectToEdit] = useState<Project | null>(null);
-  const [projectToView, setProjectToView] = useState<Project | null>(null);
+  const [projectToEditId, setProjectToEditId] = useState<string | null>(null);
+  const [projectToViewId, setProjectToViewId] = useState<string | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [hoveredTech, setHoveredTech] = useState<string | null>(null);
   const [isManualRetrying, setIsManualRetrying] = useState(false);
@@ -89,10 +88,10 @@ export function ProjectsGrid() {
     },
   });
 
-  const handleEdit = (e: React.MouseEvent, project: Project) => {
+  const handleEdit = (e: React.MouseEvent, projectId: string) => {
     e.stopPropagation();
     start();
-    setProjectToEdit(project);
+    setProjectToEditId(projectId);
     setEditDialogOpen(true);
     stop();
   };
@@ -109,9 +108,9 @@ export function ProjectsGrid() {
     }
   };
 
-  const handleCardClick = (project: Project) => {
+  const handleCardClick = (projectId: string) => {
     start();
-    setProjectToView(project);
+    setProjectToViewId(projectId);
     setDetailDialogOpen(true);
     stop();
   };
@@ -173,43 +172,16 @@ export function ProjectsGrid() {
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
       />
-      {projectToEdit && (
-        <EditProjectDialog
-          open={editDialogOpen}
-          onOpenChange={setEditDialogOpen}
-          initialData={{
-            id: projectToEdit.id,
-            name: projectToEdit.name,
-            description: projectToEdit.description,
-            body:
-              typeof projectToEdit.body === "string"
-                ? projectToEdit.body
-                : JSON.stringify(projectToEdit.body),
-            liveLink: projectToEdit.liveLink,
-            codeLink: projectToEdit.codeLink,
-            visibility: projectToEdit.visibility,
-            techStack: projectToEdit.techStack,
-          }}
-        />
-      )}
-      {projectToView && (
-        <ProjectDetailModal
-          project={{
-            ...projectToView,
-            body:
-              typeof projectToView.body === "string"
-                ? projectToView.body
-                : JSON.stringify(projectToView.body),
-          }}
-          open={detailDialogOpen}
-          onOpenChange={(open) => {
-            if (!open) {
-              setDetailDialogOpen(false);
-              setProjectToView(null);
-            }
-          }}
-        />
-      )}
+      <EditProjectDialog
+        projectId={projectToEditId}
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+      />
+      <ProjectDetailModal
+        projectId={projectToViewId}
+        open={detailDialogOpen}
+        onOpenChange={setDetailDialogOpen}
+      />
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <CreateProjectCard
           onClick={() => {
@@ -222,7 +194,7 @@ export function ProjectsGrid() {
         {projects.map((project) => (
           <article
             key={project.id}
-            onClick={() => handleCardClick(project)}
+            onClick={() => handleCardClick(project.id)}
             className="group bg-card hover:shadow-primary/5 relative flex cursor-pointer flex-col overflow-hidden rounded-xl border"
           >
             {/* Gradient overlay on hover */}
@@ -271,7 +243,7 @@ export function ProjectsGrid() {
                     <Button
                       size="icon-sm"
                       variant="ghost"
-                      onClick={(e) => handleEdit(e, project)}
+                      onClick={(e) => handleEdit(e, project.id)}
                       className="text-muted-foreground shrink-0 rounded-lg"
                     >
                       <Edit />

@@ -1,13 +1,7 @@
 "use client";
 
 import { ArrowRight, Calendar, Delete, Edit } from "@/components/icons";
-import {
-  Error as ErrorIcon,
-  Globe,
-  Loader,
-  NoList,
-  UnList,
-} from "@/components/icons";
+import { Error as ErrorIcon, Globe, Loader, UnList } from "@/components/icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +26,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { List } from "@/types";
 import { useProgress } from "@bprogress/next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -39,7 +34,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { deleteList, getLists } from "../lib/actionts";
-import { List } from "../lib/types";
 import { formatDate } from "../lib/utis";
 import { CreateListCard } from "./create-list-card";
 import { CreateListDialog } from "./create-list-dialog";
@@ -142,24 +136,6 @@ export function ListsGrid() {
     );
   }
 
-  // Empty state
-  if (!lists || lists.length === 0) {
-    return (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <NoList />
-          </EmptyMedia>
-          <EmptyTitle>No lists yet</EmptyTitle>
-          <EmptyDescription>
-            Get started by creating your first review list using the button
-            above.
-          </EmptyDescription>
-        </EmptyHeader>
-      </Empty>
-    );
-  }
-
   // Success state - show lists
   return (
     <>
@@ -187,95 +163,98 @@ export function ListsGrid() {
             stop();
           }}
         />
-        {lists.map((list) => (
-          <Link
-            key={list.id}
-            href={`/lists/${list.id}`}
-            className="group bg-card hover:shadow-primary/5 relative flex cursor-pointer flex-col overflow-hidden rounded-xl border"
-          >
-            {/* Gradient overlay on hover */}
-            <div className="from-primary/5 absolute inset-0 bg-linear-to-br via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        {lists &&
+          lists.map((list) => (
+            <Link
+              key={list.id}
+              href={`/lists/${list.id}`}
+              className="group bg-card hover:shadow-primary/5 relative flex cursor-pointer flex-col overflow-hidden rounded-xl border"
+            >
+              {/* Gradient overlay on hover */}
+              <div className="from-primary/5 absolute inset-0 bg-linear-to-br via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-            <div className="relative flex h-full flex-col gap-4 p-6">
-              {/* Header */}
-              <div className="space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-2 flex items-center gap-2">
-                      <h3 className="text-lg leading-tight font-semibold tracking-tight transition-colors">
-                        {list.name}
-                      </h3>
-                      {list.visibility === "PUBLIC" ? (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="inline-flex">
-                              <Globe className="text-primary h-4 w-4 shrink-0" />
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Public</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      ) : (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="inline-flex">
-                              <UnList className="text-muted-foreground h-4 w-4 shrink-0" />
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Unlisted</p>
-                          </TooltipContent>
-                        </Tooltip>
+              <div className="relative flex h-full flex-col gap-4 p-6">
+                {/* Header */}
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-2 flex items-center gap-2">
+                        <h3 className="text-lg leading-tight font-semibold tracking-tight transition-colors">
+                          {list.name}
+                        </h3>
+                        {list.visibility === "PUBLIC" ? (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="inline-flex">
+                                <Globe className="text-primary h-4 w-4 shrink-0" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Public</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        ) : (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="inline-flex">
+                                <UnList className="text-muted-foreground h-4 w-4 shrink-0" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Unlisted</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                      </div>
+                      {list.description && (
+                        <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
+                          {list.description}
+                        </p>
                       )}
                     </div>
-                    {list.description && (
-                      <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
-                        {list.description}
-                      </p>
-                    )}
-                  </div>
 
-                  {/* Action buttons - appears on hover */}
-                  <div className="flex scale-95 gap-1.5 transition-all duration-200 group-hover:scale-100 group-hover:opacity-100 lg:opacity-0">
-                    <Button
-                      size="icon-sm"
-                      variant="ghost"
-                      onClick={(e) => handleEdit(e, list)}
-                      className="text-muted-foreground shrink-0 rounded-lg"
-                    >
-                      <Edit />
-                    </Button>
-                    <Button
-                      size="icon-sm"
-                      variant="ghost"
-                      onClick={(e) => handleDeleteClick(e, list.id, list.name)}
-                      className="text-destructive lg:text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 rounded-lg"
-                    >
-                      <Delete />
-                    </Button>
+                    {/* Action buttons - appears on hover */}
+                    <div className="flex scale-95 gap-1.5 transition-all duration-200 group-hover:scale-100 group-hover:opacity-100 lg:opacity-0">
+                      <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={(e) => handleEdit(e, list)}
+                        className="text-muted-foreground shrink-0 rounded-lg"
+                      >
+                        <Edit />
+                      </Button>
+                      <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={(e) =>
+                          handleDeleteClick(e, list.id, list.name)
+                        }
+                        className="text-destructive lg:text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 rounded-lg"
+                      >
+                        <Delete />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="mt-auto border-t pt-3">
+                  <div className="flex items-center justify-between">
+                    <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                      <Calendar className="h-3.5 w-3.5 shrink-0" />
+                      <span>{formatDate(list.createdAt)}</span>
+                    </div>
+
+                    {/* Arrow indicator - hidden on mobile, shows on desktop hover */}
+                    <div className="text-accent-foreground hidden -translate-x-2 items-center gap-1 text-xs font-medium opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 md:flex">
+                      <span>View</span>
+                      <ArrowRight className="text-muted-foreground h-4 w-4" />
+                    </div>
                   </div>
                 </div>
               </div>
-
-              {/* Footer */}
-              <div className="mt-auto border-t pt-3">
-                <div className="flex items-center justify-between">
-                  <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-                    <Calendar className="h-3.5 w-3.5 shrink-0" />
-                    <span>{formatDate(list.createdAt)}</span>
-                  </div>
-
-                  {/* Arrow indicator - hidden on mobile, shows on desktop hover */}
-                  <div className="text-accent-foreground hidden -translate-x-2 items-center gap-1 text-xs font-medium opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 md:flex">
-                    <span>View</span>
-                    <ArrowRight className="text-muted-foreground h-4 w-4" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))}
       </div>
 
       {/* Delete Confirmation Dialog */}

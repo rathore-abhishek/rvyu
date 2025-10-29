@@ -1,9 +1,11 @@
 "use server";
+
 import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { validateOrThrow } from "@/validation";
 import { signInSchema, signUpSchema } from "@/validation/auth";
+import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function signInSocial(provider: "google" | "github") {
   const { url, redirect: shouldRedirect } = await auth.api.signInSocial({
@@ -22,14 +24,16 @@ export async function signIn({
   email: string;
   password: string;
 }) {
-  throw new Error("test");
-
   validateOrThrow(signInSchema, { email, password });
+
+  console.log(email, password);
 
   const { user } = await auth.api.signInEmail({
     body: { email, password },
     headers: await headers(),
   });
+
+  console.log(user);
 
   if (!user) {
     throw new Error("Failed to sign in");
@@ -71,4 +75,6 @@ export async function logout() {
   await auth.api.signOut({
     headers: await headers(),
   });
+
+  revalidatePath("/dashboard");
 }

@@ -34,6 +34,7 @@ import Login from "./login";
 import Logout from "./logout";
 import Mail from "./mail";
 import Moon from "./moon";
+import NoImage from "./no-image";
 import NoList from "./no-list";
 import NotFound from "./not-found";
 import NumberList from "./number-list";
@@ -112,4 +113,5 @@ export {
   User,
   Warning,
   X,
+  NoImage,
 };

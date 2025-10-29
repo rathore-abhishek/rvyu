@@ -1,18 +1,27 @@
+"use client";
+
+import { getUser } from "@/actions/user";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+
+import { MobileNav } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
-import { MobileNav } from "./mobile-nav";
-import { getUser } from "@/actions/user";
 
 const navLinks = [
   { href: "/dashboard/lists", label: "Dashboard" },
   { href: "/lists", label: "Lists" },
 ];
 
-const Navbar = async () => {
-  const user = await getUser();
+const Navbar = () => {
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["user"],
+    queryFn: getUser,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 
   return (
     <header className="sticky top-0 right-0 left-0 z-50 px-5">
@@ -22,7 +31,7 @@ const Navbar = async () => {
 
         {/* Mobile Menu */}
         <div className="relative md:hidden">
-          <MobileNav user={user} />
+          <MobileNav user={user ?? null} />
         </div>
 
         {/* Logo */}
@@ -56,7 +65,9 @@ const Navbar = async () => {
         {/* Right Section - Theme Toggle & User Menu/CTA */}
         <div className="relative flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
-          {user ? (
+          {isLoading ? (
+            <Skeleton className="h-10 w-10 rounded-full" />
+          ) : user ? (
             <UserMenu user={user} />
           ) : (
             <Button asChild size="sm" className="hidden sm:flex">

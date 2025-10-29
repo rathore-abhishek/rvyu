@@ -1,23 +1,18 @@
 "use server";
 
+import { editProfileSchema } from "@/features/profile/lib/validation";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { extractUploadThingKey } from "@/lib/utils";
+import { User } from "@/types";
+import { validateOrThrow } from "@/validation";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { UTApi } from "uploadthing/server";
 
-export async function getUser(): Promise<{
-  id: string;
-  email: string;
-  name: string;
-  emailVerified: boolean;
-  image: string | null;
-  bio: string | null;
-  github: string | null;
-  twitter: string | null;
-  linkedin: string | null;
-  peerlist: string | null;
-  portfolio: string | null;
-} | null> {
+const utapi = new UTApi();
+
+export async function getUser(): Promise<User | null> {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -41,6 +36,8 @@ export async function getUser(): Promise<{
       linkedin: true,
       peerlist: true,
       portfolio: true,
+      createdAt: true,
+      updatedAt: true,
     },
   });
 
@@ -48,17 +45,13 @@ export async function getUser(): Promise<{
     return null;
   }
 
-  // Ensure name is always a strin
-  // g (fallback to email)
-  return {
-    ...user,
-    name: user.name || user.email,
-  };
+  return user;
 }
 
 export async function updateUserProfile(data: {
   name: string;
   bio?: string;
+  image?: string;
   github?: string;
   twitter?: string;
   linkedin?: string;
@@ -66,6 +59,8 @@ export async function updateUserProfile(data: {
   portfolio?: string;
 }) {
   try {
+    validateOrThrow(editProfileSchema, data);
+
     const session = await auth.api.getSession({
       headers: await headers(),
     });
@@ -74,36 +69,22 @@ export async function updateUserProfile(data: {
       return { success: false, error: "Unauthorized" };
     }
 
-    // Validate name
-    if (!data.name || data.name.trim().length === 0) {
-      return { success: false, error: "Name is required" };
-    }
+    // Get current user to check for old image
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { image: true },
+    });
 
-    if (data.name.length > 100) {
-      return { success: false, error: "Name must be less than 100 characters" };
-    }
-
-    // Validate bio length
-    if (data.bio && data.bio.length > 500) {
-      return { success: false, error: "Bio must be less than 500 characters" };
-    }
-
-    // Validate social links length
-    const socialFields = ["github", "twitter", "linkedin", "peerlist"] as const;
-    for (const field of socialFields) {
-      if (data[field] && data[field]!.length > 100) {
-        return {
-          success: false,
-          error: `${field.charAt(0).toUpperCase() + field.slice(1)} must be less than 100 characters`,
-        };
+    // Delete old image from uploadthing if it exists and a new image is provided
+    if (currentUser?.image && data.image && currentUser.image !== data.image) {
+      const oldImageKey = extractUploadThingKey(currentUser.image);
+      if (oldImageKey) {
+        try {
+          await utapi.deleteFiles(oldImageKey);
+        } catch (error) {
+          console.error("Error deleting old image:", error);
+        }
       }
-    }
-
-    if (data.portfolio && data.portfolio.length > 200) {
-      return {
-        success: false,
-        error: "Portfolio URL must be less than 200 characters",
-      };
     }
 
     // Update user profile
@@ -112,6 +93,7 @@ export async function updateUserProfile(data: {
       data: {
         name: data.name.trim(),
         bio: data.bio?.trim() || null,
+        image: data.image || undefined,
         github: data.github?.trim() || null,
         twitter: data.twitter?.trim() || null,
         linkedin: data.linkedin?.trim() || null,

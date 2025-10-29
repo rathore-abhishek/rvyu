@@ -1,6 +1,7 @@
 "use client";
 
-import { Globe, Loader, ProjectLock } from "@/components/icons";
+import { Error as ErrorIcon, Globe, Loader, ProjectLock } from "@/components/icons";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,12 +16,12 @@ import RichTextEditor from "@/components/ui/rich-text-editor";
 import { Textarea } from "@/components/ui/textarea";
 import { validateWithSchema } from "@/validation";
 import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { editProject } from "../lib/actions";
-import { NewProject, Project } from "../lib/types";
+import { editProject, getProjectById } from "../lib/actions";
+import { NewProject } from "../lib/types";
 import {
   newProjectSchema,
   newProjectWithoutTechStackSchema,
@@ -28,37 +29,57 @@ import {
 import { TechStackInput } from "./tech-stack-input";
 
 interface EditProjectDialogProps {
+  projectId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialData: Omit<Project, "createdAt" | "updatedAt" | "userId">;
 }
 
 export function EditProjectDialog({
+  projectId,
   open,
   onOpenChange,
-  initialData,
 }: EditProjectDialogProps) {
   const queryClient = useQueryClient();
+  const [isManualRetrying, setIsManualRetrying] = useState(false);
+
+  const {
+    data: project,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["project", projectId],
+    queryFn: () => getProjectById(projectId!),
+    enabled: !!projectId && open,
+  });
+
+  // Initialize tech stack from project data
   const [techStack, setTechStack] = useState<
     { label: string; image?: string }[]
-  >(
-    initialData.techStack.map((t) => ({
+  >(() =>
+    project?.techStack.map((t) => ({
       label: t.label,
       image: t.image || undefined,
-    })),
+    })) || [],
   );
 
   const form = useForm({
     defaultValues: {
-      name: initialData.name,
-      description: initialData.description,
-      body: initialData.body || "",
-      liveLink: initialData.liveLink,
-      codeLink: initialData.codeLink || "",
-      visibility: initialData.visibility,
+      name: project?.name || "",
+      description: project?.description || "",
+      body:
+        typeof project?.body === "string"
+          ? project.body
+          : JSON.stringify(project?.body || ""),
+      liveLink: project?.liveLink || "",
+      codeLink: project?.codeLink || "",
+      visibility: project?.visibility || "PRIVATE",
     } as Omit<NewProject, "techStack">,
     validators: { onSubmit: newProjectWithoutTechStackSchema },
     onSubmit: async () => {
+      if (!project) return;
+
       const projectData = {
         ...form.state.values,
         techStack,
@@ -75,7 +96,7 @@ export function EditProjectDialog({
       }
 
       await editProjectMutation({
-        id: initialData.id,
+        id: project.id,
         data: data!,
       });
     },
@@ -87,7 +108,9 @@ export function EditProjectDialog({
     onSuccess: () => {
       toast.success("Project updated successfully!");
       form.reset();
+      // Invalidate both projects list and individual project queries
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
       onOpenChange(false);
     },
     onError: (error) => {
@@ -103,8 +126,106 @@ export function EditProjectDialog({
     setTechStack(techStack.filter((_, i) => i !== index));
   };
 
+  // Loading state
+  if ((isLoading && !project) || isManualRetrying) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="sr-only">Loading project...</DialogTitle>
+            <Skeleton className="h-7 w-32" />
+            <Skeleton className="h-4 w-48" />
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* Name Field Skeleton */}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+
+            {/* Description Field Skeleton */}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+
+            {/* Rich Content Skeleton */}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-40 w-full" />
+            </div>
+
+            {/* URL Fields Skeleton */}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+
+            {/* Tech Stack Skeleton */}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <div className="flex gap-2">
+                <Skeleton className="h-8 w-20" />
+                <Skeleton className="h-8 w-24" />
+              </div>
+            </div>
+
+            {/* Visibility Skeleton */}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-20" />
+              <div className="flex gap-2">
+                <Skeleton className="h-9 flex-1" />
+                <Skeleton className="h-9 flex-1" />
+              </div>
+            </div>
+
+            {/* Buttons Skeleton */}
+            <div className="flex gap-2">
+              <Skeleton className="h-10 flex-1" />
+              <Skeleton className="h-10 flex-1" />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogTitle className="sr-only">Error loading project</DialogTitle>
+          <div className="flex flex-col items-center justify-center py-12">
+            <ErrorIcon className="text-destructive mb-4 h-8 w-8" />
+            <p className="text-muted-foreground mb-4 text-sm">
+              {error?.message || "Failed to load project"}
+            </p>
+            <Button
+              variant="outline"
+              onClick={async () => {
+                setIsManualRetrying(true);
+                await refetch();
+                setIsManualRetrying(false);
+              }}
+            >
+              Try Again
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  if (!project) return null;
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange} key={projectId}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit project</DialogTitle>

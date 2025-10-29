@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { List } from "@/types";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -23,12 +24,7 @@ import { newListSchema } from "../lib/validation";
 interface EditListDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialData: {
-    id: string;
-    name: string;
-    description: string;
-    visibility: "PUBLIC" | "UNLISTED";
-  };
+  initialData: Pick<List, "id" | "name" | "description" | "visibility">;
 }
 
 export function EditListDialog({
