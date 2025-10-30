@@ -1,7 +1,12 @@
 "use client";
 
-import { updateUserProfile } from "@/actions/user";
-import { Edit, Loader, NoImage } from "@/components/icons";
+import { useState } from "react";
+
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useDropzone } from "react-dropzone";
+import { toast } from "sonner";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,13 +19,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+
 import { useUploadThing } from "@/lib/upload";
+
+import { updateUserProfile } from "@/actions/user";
+
+import { Edit, Loader, NoImage } from "@/components/icons";
 import { User } from "@/types";
-import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { useDropzone } from "react-dropzone";
-import { toast } from "sonner";
 
 import { EditProfile } from "../lib/types";
 import { getInitials } from "../lib/utils";

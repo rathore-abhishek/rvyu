@@ -1,12 +1,17 @@
 "use client";
 
-import {
-  CodeLink,
-  Error as ErrorIcon,
-  Globe,
-  Link as LinkIcon,
-  ProjectLock,
-} from "@/components/icons";
+import { useEffect, useState } from "react";
+
+import Image from "next/image";
+
+import { useQuery } from "@tanstack/react-query";
+import { Content } from "@tiptap/core";
+import { FontFamily } from "@tiptap/extension-font-family";
+import Link from "@tiptap/extension-link";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,15 +26,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useQuery } from "@tanstack/react-query";
-import { Content } from "@tiptap/core";
-import { FontFamily } from "@tiptap/extension-font-family";
-import Link from "@tiptap/extension-link";
-import { TextStyle } from "@tiptap/extension-text-style";
-import { EditorContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+
+import {
+  CodeLink,
+  Error as ErrorIcon,
+  Globe,
+  Link as LinkIcon,
+  ProjectLock,
+} from "@/components/icons";
 
 import { getProjectById } from "../lib/actions";
 import { PlatformPreview } from "./platform-preview";

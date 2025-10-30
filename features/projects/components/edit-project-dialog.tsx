@@ -1,7 +1,11 @@
 "use client";
 
-import { Error as ErrorIcon, Globe, Loader, ProjectLock } from "@/components/icons";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
+
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,12 +17,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import RichTextEditor from "@/components/ui/rich-text-editor";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+
+import {
+  Error as ErrorIcon,
+  Globe,
+  Loader,
+  ProjectLock,
+} from "@/components/icons";
 import { validateWithSchema } from "@/validation";
-import { useForm } from "@tanstack/react-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { toast } from "sonner";
 
 import { editProject, getProjectById } from "../lib/actions";
 import { NewProject } from "../lib/types";
@@ -57,11 +65,12 @@ export function EditProjectDialog({
   // Initialize tech stack from project data
   const [techStack, setTechStack] = useState<
     { label: string; image?: string }[]
-  >(() =>
-    project?.techStack.map((t) => ({
-      label: t.label,
-      image: t.image || undefined,
-    })) || [],
+  >(
+    () =>
+      project?.techStack.map((t) => ({
+        label: t.label,
+        image: t.image || undefined,
+      })) || [],
   );
 
   const form = useForm({

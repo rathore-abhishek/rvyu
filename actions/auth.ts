@@ -1,11 +1,14 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { validateOrThrow } from "@/validation";
-import { signInSchema, signUpSchema } from "@/validation/auth";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+
+import { auth } from "@/lib/auth";
+
+import { signInSchema, signUpSchema } from "@/validation/auth";
+
+import { validateOrThrow } from "@/validation";
 
 import { getUser } from "./user";
 

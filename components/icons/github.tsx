@@ -1,6 +1,8 @@
 "use client";
-import { useTheme } from "next-themes";
+
 import React from "react";
+
+import { useTheme } from "next-themes";
 
 type Props = React.ComponentProps<"svg">;
 

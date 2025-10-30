@@ -1,7 +1,13 @@
 "use client";
 
-import { logout } from "@/actions/auth";
-import { Loader } from "@/components/icons";
+import { useState } from "react";
+
+import { useRouter } from "next/navigation";
+
+import { useProgress } from "@bprogress/next";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,13 +16,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+
 import { ProfileDialog } from "@/features/profile/components/profile-dialog";
+
+import { logout } from "@/actions/auth";
+
+import { Loader } from "@/components/icons";
 import { User as UserType } from "@/types";
-import { useProgress } from "@bprogress/next";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
 
 import { Logout, User } from "../icons";
 

@@ -1,16 +1,14 @@
 "use client";
 
-import { signInSocial, signUp } from "@/actions/auth";
-import {
-  EyeClose,
-  EyeOpen,
-  Github,
-  Google,
-  Loader,
-  Lock,
-  Mail,
-  User,
-} from "@/components/icons";
+import { useState } from "react";
+
+import Link from "next/link";
+
+import { useRouter } from "@bprogress/next";
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -22,14 +20,23 @@ import {
 } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+
+import { signInSocial, signUp } from "@/actions/auth";
+
 import { SignUpWithConfirmSchema } from "@/types/auth";
+
 import { signUpWithConfirmSchema } from "@/validation/auth";
-import { useRouter } from "@bprogress/next";
-import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
-import { useState } from "react";
-import { toast } from "sonner";
+
+import {
+  EyeClose,
+  EyeOpen,
+  Github,
+  Google,
+  Loader,
+  Lock,
+  Mail,
+  User,
+} from "@/components/icons";
 
 const SignUp = () => {
   const router = useRouter();
@@ -67,7 +74,7 @@ const SignUp = () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       toast.success(
         "Account created! Please check your inbox to verify your email.",
-        { duration: 5000 }
+        { duration: 5000 },
       );
       router.push("/dashboard");
     },

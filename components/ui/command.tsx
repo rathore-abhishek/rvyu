@@ -1,6 +1,9 @@
 "use client";
 
-import { Search } from "@/components/icons";
+import * as React from "react";
+
+import { Command as CommandPrimitive } from "cmdk";
+
 import {
   Dialog,
   DialogContent,
@@ -8,9 +11,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
 import { cn } from "@/lib/utils";
-import { Command as CommandPrimitive } from "cmdk";
-import * as React from "react";
+
+import { Search } from "@/components/icons";
 
 function Command({
   className,

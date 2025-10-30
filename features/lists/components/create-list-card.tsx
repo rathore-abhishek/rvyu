@@ -24,9 +24,7 @@ export function CreateListCard({ onClick }: CreateListCardProps) {
           <h3 className="mb-1 text-base font-semibold tracking-tight">
             Add List
           </h3>
-          <p className="text-muted-foreground text-sm">
-            Collect amazing work.
-          </p>
+          <p className="text-muted-foreground text-sm">Collect amazing work.</p>
         </div>
       </div>
     </article>

@@ -1,14 +1,18 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+
+import { UTApi } from "uploadthing/server";
+
 import { editProfileSchema } from "@/features/profile/lib/validation";
+
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { extractUploadThingKey } from "@/lib/utils";
+
 import { User } from "@/types";
 import { validateOrThrow } from "@/validation";
-import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
-import { UTApi } from "uploadthing/server";
 
 const utapi = new UTApi();
 

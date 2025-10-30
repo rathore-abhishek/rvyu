@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { signInSchema, signUpSchema, signUpWithConfirmSchema } from "@/validation/auth";
+
+import {
+  signInSchema,
+  signUpSchema,
+  signUpWithConfirmSchema,
+} from "@/validation/auth";
 
 export type SignInSchema = z.infer<typeof signInSchema>;
 export type SignUpSchema = z.infer<typeof signUpSchema>;

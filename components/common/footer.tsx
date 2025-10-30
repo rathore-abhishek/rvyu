@@ -1,7 +1,9 @@
-import { Github, Heart, Mail } from "@/components/icons";
+import React from "react";
+
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+
+import { Github, Heart, Mail } from "@/components/icons";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

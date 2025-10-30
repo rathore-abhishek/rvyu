@@ -1,5 +1,15 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
+
+import { FontFamily } from "@tiptap/extension-font-family";
+import Link from "@tiptap/extension-link";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+
+import { cn } from "@/lib/utils";
+
 import {
   BlackQuote,
   Bold,
@@ -15,13 +25,6 @@ import {
   Unlink,
   UrlLink,
 } from "@/components/icons";
-import { cn } from "@/lib/utils";
-import { FontFamily } from "@tiptap/extension-font-family";
-import Link from "@tiptap/extension-link";
-import { TextStyle } from "@tiptap/extension-text-style";
-import { EditorContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "./button";
 import {
@@ -321,13 +324,19 @@ const RichTextEditor = ({
             <Button
               type="button"
               variant={
-                editor.isActive("textStyle", { fontFamily: "ui-sans-serif, system-ui, sans-serif" })
+                editor.isActive("textStyle", {
+                  fontFamily: "ui-sans-serif, system-ui, sans-serif",
+                })
                   ? "secondary"
                   : "ghost"
               }
               size="icon-sm"
               onClick={() =>
-                editor.chain().focus().setFontFamily("ui-sans-serif, system-ui, sans-serif").run()
+                editor
+                  .chain()
+                  .focus()
+                  .setFontFamily("ui-sans-serif, system-ui, sans-serif")
+                  .run()
               }
               disabled={disabled}
               className="h-8 w-8"
@@ -345,13 +354,19 @@ const RichTextEditor = ({
             <Button
               type="button"
               variant={
-                editor.isActive("textStyle", { fontFamily: "ui-serif, Georgia, serif" })
+                editor.isActive("textStyle", {
+                  fontFamily: "ui-serif, Georgia, serif",
+                })
                   ? "secondary"
                   : "ghost"
               }
               size="icon-sm"
               onClick={() =>
-                editor.chain().focus().setFontFamily("ui-serif, Georgia, serif").run()
+                editor
+                  .chain()
+                  .focus()
+                  .setFontFamily("ui-serif, Georgia, serif")
+                  .run()
               }
               disabled={disabled}
               className="h-8 w-8"

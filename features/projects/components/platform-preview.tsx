@@ -1,12 +1,16 @@
 "use client";
 
-import { Discord, Loader, PeerList, X } from "@/components/icons/";
-import NoImage from "@/components/icons/no-image";
+import { useState } from "react";
+
+import Image from "next/image";
+
+import { useQuery } from "@tanstack/react-query";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
-import { useState } from "react";
+
+import { Discord, Loader, PeerList, X } from "@/components/icons/";
+import NoImage from "@/components/icons/no-image";
 
 import { getSiteMetadata } from "../lib/actions";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FolderCode, List, Plus } from "@/components/icons";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,8 +9,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CreateProjectDialog } from "@/features/projects/components";
+
 import { CreateListDialog } from "@/features/lists/components";
+import { CreateProjectDialog } from "@/features/projects/components";
+
+import { FolderCode, List, Plus } from "@/components/icons";
 
 export function DashboardCreateMenu() {
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
@@ -37,7 +40,7 @@ export function DashboardCreateMenu() {
         open={createListOpen}
         onOpenChange={setCreateListOpen}
       />
-      
+
       <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <Button size="sm">

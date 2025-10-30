@@ -1,15 +1,14 @@
 "use client";
 
-import { signIn, signInSocial } from "@/actions/auth";
-import {
-  EyeClose,
-  EyeOpen,
-  Github,
-  Google,
-  Loader,
-  Lock,
-  Mail,
-} from "@/components/icons";
+import { useState } from "react";
+
+import Link from "next/link";
+
+import { useRouter } from "@bprogress/next";
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -21,14 +20,22 @@ import {
 } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+
+import { signIn, signInSocial } from "@/actions/auth";
+
 import { SignInSchema } from "@/types/auth";
+
 import { signInSchema } from "@/validation/auth";
-import { useRouter } from "@bprogress/next";
-import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
-import { useState } from "react";
-import { toast } from "sonner";
+
+import {
+  EyeClose,
+  EyeOpen,
+  Github,
+  Google,
+  Loader,
+  Lock,
+  Mail,
+} from "@/components/icons";
 
 const Login = () => {
   const router = useRouter();

@@ -1,4 +1,5 @@
-import { ArrowRight, Home, NotFound as NotFoundIcon } from "@/components/icons";
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -8,11 +9,12 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import Link from "next/link";
+
+import { ArrowRight, Home, NotFound as NotFoundIcon } from "@/components/icons";
 
 const NotFound = () => {
   return (
-    <div className="container mx-auto flex py-16 max-w-3xl items-center justify-center px-3">
+    <div className="container mx-auto flex max-w-3xl items-center justify-center px-3 py-16">
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon" className="mb-4">

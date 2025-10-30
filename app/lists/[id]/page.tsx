@@ -1,6 +1,8 @@
-import { Calendar, Plus } from "@/components/icons";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
+
+import { Button } from "@/components/ui/button";
+
+import { Calendar, Plus } from "@/components/icons";
 
 const ListDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
   const id = (await params).id;

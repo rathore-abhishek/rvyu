@@ -1,5 +1,5 @@
-import { getUser } from "@/actions/user";
-import { Login } from "@/components/icons";
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -8,11 +8,16 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+
 import { EmailVerificationRequired } from "@/components/common/email-verification-required";
+
 import { DashboardCreateMenu } from "@/features/dashboard/components/dashboard-create-menu";
 import { DashboardHeader } from "@/features/dashboard/components/header";
 import { DashboardTabs } from "@/features/dashboard/components/tabs";
-import Link from "next/link";
+
+import { getUser } from "@/actions/user";
+
+import { Login } from "@/components/icons";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getUser();

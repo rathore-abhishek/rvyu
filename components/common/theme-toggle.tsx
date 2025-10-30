@@ -1,9 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import Sun from "../icons/sun";
-import Moon from "../icons/moon";
 import { useTheme } from "next-themes";
+
+import { Button } from "@/components/ui/button";
+
+import Moon from "../icons/moon";
+import Sun from "../icons/sun";
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -16,9 +18,9 @@ export function ThemeToggle() {
       aria-label="Toggle theme"
     >
       {resolvedTheme === "dark" ? (
-        <Sun className="size-5 text-muted-foreground" />
+        <Sun className="text-muted-foreground size-5" />
       ) : (
-        <Moon className="size-5 text-muted-foreground" />
+        <Moon className="text-muted-foreground size-5" />
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>

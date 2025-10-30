@@ -1,7 +1,8 @@
 "use client";
 
-import { resendVerificationEmail } from "@/actions/auth";
-import { Loader, Mail } from "@/components/icons";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -10,8 +11,10 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+
+import { resendVerificationEmail } from "@/actions/auth";
+
+import { Loader, Mail } from "@/components/icons";
 
 export function EmailVerificationRequired() {
   const { mutate: resendEmail, isPending } = useMutation({

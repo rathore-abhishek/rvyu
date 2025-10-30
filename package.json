@@ -7,7 +7,11 @@
     "build": "prisma generate --no-engine && next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate --no-engine"
+    "lint:fix": "eslint --fix",
+    "check:unused-icons": "knip --include files",
+    "lint:icons": "knip --reporter json --include files",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@bprogress/next": "^3.2.12",
@@ -57,6 +61,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.19",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
@@ -66,6 +71,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.0",
+    "eslint-plugin-unused-imports": "^4.3.0",
+    "knip": "^5.66.4",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
     "tailwindcss": "^4",

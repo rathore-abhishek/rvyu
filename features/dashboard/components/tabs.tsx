@@ -1,9 +1,11 @@
 "use client";
 
-import { FolderCode, List } from "@/components/icons";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { FolderCode, List } from "@/components/icons";
 
 export function DashboardTabs() {
   const pathname = usePathname();

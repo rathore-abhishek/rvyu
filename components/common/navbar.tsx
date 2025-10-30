@@ -1,11 +1,14 @@
 "use client";
 
-import { getUser } from "@/actions/user";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
+
+import { useQuery } from "@tanstack/react-query";
+
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { getUser } from "@/actions/user";
 
 import { MobileNav } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";

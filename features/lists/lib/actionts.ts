@@ -1,11 +1,15 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
-import { NewList } from "./types";
-import { validateOrThrow } from "@/validation";
-import { newListSchema } from "./validation";
-import { getUser } from "@/actions/user";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
+
+import { getUser } from "@/actions/user";
+
+import { validateOrThrow } from "@/validation";
+
+import { NewList } from "./types";
+import { newListSchema } from "./validation";
 
 export async function createList({ name, description, visibility }: NewList) {
   validateOrThrow(newListSchema, { name, description, visibility });

@@ -1,7 +1,11 @@
 "use client";
 
-import { logout } from "@/actions/auth";
-import { ArrowRight, Logout, NoImage } from "@/components/icons";
+import { useState } from "react";
+
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -12,13 +16,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+
 import { ProfileDialog } from "@/features/profile/components/profile-dialog";
+
 import { cn } from "@/lib/utils";
+
+import { logout } from "@/actions/auth";
+
+import { ArrowRight, Logout, NoImage } from "@/components/icons";
 import { User } from "@/types";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
 
 import { Dashboard, List, SidebarOpen } from "../icons";
 

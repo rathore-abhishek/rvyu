@@ -1,6 +1,12 @@
 "use client";
 
-import { Cross, Tick } from "@/components/icons";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import Image from "next/image";
+
+import { AnimatePresence, motion } from "motion/react";
+import { toast } from "sonner";
+
 import {
   Command,
   CommandEmpty,
@@ -9,11 +15,10 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Label } from "@/components/ui/label";
+
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "motion/react";
-import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
+
+import { Cross, Tick } from "@/components/icons";
 
 interface TechStack {
   label: string;
@@ -236,7 +241,7 @@ export function TechStackInput({
               transition={{ duration: 0.15, ease: "easeOut" }}
               className={cn(
                 "absolute z-50 w-full",
-                openUpward ? "bottom-full mb-2" : "top-full mt-2"
+                openUpward ? "bottom-full mb-2" : "top-full mt-2",
               )}
             >
               <Command className="rounded-lg border shadow-md">

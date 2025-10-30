@@ -1,14 +1,14 @@
 "use client";
 
-import { Calendar, Delete, Edit } from "@/components/icons";
-import {
-  CodeLink,
-  Error as ErrorIcon,
-  Globe,
-  Link,
-  Loader,
-  Lock,
-} from "@/components/icons";
+import { useState } from "react";
+
+import Image from "next/image";
+
+import { useProgress } from "@bprogress/next";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "motion/react";
+import { toast } from "sonner";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,12 +32,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useProgress } from "@bprogress/next";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "motion/react";
-import Image from "next/image";
-import { useState } from "react";
-import { toast } from "sonner";
+
+import { Calendar, Delete, Edit } from "@/components/icons";
+import {
+  CodeLink,
+  Error as ErrorIcon,
+  Globe,
+  Link,
+  Loader,
+  Lock,
+} from "@/components/icons";
 
 import { deleteProject, getProjects } from "../lib/actions";
 import { formatDate } from "../lib/utils";

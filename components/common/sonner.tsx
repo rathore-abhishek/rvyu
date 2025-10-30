@@ -44,13 +44,13 @@ export function SonnerTypes() {
           toast.promise<{ name: string }>(
             () =>
               new Promise((resolve) =>
-                setTimeout(() => resolve({ name: "Event" }), 10000)
+                setTimeout(() => resolve({ name: "Event" }), 10000),
               ),
             {
               loading: "Loading...",
               success: (data) => `${data.name} has been created`,
               error: "Error",
-            }
+            },
           );
         }}
       >

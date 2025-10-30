@@ -1,8 +1,10 @@
 "use server";
 
-import { getUser } from "@/actions/user";
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
+
+import { getUser } from "@/actions/user";
 
 import { NewProject, ProjectMetadata } from "./types";
 

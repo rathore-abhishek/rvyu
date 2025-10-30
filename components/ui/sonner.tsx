@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
+
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 import { Error, Info, Loader, Tick, Warning } from "../icons";
