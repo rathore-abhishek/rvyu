@@ -34,11 +34,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        suppressHydrationWarning
-        className={`${serif.variable} ${sans.variable} antialiased`}
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${serif.variable} ${sans.variable} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
