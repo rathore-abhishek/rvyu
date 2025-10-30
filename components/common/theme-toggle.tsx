@@ -10,11 +10,33 @@ import Sun from "../icons/sun";
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
 
+  const toggleTheme = () => {
+    const newTheme = resolvedTheme === "dark" ? "light" : "dark";
+
+    // Check if View Transition API is supported
+    if (
+      typeof document !== "undefined" &&
+      "startViewTransition" in document &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      // Use View Transition API with proper type casting
+      const doc = document as Document & {
+        startViewTransition: (callback: () => void) => void;
+      };
+      doc.startViewTransition(() => {
+        setTheme(newTheme);
+      });
+    } else {
+      // Fallback for browsers that don't support View Transitions
+      setTheme(newTheme);
+    }
+  };
+
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+      onClick={toggleTheme}
       aria-label="Toggle theme"
     >
       {resolvedTheme === "dark" ? (
