@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 
-import { useRouter } from "next/navigation";
-
-import { useProgress } from "@bprogress/next";
+import { useProgress, useRouter } from "@bprogress/next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 

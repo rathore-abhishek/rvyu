@@ -71,6 +71,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.0",
+    "eslint-plugin-tailwindcss": "^3.18.2",
     "eslint-plugin-unused-imports": "^4.3.0",
     "knip": "^5.66.4",
     "prettier": "^3.6.2",
