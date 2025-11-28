@@ -15,7 +15,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
 
 const navLinks = [
-  { href: "/dashboard/lists", label: "Dashboard" },
+  { href: "/dashboard", label: "Dashboard" },
   { href: "/lists", label: "Lists" },
 ];
 

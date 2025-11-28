@@ -1,34 +1,32 @@
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider   = "prisma-client"
+  output     = "../generated/prisma"
+  engineType = "client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String         @id @default(cuid())
-  email         String         @unique
+  id            String            @id @default(cuid())
+  email         String            @unique
   name          String?
-  emailVerified Boolean        @default(false)
+  emailVerified Boolean           @default(false)
   image         String?
-  github        String?
-  twitter       String?
-  peerlist      String?
-  linkedin      String?
-  portfolio     String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @default(now()) @updatedAt
   bio           String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @default(now()) @updatedAt
-  sessions      Session[]
+  github        String?
+  peerlist      String?
+  portfolio     String?
+  twitter       String?
+  linkedin      String?
   accounts      Account[]
-  projects      Project[]
   lists         List[]
-  savedProjects SavedProject[]
   listVotes     ListProjectVote[]
+  savedProjects SavedProject[]
+  sessions      Session[]
 
   @@map("user")
 }
@@ -36,7 +34,7 @@ model User {
 model Session {
   id        String   @id
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
@@ -44,7 +42,6 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@map("session")
 }
 
@@ -53,7 +50,6 @@ model Account {
   accountId             String
   providerId            String
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -63,6 +59,7 @@ model Account {
   password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("account")
 }
@@ -79,20 +76,18 @@ model Verification {
 }
 
 model Project {
-  id            String            @id @default(cuid())
-  name          String
-  description   String
-  body          Json?
-  liveLink      String
-  codeLink      String?
-  visibility    ProjectVisibility @default(PRIVATE)
-  userId        String
-  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  techStack     TechStack[]
-  savedBy       SavedProject[]
-  listProjects  ListProject[]
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id           String            @id @default(cuid())
+  name         String
+  description  String
+  liveLink     String
+  codeLink     String?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  visibility   ProjectVisibility @default(PRIVATE)
+  body         Json?
+  listProjects ListProject[]
+  savedBy      SavedProject[]
+  techStack    TechStack[]
 
   @@map("project")
 }
@@ -102,10 +97,64 @@ model TechStack {
   label     String
   image     String?
   projectId String
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("tech_stack")
+}
+
+model List {
+  id           String         @id @default(cuid())
+  name         String
+  userId       String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  visibility   ListVisibility @default(UNLISTED)
+  description  Json?
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listProjects ListProject[]
+
+  @@map("list")
+}
+
+model ListProject {
+  id        String            @id @default(cuid())
+  listId    String
+  projectId String
+  order     Int               @default(0)
+  createdAt DateTime          @default(now())
+  list      List              @relation(fields: [listId], references: [id], onDelete: Cascade)
+  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  votes     ListProjectVote[]
+
+  @@unique([listId, projectId])
+  @@map("list_project")
+}
+
+model SavedProject {
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String
+  createdAt DateTime @default(now())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@map("saved_project")
+}
+
+model ListProjectVote {
+  id            String      @id @default(cuid())
+  userId        String
+  listProjectId String
+  value         Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  listProject   ListProject @relation(fields: [listProjectId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listProjectId])
+  @@map("list_project_vote")
 }
 
 enum ProjectVisibility {
@@ -116,58 +165,4 @@ enum ProjectVisibility {
 enum ListVisibility {
   PUBLIC
   UNLISTED
-}
-
-model List {
-  id           String         @id @default(cuid())
-  name         String
-  description  String?
-  visibility   ListVisibility @default(UNLISTED)
-  userId       String
-  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  listProjects ListProject[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-
-  @@map("list")
-}
-
-model ListProject {
-  id        String            @id @default(cuid())
-  listId    String
-  projectId String
-  list      List              @relation(fields: [listId], references: [id], onDelete: Cascade)
-  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  votes     ListProjectVote[]
-  order     Int               @default(0)
-  createdAt DateTime          @default(now())
-
-  @@unique([listId, projectId])
-  @@map("list_project")
-}
-
-model SavedProject {
-  id        String   @id @default(cuid())
-  userId    String
-  projectId String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-
-  @@unique([userId, projectId])
-  @@map("saved_project")
-}
-
-model ListProjectVote {
-  id            String      @id @default(cuid())
-  userId        String
-  listProjectId String
-  value         Int         // 1 for upvote, -1 for downvote
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  listProject   ListProject @relation(fields: [listProjectId], references: [id], onDelete: Cascade)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  @@unique([userId, listProjectId])
-  @@map("list_project_vote")
 }

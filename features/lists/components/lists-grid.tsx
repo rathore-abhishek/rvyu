@@ -37,7 +37,7 @@ import { ArrowRight, Calendar, Delete, Edit } from "@/components/icons";
 import { Error as ErrorIcon, Globe, Loader, UnList } from "@/components/icons";
 import { List } from "@/types";
 
-import { deleteList, getLists } from "../lib/actionts";
+import { deleteList, getUserLists } from "../lib/actionts";
 import { formatDate } from "../lib/utis";
 import { CreateListCard } from "./create-list-card";
 import { CreateListDialog } from "./create-list-dialog";
@@ -53,7 +53,7 @@ export function ListsGrid() {
     refetch,
   } = useQuery({
     queryKey: ["lists"],
-    queryFn: getLists,
+    queryFn: getUserLists,
   });
   const queryClient = useQueryClient();
   const { start, stop } = useProgress();

@@ -27,6 +27,7 @@ import Home from "./home";
 import Info from "./info";
 import Italic from "./italic";
 import Link from "./link";
+import LinkedIn from "./linkedin";
 import List from "./list";
 import Loader from "./loader";
 import Lock from "./lock";
@@ -113,5 +114,6 @@ export {
   User,
   Warning,
   X,
+  LinkedIn,
   NoImage,
 };

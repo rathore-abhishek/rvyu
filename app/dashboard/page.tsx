@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation";
+import { ListsGrid } from "@/features/lists/components";
 
-const Dashboard = () => {
-  redirect("/dashboard/lists");
+const Lists = () => {
+  return <ListsGrid />;
 };
 
-export default Dashboard;
+export default Lists;

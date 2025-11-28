@@ -13,7 +13,6 @@ import { EmailVerificationRequired } from "@/components/common/email-verificatio
 
 import { DashboardCreateMenu } from "@/features/dashboard/components/dashboard-create-menu";
 import { DashboardHeader } from "@/features/dashboard/components/header";
-import { DashboardTabs } from "@/features/dashboard/components/tabs";
 
 import { getUser } from "@/actions/user";
 
@@ -59,7 +58,6 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
           <DashboardHeader />
           <DashboardCreateMenu />
         </div>
-        <DashboardTabs />
         {children}
       </div>
     </div>

@@ -17,6 +17,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -24,7 +30,16 @@ import { useUploadThing } from "@/lib/upload";
 
 import { updateUserProfile } from "@/actions/user";
 
-import { Edit, Loader, NoImage } from "@/components/icons";
+import {
+  Edit,
+  Github,
+  Globe,
+  LinkedIn,
+  Loader,
+  NoImage,
+  PeerList,
+  X as Twitter,
+} from "@/components/icons";
 import { User } from "@/types";
 
 import { EditProfile } from "../lib/types";
@@ -263,36 +278,79 @@ export function ProfileDialog({
           {/* ---- Social Links (looped) ---- */}
           {(
             ["github", "twitter", "linkedin", "peerlist", "portfolio"] as const
-          ).map((key) => (
-            <form.Field key={key} name={key}>
-              {(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                  </Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder={
-                      key === "portfolio"
-                        ? "https://yourwebsite.com"
-                        : `${key}.com/username`
-                    }
-                    maxLength={key === "portfolio" ? 200 : 100}
-                  />
-                  {field.state.meta.isTouched &&
-                  field.state.meta.errors.length ? (
-                    <p className="text-destructive text-sm">
-                      {field.state.meta.errors[0]?.message}
-                    </p>
-                  ) : null}
-                </div>
-              )}
-            </form.Field>
-          ))}
+          ).map((key) => {
+            const Icon =
+              key === "github"
+                ? Github
+                : key === "twitter"
+                  ? Twitter
+                  : key === "linkedin"
+                    ? LinkedIn
+                    : key === "peerlist"
+                      ? PeerList
+                      : Globe;
+
+            const prefix =
+              key === "github"
+                ? "github.com/"
+                : key === "twitter"
+                  ? "x.com/"
+                  : key === "linkedin"
+                    ? "linkedin.com/in/"
+                    : key === "peerlist"
+                      ? "peerlist.io/"
+                      : null;
+
+            const placeholder =
+              key === "github"
+                ? "username"
+                : key === "twitter"
+                  ? "username"
+                  : key === "linkedin"
+                    ? "username"
+                    : key === "peerlist"
+                      ? "username"
+                      : "https://rathore-abhishek.vercel.app";
+
+            return (
+              <form.Field key={key} name={key}>
+                {(field) => (
+                  <div className="space-y-2">
+                    <Label htmlFor={field.name}>
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                    </Label>
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <InputGroupText>
+                          <Icon className="h-4 w-4" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      {prefix && (
+                        <InputGroupAddon>
+                          <InputGroupText>{prefix}</InputGroupText>
+                        </InputGroupAddon>
+                      )}
+                      <InputGroupInput
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder={placeholder}
+                        maxLength={key === "portfolio" ? 200 : 100}
+                      />
+                    </InputGroup>
+                    {field.state.meta.isTouched &&
+                    field.state.meta.errors.length ? (
+                      <p className="text-destructive text-sm">
+                        {field.state.meta.errors[0]?.message}
+                      </p>
+                    ) : null}
+                  </div>
+                )}
+              </form.Field>
+            );
+          })}
 
           {/* ---- Actions ---- */}
           <div className="flex justify-end gap-3">

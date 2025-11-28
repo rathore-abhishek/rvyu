@@ -1,7 +1,9 @@
 "use client";
 
+import * as React from "react";
+
 import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -14,40 +16,48 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 
 import { Globe, Loader, UnList } from "@/components/icons";
-import { List } from "@/types";
 
-import { editList } from "../lib/actionts";
+import { editList, getListDetails } from "../lib/actionts";
 import { NewList } from "../lib/types";
 import { newListSchema } from "../lib/validation";
 
 interface EditListDialogProps {
+  listId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialData: Pick<List, "id" | "name" | "description" | "visibility">;
 }
 
 export function EditListDialog({
+  listId,
   open,
   onOpenChange,
-  initialData,
 }: EditListDialogProps) {
   const queryClient = useQueryClient();
 
+  // Fetch list details when dialog opens
+  const { data: listData, isLoading } = useQuery({
+    queryKey: ["list-details", listId],
+    queryFn: () => getListDetails(listId!),
+    enabled: !!listId && open,
+  });
+
   const form = useForm({
     defaultValues: {
-      name: initialData.name,
-      description: initialData.description,
-      visibility: initialData.visibility,
+      name: listData?.name || "",
+      description: listData?.description || "",
+      visibility: listData?.visibility || "UNLISTED",
     } as NewList,
     validators: {
       onSubmit: newListSchema,
     },
     onSubmit: async () => {
+      if (!listData) return;
       await editListMutation({
-        id: initialData.id,
+        id: listData.id,
         ...form.state.values,
       });
     },
@@ -59,6 +69,7 @@ export function EditListDialog({
       toast.success("List updated successfully!");
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["lists"] });
+      queryClient.invalidateQueries({ queryKey: ["list-details", listId] });
       onOpenChange(false);
     },
     onError: (error) => {
@@ -66,8 +77,18 @@ export function EditListDialog({
     },
   });
 
+  // Reset form when listData changes
+  React.useEffect(() => {
+    if (listData && open) {
+      form.setFieldValue("name", listData.name);
+      form.setFieldValue("description", listData.description || "");
+      form.setFieldValue("visibility", listData.visibility);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listData, open]);
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange} key={listId}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit list</DialogTitle>
@@ -75,7 +96,23 @@ export function EditListDialog({
             Update your review list details.
           </DialogDescription>
         </DialogHeader>
-        <form
+        {isLoading ? (
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-9 w-full" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-20 w-full" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-8 w-full" />
+            </div>
+          </div>
+        ) : !listData ? null : (
+          <form
           onSubmit={(e) => {
             e.preventDefault();
             form.handleSubmit();
@@ -194,6 +231,7 @@ export function EditListDialog({
             </Button>
           </div>
         </form>
+        )}
       </DialogContent>
     </Dialog>
   );

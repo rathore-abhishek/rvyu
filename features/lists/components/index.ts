@@ -3,3 +3,7 @@ export { EditListDialog } from "./edit-list-dialog";
 export { CreateListCard } from "./create-list-card";
 export { ListsGrid } from "./lists-grid";
 export { ListsGridSkeleton } from "./lists-grid-skeleton";
+export { SubmitProjectDialog } from "./submit-project-dialog";
+export { ProjectCard } from "./project-card";
+export { ProjectCardPreview } from "./project-card-preview";
+export { ListProjectDetailModal } from "./list-project-detail-modal";
