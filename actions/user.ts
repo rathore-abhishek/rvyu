@@ -3,14 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
+import { eq } from "drizzle-orm";
 import { UTApi } from "uploadthing/server";
 
 import { editProfileSchema } from "@/features/profile/lib/validation";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { extractUploadThingKey } from "@/lib/utils";
 
+import db from "@/db";
+import { user } from "@/db/schema";
 import { User } from "@/types";
 import { validateOrThrow } from "@/validation";
 
@@ -25,31 +27,15 @@ export async function getUser(): Promise<User | null> {
     return null;
   }
 
-  // Fetch complete user data from database including social links
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      emailVerified: true,
-      image: true,
-      bio: true,
-      github: true,
-      twitter: true,
-      linkedin: true,
-      peerlist: true,
-      portfolio: true,
-      createdAt: true,
-      updatedAt: true,
-    },
+  const userData = await db.query.user.findFirst({
+    where: eq(user.id, session.user.id),
   });
 
-  if (!user) {
+  if (!userData) {
     return null;
   }
 
-  return user;
+  return userData;
 }
 
 export async function updateUserProfile(data: {
@@ -74,9 +60,9 @@ export async function updateUserProfile(data: {
     }
 
     // Get current user to check for old image
-    const currentUser = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { image: true },
+    const currentUser = await db.query.user.findFirst({
+      where: eq(user.id, session.user.id),
+      columns: { image: true },
     });
 
     // Delete old image from uploadthing if it exists and a new image is provided
@@ -92,19 +78,19 @@ export async function updateUserProfile(data: {
     }
 
     // Update user profile
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: {
+    await db
+      .update(user)
+      .set({
         name: data.name.trim(),
         bio: data.bio?.trim() || null,
-        image: data.image || undefined,
+        image: data.image || null,
         github: data.github?.trim() || null,
         twitter: data.twitter?.trim() || null,
         linkedin: data.linkedin?.trim() || null,
         peerlist: data.peerlist?.trim() || null,
         portfolio: data.portfolio?.trim() || null,
-      },
-    });
+      })
+      .where(eq(user.id, session.user.id));
 
     // Revalidate relevant paths
     revalidatePath("/dashboard");

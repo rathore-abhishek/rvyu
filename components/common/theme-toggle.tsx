@@ -39,11 +39,8 @@ export function ThemeToggle() {
       onClick={toggleTheme}
       aria-label="Toggle theme"
     >
-      {resolvedTheme === "dark" ? (
-        <Sun className="text-muted-foreground size-5" />
-      ) : (
-        <Moon className="text-muted-foreground size-5" />
-      )}
+      <Sun className="text-muted-foreground hidden size-5 dark:block" />
+      <Moon className="text-muted-foreground block size-5 dark:hidden" />
       <span className="sr-only">Toggle theme</span>
     </Button>
   );

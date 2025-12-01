@@ -2,50 +2,38 @@
 
 import { useState } from "react";
 
+import Image from "next/image";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import RichTextEditor from "@/components/ui/rich-text-editor";
 import { Textarea } from "@/components/ui/textarea";
 
 import { submitProjectToList } from "@/features/lists/lib/actions";
+import { TechStackInput } from "@/features/projects/components";
 import { submitProject } from "@/features/projects/lib/actions";
 import { NewProject } from "@/features/projects/lib/types";
 import { newProjectWithoutTechStackSchema } from "@/features/projects/lib/validation";
 
 import { Loader, Tick } from "@/components/icons";
-import { TechStackInput } from "@/features/projects/components/tech-stack-input";
 
-interface SubmitProjectDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  listId: string;
-  listName: string;
-}
-
-export function SubmitProjectDialog({
-  open,
-  onOpenChange,
-  listId,
-  listName,
-}: SubmitProjectDialogProps) {
+export default function SubmitProjectPage() {
+  const params = useParams();
+  const router = useRouter();
   const queryClient = useQueryClient();
+  const listId = params.id as string;
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [techStack, setTechStack] = useState<
     { label: string; image?: string }[]
   >([]);
-
   const form = useForm({
     defaultValues: {
       name: "",
@@ -53,16 +41,19 @@ export function SubmitProjectDialog({
       body: "",
       liveLink: "",
       codeLink: "",
-    } as Omit<NewProject, "techStack" | "visibility">,
+      visibility: "PUBLIC" as const,
+    } as Omit<NewProject, "techStack">,
     validators: { onSubmit: newProjectWithoutTechStackSchema },
     onSubmit: async () => {
-      console.log("hi");
       const projectData = {
         ...form.state.values,
-        techStack,
+        techStack: [],
       };
 
-      console.log("projectData", projectData);
+      // Validate using the schema that allows empty tech stack if we were using it,
+      // but here we use the one without tech stack for form validation
+      // and manually construct the object for the action.
+
       await createAndSubmitMutation(projectData);
     },
   });
@@ -103,62 +94,60 @@ export function SubmitProjectDialog({
     setTechStack(techStack.filter((_, i) => i !== index));
   };
 
-  const resetForm = () => {
-    form.reset();
-    setTechStack([]);
-    setIsSubmitted(false);
-  };
-
-  const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) {
-      if (isSubmitted) {
-        resetForm();
-      }
-    }
-    onOpenChange(newOpen);
-  };
+  if (isSubmitted) {
+    return (
+      <div className="container mx-auto flex max-w-6xl flex-col items-center justify-center gap-6 py-20 text-center">
+        <div className="bg-primary/10 text-primary flex h-20 w-20 items-center justify-center rounded-4xl">
+          <Tick className="h-10 w-10" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="font-serif text-3xl font-bold tracking-wider">
+            Project Submitted!
+          </h1>
+          <p className="text-muted-foreground max-w-sm text-lg text-pretty">
+            Your project has been successfully created and added to the list.
+          </p>
+        </div>
+        <div className="flex gap-4">
+          <Button variant="outline" onClick={() => setIsSubmitted(false)}>
+            Submit Another
+          </Button>
+          <Button asChild>
+            <Link href={`/lists/${listId}`}>Go to List</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Submit Project</DialogTitle>
-          <DialogDescription>
-            Submit a new project to &quot;{listName}&quot;
-          </DialogDescription>
-        </DialogHeader>
+    <div className="container mx-auto flex max-w-6xl flex-col items-center justify-center px-6 py-10">
+      <div className="mb-4 flex flex-col items-center justify-center text-center lg:mb-8">
+        <Image
+          src="/logo.png"
+          alt="Rocket"
+          width={50}
+          height={50}
+          className="mb-4 w-12 object-contain lg:w-14"
+        />
+        <h1 className="text-muted-foreground font-serif text-3xl tracking-wider lg:text-4xl">
+          Submit <span className="italic">&</span> Shine
+        </h1>
+        <p className="font-serif text-4xl tracking-wider text-pretty lg:text-5xl">
+          Get <span className="italic">Featured</span> Now.
+        </p>
+      </div>
 
-        {isSubmitted ? (
-          <div className="flex flex-col items-center justify-center gap-6 py-10 text-center">
-            <div className="bg-primary/10 text-primary flex h-20 w-20 items-center justify-center rounded-full">
-              <Tick className="h-10 w-10" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold">Project Submitted!</h3>
-              <p className="text-muted-foreground">
-                Your project has been successfully created and added to the
-                list.
-              </p>
-            </div>
-            <div className="flex gap-4">
-              <Button variant="outline" onClick={resetForm}>
-                Submit Another
-              </Button>
-              <Button onClick={() => onOpenChange(false)}>Done</Button>
-            </div>
-          </div>
-        ) : (
+      <Card className="w-full max-w-xl">
+        <CardContent>
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              console.log("Form submitted, current values:", form.state.values);
-              console.log("Form errors:", form.state.errors);
-              console.log("Can submit:", form.state.canSubmit);
+              e.stopPropagation();
               form.handleSubmit();
             }}
             className="space-y-6"
           >
-            {/* Name */}
             <form.Field name="name">
               {(field) => (
                 <div className="space-y-2">
@@ -180,7 +169,7 @@ export function SubmitProjectDialog({
                 </div>
               )}
             </form.Field>
-            {/* Description */}
+
             <form.Field name="description">
               {(field) => (
                 <div className="space-y-2">
@@ -208,7 +197,7 @@ export function SubmitProjectDialog({
                 </div>
               )}
             </form.Field>
-            {/* Body */}
+
             <form.Field name="body">
               {(field) => (
                 <div className="space-y-2">
@@ -233,7 +222,7 @@ export function SubmitProjectDialog({
                 </div>
               )}
             </form.Field>
-            {/* Links */}
+
             <div className="grid gap-6 md:grid-cols-2">
               <form.Field name="liveLink">
                 {(field) => (
@@ -284,6 +273,7 @@ export function SubmitProjectDialog({
                 )}
               </form.Field>
             </div>
+
             {/* Tech Stack */}
             <TechStackInput
               techStack={techStack}
@@ -292,30 +282,19 @@ export function SubmitProjectDialog({
               disabled={isPending}
             />
 
-            <div className="flex justify-between gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-1/2"
-                onClick={() => onOpenChange(false)}
-                disabled={isPending}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isPending} className="w-1/2">
-                {isPending ? (
-                  <>
-                    <Loader className="h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  "Submit Project"
-                )}
-              </Button>
-            </div>
+            <Button type="submit" disabled={isPending} className="w-full">
+              {isPending ? (
+                <>
+                  <Loader />
+                  Submitting...
+                </>
+              ) : (
+                "Submit Project"
+              )}
+            </Button>
           </form>
-        )}
-      </DialogContent>
-    </Dialog>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

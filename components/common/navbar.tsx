@@ -10,14 +10,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { getUser } from "@/actions/user";
 
+import { Meteors } from "../ui/meteors";
 import { MobileNav } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
 
-const navLinks = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/lists", label: "Lists" },
-];
+const navLinks = [{ href: "/dashboard", label: "Dashboard" }];
 
 const Navbar = () => {
   const { data: user, isLoading } = useQuery({
@@ -27,8 +25,10 @@ const Navbar = () => {
   });
 
   return (
-    <header className="sticky top-0 right-0 left-0 z-50 px-5">
-      <nav className="from-background to-background/80 relative container mx-auto mt-2 flex max-w-6xl items-center justify-between rounded-2xl border bg-linear-to-br px-6 py-3 shadow-sm backdrop-blur-sm sm:mt-4 sm:rounded-3xl sm:py-4">
+    <header className="sticky top-3 right-0 left-0 z-50 px-5">
+      <nav className="from-background to-background/80 relative container mx-auto flex max-w-6xl items-center justify-between overflow-hidden rounded-2xl border bg-linear-to-br px-6 py-3 shadow-sm backdrop-blur-sm sm:rounded-3xl sm:py-4">
+        <Meteors number={10} angle={70} />
+
         {/* Gradient overlay */}
         <div className="from-primary/5 pointer-events-none absolute inset-0 rounded-2xl bg-linear-to-br via-transparent to-transparent sm:rounded-3xl" />
 

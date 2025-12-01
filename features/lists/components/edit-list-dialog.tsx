@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import {useEffect} from "react";
 
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,14 +19,14 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 
-import { Globe, Loader, UnList } from "@/components/icons";
+import { Loader } from "@/components/icons";
 
-import { editList, getListDetails } from "../lib/actionts";
-import { NewList } from "../lib/types";
-import { newListSchema } from "../lib/validation";
+import { editList, getListDetails } from "../lib/actions";
+import { List } from "../lib/types";
+import { listSchema } from "../lib/validation";
 
 interface EditListDialogProps {
-  listId: string | null;
+  listId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -37,27 +37,30 @@ export function EditListDialog({
   onOpenChange,
 }: EditListDialogProps) {
   const queryClient = useQueryClient();
+  const id = listId;
 
   // Fetch list details when dialog opens
-  const { data: listData, isLoading } = useQuery({
-    queryKey: ["list-details", listId],
-    queryFn: () => getListDetails(listId!),
-    enabled: !!listId && open,
+  const { data: fetchedData, isLoading } = useQuery({
+    queryKey: ["list-details", id],
+    queryFn: () => getListDetails(id!),
+    enabled: !!id && open,
   });
+
+  const listData = fetchedData;
 
   const form = useForm({
     defaultValues: {
       name: listData?.name || "",
       description: listData?.description || "",
-      visibility: listData?.visibility || "UNLISTED",
-    } as NewList,
+      playlistLink: listData?.playlistLink || "",
+    } as List,
     validators: {
-      onSubmit: newListSchema,
+      onSubmit: listSchema,
     },
     onSubmit: async () => {
-      if (!listData) return;
+      if (!id) return;
       await editListMutation({
-        id: listData.id,
+        id,
         ...form.state.values,
       });
     },
@@ -69,7 +72,7 @@ export function EditListDialog({
       toast.success("List updated successfully!");
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["lists"] });
-      queryClient.invalidateQueries({ queryKey: ["list-details", listId] });
+      queryClient.invalidateQueries({ queryKey: ["list-details", id] });
       onOpenChange(false);
     },
     onError: (error) => {
@@ -78,17 +81,16 @@ export function EditListDialog({
   });
 
   // Reset form when listData changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (listData && open) {
       form.setFieldValue("name", listData.name);
       form.setFieldValue("description", listData.description || "");
-      form.setFieldValue("visibility", listData.visibility);
+      form.setFieldValue("playlistLink", listData.playlistLink || "");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listData, open]);
+  }, [listData, open, form]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} key={listId}>
+    <Dialog open={open} onOpenChange={onOpenChange} key={id}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit list</DialogTitle>
@@ -96,141 +98,139 @@ export function EditListDialog({
             Update your review list details.
           </DialogDescription>
         </DialogHeader>
-        {isLoading ? (
+        {isLoading && !listData ? (
           <div className="space-y-4">
+            {/* Name field */}
             <div className="space-y-2">
               <Skeleton className="h-4 w-16" />
               <Skeleton className="h-9 w-full" />
             </div>
+            {/* Description field */}
             <div className="space-y-2">
-              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-24" />
               <Skeleton className="h-20 w-full" />
             </div>
+            {/* Playlist link field */}
             <div className="space-y-2">
-              <Skeleton className="h-4 w-16" />
-              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-9 w-full" />
+            </div>
+            {/* Buttons */}
+            <div className="flex gap-2">
+              <Skeleton className="h-9 flex-1" />
+              <Skeleton className="h-9 flex-1" />
             </div>
           </div>
         ) : !listData ? null : (
           <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            form.handleSubmit();
-          }}
-          className="space-y-4"
-        >
-          <form.Field name="name">
-            {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor="edit-name">Name</Label>
-                <Input
-                  id="edit-name"
-                  placeholder="e.g. Frontend Projects"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  disabled={isPending}
-                  aria-invalid={field.state.meta.errors.length > 0}
-                  maxLength={50}
-                />
-                {field.state.meta.errors.length > 0 && (
-                  <p className="text-destructive text-sm">
-                    {field.state.meta.errors[0]?.message}
-                  </p>
-                )}
-              </div>
-            )}
-          </form.Field>
-
-          <form.Field name="description">
-            {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor="edit-description">
-                  Description{" "}
-                  <span className="text-muted-foreground font-normal">
-                    (optional)
-                  </span>
-                </Label>
-                <Textarea
-                  id="edit-description"
-                  placeholder="Brief description of this review list..."
-                  value={(field.state.value as string) || ""}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  rows={3}
-                  maxLength={500}
-                  disabled={isPending}
-                  aria-invalid={field.state.meta.errors.length > 0}
-                />
-                {field.state.value && (
-                  <p className="text-muted-foreground text-xs">
-                    {(field.state.value as string).length}/500 characters
-                  </p>
-                )}
-                {field.state.meta.errors.length > 0 && (
-                  <p className="text-destructive text-sm">
-                    {field.state.meta.errors[0]?.message}
-                  </p>
-                )}
-              </div>
-            )}
-          </form.Field>
-
-          <form.Field name="visibility">
-            {(field) => (
-              <div className="space-y-2">
-                <Label>Visibility</Label>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant={
-                      field.state.value === "UNLISTED" ? "default" : "outline"
-                    }
-                    size="sm"
-                    onClick={() => field.handleChange("UNLISTED")}
+            onSubmit={(e) => {
+              e.preventDefault();
+              form.handleSubmit();
+            }}
+            className="space-y-4"
+          >
+            <form.Field name="name">
+              {(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor="edit-name">Name</Label>
+                  <Input
+                    id="edit-name"
+                    placeholder="e.g. Frontend Projects"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
                     disabled={isPending}
-                    className="flex-1"
-                  >
-                    <UnList className="h-4 w-4" />
-                    Unlisted
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={
-                      field.state.value === "PUBLIC" ? "default" : "outline"
-                    }
-                    size="sm"
-                    onClick={() => field.handleChange("PUBLIC")}
-                    disabled={isPending}
-                    className="flex-1"
-                  >
-                    <Globe className="h-4 w-4" />
-                    Public
-                  </Button>
+                    aria-invalid={field.state.meta.errors.length > 0}
+                  />
+                  {field.state.meta.errors.length > 0 && (
+                    <p className="text-destructive text-sm">
+                      {field.state.meta.errors[0]?.message}
+                    </p>
+                  )}
                 </div>
-              </div>
-            )}
-          </form.Field>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isPending}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isPending} className="flex-1">
-              {isPending ? (
-                <>
-                  <Loader className="h-4 w-4" />
-                  Updating...
-                </>
-              ) : (
-                "Update list"
               )}
-            </Button>
-          </div>
-        </form>
+            </form.Field>
+
+            <form.Field name="description">
+              {(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor="edit-description">
+                    Description{" "}
+                    <span className="text-muted-foreground font-normal">
+                      (optional)
+                    </span>
+                  </Label>
+                  <Textarea
+                    id="edit-description"
+                    placeholder="Brief description of this review list..."
+                    value={(field.state.value as string) || ""}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    rows={3}
+                    maxLength={500}
+                    disabled={isPending}
+                    aria-invalid={field.state.meta.errors.length > 0}
+                  />
+                  {field.state.value && (
+                    <p className="text-muted-foreground text-xs">
+                      {(field.state.value as string).length}/500 characters
+                    </p>
+                  )}
+                  {field.state.meta.errors.length > 0 && (
+                    <p className="text-destructive text-sm">
+                      {field.state.meta.errors[0]?.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name="playlistLink">
+              {(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor="edit-playlistLink">
+                    Playlist link{" "}
+                    <span className="text-muted-foreground font-normal">
+                      (optional)
+                    </span>
+                  </Label>
+                  <Input
+                    id="edit-playlistLink"
+                    placeholder="https://youtube.com/playlist?list=..."
+                    value={(field.state.value as string) || ""}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    disabled={isPending}
+                    aria-invalid={field.state.meta.errors.length > 0}
+                  />
+                  {field.state.meta.errors.length > 0 && (
+                    <p className="text-destructive text-sm">
+                      {field.state.meta.errors[0]?.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            </form.Field>
+
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                disabled={isPending}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isPending} className="flex-1">
+                {isPending ? (
+                  <>
+                    <Loader className="h-4 w-4" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            </div>
+          </form>
         )}
       </DialogContent>
     </Dialog>

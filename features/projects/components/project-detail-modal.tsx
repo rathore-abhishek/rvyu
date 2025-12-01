@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 
 import Image from "next/image";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Content } from "@tiptap/core";
 import { FontFamily } from "@tiptap/extension-font-family";
 import Link from "@tiptap/extension-link";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,41 +28,51 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import Save from "@/components/icons/save";
+
+import { PlatformPreview } from "@/features/projects/components/platform-preview";
+import { ProjectReviewForm } from "@/features/projects/components/project-review-form";
+
 import {
+  Calendar,
   CodeLink,
   Error as ErrorIcon,
-  Globe,
   Link as LinkIcon,
-  ProjectLock,
 } from "@/components/icons";
 
-import { getProjectById } from "../lib/actions";
-import { PlatformPreview } from "./platform-preview";
+import { getProjectDetails, toggleProjectSave } from "../../lists/lib/actions";
+import { formatDate } from "../../lists/lib/utils";
 
-interface ProjectDetailModalProps {
+interface ListProjectDetailModalProps {
   projectId: string | null;
+  listProjectId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  currentUserId: string | null;
+  initialSaved?: boolean;
 }
 
-export function ProjectDetailModal({
+export function ListProjectDetailModal({
   projectId,
   open,
   onOpenChange,
-}: ProjectDetailModalProps) {
-  const [isManualRetrying, setIsManualRetrying] = useState(false);
+  currentUserId,
+  initialSaved = false,
+}: ListProjectDetailModalProps) {
+  const queryClient = useQueryClient();
 
   const {
     data: project,
     isLoading,
     isError,
     error,
-    refetch,
   } = useQuery({
-    queryKey: ["project", projectId],
-    queryFn: () => getProjectById(projectId!),
+    queryKey: ["project-details", projectId],
+    queryFn: () => getProjectDetails(projectId!),
     enabled: !!projectId && open,
   });
+
+  const [saved, setSaved] = useState(initialSaved);
 
   const bodyContent = project?.body
     ? typeof project.body === "string"
@@ -101,43 +112,85 @@ export function ProjectDetailModal({
     }
   }, [editor, bodyContent]);
 
-  // Loading state
-  if ((isLoading && !project) || isManualRetrying) {
+  const { mutate: toggleSave, isPending: isSaving } = useMutation({
+    mutationFn: toggleProjectSave,
+    onMutate: async () => {
+      if (!currentUserId) {
+        toast.error("Please log in to save projects");
+        throw new Error("Not logged in");
+      }
+
+      const previousSaved = saved;
+      setSaved(!saved);
+      return { previousSaved };
+    },
+    onError: (error, _variables, context) => {
+      if (context) {
+        setSaved(context.previousSaved);
+      }
+      if (error.message !== "Not logged in") {
+        toast.error("Failed to update save");
+      }
+    },
+    onSuccess: (data) => {
+      toast.success(data.saved ? "Project saved!" : "Project unsaved");
+      queryClient.invalidateQueries({ queryKey: ["project-details"] });
+      queryClient.invalidateQueries({ queryKey: ["list-projects"] });
+    },
+  });
+
+  const handleSave = () => {
+    if (projectId) {
+      toggleSave({ projectId });
+    }
+  };
+
+  if (isLoading) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="sr-only">Loading project...</DialogTitle>
-            <div className="flex items-center gap-3">
-              <Skeleton className="h-8 w-3/4" />
-              <Skeleton className="h-5 w-5 rounded-full" />
-            </div>
+            <Skeleton className="h-8 w-3/4" />
             <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-2/3" />
           </DialogHeader>
-
           <div className="space-y-5">
-            {/* Action Buttons Skeleton */}
+            {/* Actions */}
             <div className="flex gap-2">
-              <Skeleton className="h-9 w-32" />
               <Skeleton className="h-9 w-24" />
+              <Skeleton className="h-9 w-20" />
             </div>
 
-            {/* Tech Stack Skeleton */}
+            {/* Tech Stack */}
             <div className="flex flex-wrap gap-2">
               <Skeleton className="h-8 w-20" />
               <Skeleton className="h-8 w-24" />
-              <Skeleton className="h-8 w-28" />
-              <Skeleton className="h-8 w-20" />
+              <Skeleton className="h-8 w-16" />
             </div>
 
-            {/* Rich Content Skeleton */}
+            {/* Body */}
             <div className="space-y-2">
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-4/5" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+
+            {/* Creator & Date */}
+            <div className="flex items-center justify-between gap-4 border-t pt-4">
+              <Skeleton className="h-4 w-32" />
+            </div>
+
+            {/* Platform Preview Skeleton */}
+            <div className="w-full space-y-3">
+              <div className="grid w-full grid-cols-3 gap-1">
+                <Skeleton className="h-9 rounded-md" />
+                <Skeleton className="h-9 rounded-md" />
+                <Skeleton className="h-9 rounded-md" />
+              </div>
+              <div className="flex flex-col gap-1">
+                <Skeleton className="aspect-2/1 w-full rounded-xl" />
+                <Skeleton className="h-3 w-32" />
+              </div>
             </div>
           </div>
         </DialogContent>
@@ -145,7 +198,6 @@ export function ProjectDetailModal({
     );
   }
 
-  // Error state
   if (isError) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -156,119 +208,129 @@ export function ProjectDetailModal({
             <p className="text-muted-foreground mb-4 text-sm">
               {error?.message || "Failed to load project"}
             </p>
-            <Button
-              variant="outline"
-              onClick={async () => {
-                setIsManualRetrying(true);
-                await refetch();
-                setIsManualRetrying(false);
-              }}
-            >
-              Try Again
-            </Button>
           </div>
         </DialogContent>
       </Dialog>
     );
   }
 
+  if (!project) {
+    return null;
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <div className="flex items-center gap-3">
+      <DialogContent className="flex h-full max-w-6xl flex-row">
+        <div className="flex w-1/2 flex-col overflow-y-auto">
+          <DialogHeader>
             <DialogTitle className="font-serif text-2xl leading-tight tracking-wider">
-              {project?.name}
+              {project.name}
             </DialogTitle>
-            {project?.visibility === "PUBLIC" ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="inline-flex">
-                    <Globe className="text-primary h-5 w-5 shrink-0" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Public</p>
-                </TooltipContent>
-              </Tooltip>
-            ) : (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="inline-flex">
-                    <ProjectLock className="text-muted-foreground h-5 w-5 shrink-0" />
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Private</p>
-                </TooltipContent>
-              </Tooltip>
-            )}
-          </div>
-          <DialogDescription className="text-muted-foreground text-start text-sm leading-relaxed">
-            {project?.description}
-          </DialogDescription>
-        </DialogHeader>
+            <DialogDescription className="text-muted-foreground text-start text-sm leading-relaxed">
+              {project.description}
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-5">
-          {/* Action Buttons */}
-          <div className="flex gap-2">
-            <Button asChild size="sm">
-              <a
-                href={project?.liveLink || "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <LinkIcon className="h-3.5 w-3.5" />
-                Live Demo
-              </a>
-            </Button>
-            {project?.codeLink && (
-              <Button asChild variant="outline" size="sm">
+          <div className="space-y-5">
+            {/* Action Buttons with Like & Save */}
+            <div className="flex items-center gap-2">
+              <Button asChild size="sm">
                 <a
-                  href={project?.codeLink || "#"}
+                  href={project.liveLink}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <CodeLink className="h-3.5 w-3.5" />
-                  Code
+                  <LinkIcon className="h-3.5 w-3.5" />
+                  Live Demo
                 </a>
               </Button>
+              {project.codeLink && (
+                <Button asChild variant="outline" size="sm">
+                  <a
+                    href={project.codeLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <CodeLink className="h-3.5 w-3.5" />
+                    Code
+                  </a>
+                </Button>
+              )}
+              <div className="bg-border mx-2 h-6 w-px" />
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className={
+                      saved
+                        ? "text-primary hover:text-primary"
+                        : "text-muted-foreground"
+                    }
+                  >
+                    <Save className={saved ? "fill-current" : ""} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>{saved ? "Unsave" : "Save"}</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+
+            {/* Creator & Date */}
+            <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
+              <Calendar className="h-3.5 w-3.5 shrink-0" />
+              <span className="text-xs">
+                Submitted {formatDate(project.createdAt)}
+              </span>
+            </div>
+
+            {/* Tech Stack */}
+            {project.techStack && project.techStack.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {project.techStack.map((tech) => (
+                  <div
+                    key={tech.id}
+                    className="bg-muted/30 inline-flex items-center gap-2 rounded-lg border px-3 py-1.5"
+                  >
+                    {tech.image && (
+                      <Image
+                        src={tech.image}
+                        alt={tech.label}
+                        width={16}
+                        height={16}
+                        className="rounded-sm"
+                      />
+                    )}
+                    <span className="text-xs font-medium">{tech.label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Rich Content */}
+            {bodyContent && editor && (
+              <div className="prose dark:prose-invert prose-sm scrollbar-hide max-h-[20rem] max-w-none overflow-scroll text-sm">
+                <EditorContent editor={editor} />
+              </div>
             )}
           </div>
 
-          {/* Tech Stack */}
-          {project?.techStack && project.techStack.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {project.techStack.map((tech) => (
-                <div
-                  key={tech.id}
-                  className="bg-muted/30 inline-flex items-center gap-2 rounded-lg border px-3 py-1.5"
-                >
-                  {tech.image && (
-                    <Image
-                      src={tech.image}
-                      alt={tech.label}
-                      width={16}
-                      height={16}
-                      className="rounded-sm"
-                    />
-                  )}
-                  <span className="text-xs font-medium">{tech.label}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Rich Content */}
-          {bodyContent && editor && (
-            <div className="prose dark:prose-invert prose-sm max-w-none text-sm">
-              <EditorContent editor={editor} />
-            </div>
+          {/* Platform Previews */}
+          {project && <PlatformPreview liveLink={project.liveLink} />}
+        </div>
+        <div className="bg-border mx-5 h-full w-px" />
+        <div className="w-1/2 overflow-hidden">
+          {project && (
+            <ProjectReviewForm
+              projectId={project.id}
+              onSuccess={() => onOpenChange(false)}
+            />
           )}
         </div>
-
-        {/* Platform Previews */}
-        {project && <PlatformPreview liveLink={project.liveLink} />}
       </DialogContent>
     </Dialog>
   );

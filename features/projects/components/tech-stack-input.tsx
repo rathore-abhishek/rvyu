@@ -172,7 +172,9 @@ export function TechStackInput({
 
   return (
     <div className="space-y-2">
-      <Label>Tech Stack</Label>
+      <Label>
+        Tech Stack <span className="text-muted-foreground">(optional)</span>
+      </Label>
 
       <div className="relative" ref={containerRef}>
         {/* Input container with inline tags */}
@@ -303,15 +305,6 @@ export function TechStackInput({
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-
-      {/* Helper text */}
-      <div className="flex items-center justify-between">
-        <p className="text-muted-foreground text-xs">
-          {techStack.length === 0
-            ? "Add at least one technology (press Enter to add custom)"
-            : `${techStack.length}/10 technologies`}
-        </p>
       </div>
     </div>
   );

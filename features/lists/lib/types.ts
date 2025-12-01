@@ -1,5 +1,5 @@
 import z from "zod";
 
-import { newListSchema } from "./validation";
+import { listSchema } from "./validation";
 
-export type NewList = z.infer<typeof newListSchema>;
+export type List = z.infer<typeof listSchema>;

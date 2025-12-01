@@ -8,7 +8,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -16,21 +15,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import Save from "@/components/icons/save";
+import { toggleProjectSave } from "@/features/lists/lib/actions";
+import { ProjectCardPreview } from "@/features/projects/components/project-card-preview";
 
-import {
-  toggleProjectLike,
-  toggleProjectSave,
-} from "@/features/lists/lib/project-actions";
-
-import {
-  CodeLink,
-  Heart,
-  Link as LinkIcon,
-  User as UserIcon,
-} from "@/components/icons";
-
-import { ProjectCardPreview } from "./project-card-preview";
+import { CodeLink, Link as LinkIcon, Save } from "@/components/icons";
 
 interface ProjectCardProps {
   listProjectId: string;
@@ -44,71 +32,27 @@ interface ProjectCardProps {
     label: string;
     image: string | null;
   }>;
-  user: {
-    id: string;
-    name: string | null;
-    image: string | null;
-  };
-  voteCount: number;
-  userVoted: boolean;
+
   userSaved: boolean;
   currentUserId: string | null;
   onClick: () => void;
 }
 
 export function ProjectCard({
-  listProjectId,
   projectId,
   name,
   description,
   liveLink,
   codeLink,
   techStack,
-  user,
-  voteCount,
-  userVoted,
+
   userSaved,
   currentUserId,
   onClick,
 }: ProjectCardProps) {
   const queryClient = useQueryClient();
-  const [liked, setLiked] = useState(userVoted);
   const [saved, setSaved] = useState(userSaved);
-  const [likeCount, setLikeCount] = useState(voteCount);
   const [hoveredTech, setHoveredTech] = useState<string | null>(null);
-
-  const { mutate: toggleLike, isPending: isLiking } = useMutation({
-    mutationFn: toggleProjectLike,
-    onMutate: async () => {
-      if (!currentUserId) {
-        toast.error("Please log in to like projects");
-        throw new Error("Not logged in");
-      }
-
-      // Optimistic update
-      const previousLiked = liked;
-      const previousCount = likeCount;
-
-      setLiked(!liked);
-      setLikeCount(liked ? likeCount - 1 : likeCount + 1);
-
-      return { previousLiked, previousCount };
-    },
-    onError: (error, variables, context) => {
-      // Rollback on error
-      if (context) {
-        setLiked(context.previousLiked);
-        setLikeCount(context.previousCount);
-      }
-      if (error.message !== "Not logged in") {
-        toast.error("Failed to update like");
-      }
-    },
-    onSuccess: () => {
-      // Invalidate to refetch with latest data
-      queryClient.invalidateQueries({ queryKey: ["list-projects"] });
-    },
-  });
 
   const { mutate: toggleSave, isPending: isSaving } = useMutation({
     mutationFn: toggleProjectSave,
@@ -139,11 +83,6 @@ export function ProjectCard({
     },
   });
 
-  const handleLike = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggleLike({ listProjectId });
-  };
-
   const handleSave = (e: React.MouseEvent) => {
     e.stopPropagation();
     toggleSave({ projectId });
@@ -173,30 +112,6 @@ export function ProjectCard({
 
           {/* Compact Action Buttons */}
           <div className="flex shrink-0 items-center gap-1">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleLike}
-                  disabled={isLiking}
-                  className={`h-8 gap-1.5 px-2.5 ${liked ? "text-destructive hover:text-destructive" : "text-muted-foreground"}`}
-                >
-                  <Heart
-                    className={`h-3.5 w-3.5 ${liked ? "fill-current" : ""}`}
-                  />
-                  {likeCount > 0 && (
-                    <span className="text-xs font-medium tabular-nums">
-                      {likeCount}
-                    </span>
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>{liked ? "Unlike" : "Like"}</p>
-              </TooltipContent>
-            </Tooltip>
-
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -348,24 +263,7 @@ export function ProjectCard({
         <div className="flex items-center justify-between gap-3 border-t pt-3">
           {/* Creator */}
           <div className="flex min-w-0 flex-1 items-center gap-2">
-            <Avatar className="h-6 w-6 shrink-0">
-              <AvatarImage src={user.image || ""} alt={user.name || "User"} />
-              <AvatarFallback className="text-xs">
-                {user.name ? (
-                  user.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .toUpperCase()
-                    .slice(0, 2)
-                ) : (
-                  <UserIcon className="h-3 w-3" />
-                )}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-muted-foreground truncate text-sm">
-              {user.name || "Anonymous"}
-            </span>
+            {/* User info removed */}
           </div>
 
           {/* External Links */}

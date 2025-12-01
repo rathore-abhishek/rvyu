@@ -10,7 +10,6 @@ export interface NewProject {
   body?: string;
   liveLink: string;
   codeLink?: string;
-  visibility: "PUBLIC" | "PRIVATE";
   techStack: { label: string; image?: string }[];
 }
 

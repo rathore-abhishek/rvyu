@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
+@plugin "@toolwind/corner-shape";
+@plugin "tailwind-scrollbar-hide";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -65,6 +67,41 @@
   --shadow-opacity: var(--shadow-opacity);
   --color-shadow-color: var(--shadow-color);
   --color-destructive-foreground: var(--destructive-foreground);
+  --animate-shiny-text: shiny-text 8s infinite;
+  @keyframes shiny-text {
+    0%,
+    90%,
+    100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+    30%,
+    60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
+    }
+  }
+  --animate-line-shadow: line-shadow 15s linear infinite;
+  @keyframes line-shadow {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 100% -100%;
+    }
+  }
+  --animate-meteor: meteor 5s linear infinite;
+  @keyframes meteor {
+    0% {
+      transform: rotate(var(--angle)) translateX(0);
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+    }
+    100% {
+      transform: rotate(var(--angle)) translateX(-500px);
+      opacity: 0;
+    }
+  }
 }
 
 :root {
@@ -183,8 +220,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans;
-    letter-spacing: var(--tracking-normal);
+    @apply bg-background text-foreground selection:bg-primary font-sans selection:text-white;
   }
 }
 
@@ -252,40 +288,15 @@
     @apply border-border outline-ring/50;
   }
   body {
+    @apply bg-background text-sidebar-foreground;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
     @apply bg-background text-foreground;
-  }
-
-  /* Override browser autofill styles */
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-    -webkit-text-fill-color: var(--foreground) !important;
-    background-color: transparent !important;
-    transition: background-color 5000s ease-in-out 0s;
-  }
-
-  /* For input groups with transparent backgrounds */
-  [data-slot="input-group"] input:-webkit-autofill,
-  [data-slot="input-group"] input:-webkit-autofill:hover,
-  [data-slot="input-group"] input:-webkit-autofill:focus,
-  [data-slot="input-group"] input:-webkit-autofill:active {
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-    -webkit-text-fill-color: var(--foreground) !important;
-    background-color: transparent !important;
-  }
-
-  /* Dark mode autofill */
-  .dark input:-webkit-autofill,
-  .dark input:-webkit-autofill:hover,
-  .dark input:-webkit-autofill:focus,
-  .dark input:-webkit-autofill:active {
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-    -webkit-text-fill-color: var(--foreground) !important;
-    background-color: transparent !important;
   }
 }

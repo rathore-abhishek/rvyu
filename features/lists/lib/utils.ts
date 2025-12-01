@@ -5,7 +5,7 @@ export function formatDate(date: Date): string {
 
   // If today
   if (diffInDays === 0) {
-    return `Today at ${date.toLocaleTimeString("en-US", {
+    return `today at ${date.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
@@ -14,7 +14,7 @@ export function formatDate(date: Date): string {
 
   // If yesterday
   if (diffInDays === 1) {
-    return `Yesterday at ${date.toLocaleTimeString("en-US", {
+    return `yesterday at ${date.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,

@@ -43,6 +43,7 @@ import PeerList from "./peerlist";
 import Plus from "./plus";
 import ProjectLock from "./project-lock";
 import Redo from "./redo";
+import Save from "./save";
 import Search from "./search";
 import SidebarClose from "./sidebar-close";
 import SidebarOpen from "./sidebar-open";
@@ -85,6 +86,7 @@ export {
   Heart,
   Home,
   Info,
+  Save,
   Italic,
   Link,
   List,

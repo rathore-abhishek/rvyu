@@ -26,23 +26,27 @@ export const newProjectWithoutTechStackSchema = z.object({
     .optional()
     .or(z.literal("")),
   liveLink: urlSchema,
-  codeLink: z
-    .string()
-    .url("Please enter a valid URL")
-    .optional()
-    .or(z.literal("")),
-  visibility: z.enum(["PUBLIC", "PRIVATE"]),
-  // techStack: z
-  //   .array(techStackSchema)
-  //   .min(1, "At least one technology is required")
-  //   .max(10, "Maximum 10 technologies allowed"),
+  codeLink: z.url("Please enter a valid URL").optional().or(z.literal("")),
 });
 
 export const newProjectSchema = newProjectWithoutTechStackSchema.extend({
   techStack: z
     .array(techStackSchema)
-    .min(1, "At least one technology is required")
-    .max(10, "Maximum 10 technologies allowed"),
+    .max(10, "Maximum 10 technologies allowed")
+    .optional()
+    .default([]),
 });
 
 export type NewProjectSchema = z.infer<typeof newProjectWithoutTechStackSchema>;
+
+export const reviewSchema = z.object({
+  projectId: z.string(),
+  design: z.number().min(0).max(10),
+  userExperience: z.number().min(0).max(10),
+  creativity: z.number().min(0).max(10),
+  functionality: z.number().min(0).max(10),
+  hireability: z.number().min(0).max(10),
+  remark: z.string().optional(),
+});
+
+export type ReviewSchema = z.infer<typeof reviewSchema>;

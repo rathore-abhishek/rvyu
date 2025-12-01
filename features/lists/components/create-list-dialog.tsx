@@ -16,11 +16,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-import { Globe, Loader, UnList } from "@/components/icons";
+import { Loader } from "@/components/icons";
 
-import { createList } from "../lib/actionts";
-import { NewList } from "../lib/types";
-import { newListSchema } from "../lib/validation";
+import { createList } from "../lib/actions";
+import { List } from "../lib/types";
+import { listSchema } from "../lib/validation";
 
 interface CreateListDialogProps {
   open: boolean;
@@ -37,10 +37,10 @@ export function CreateListDialog({
     defaultValues: {
       name: "",
       description: "",
-      visibility: "UNLISTED" as const,
-    } as NewList,
+      playlist: "",
+    } as List,
     validators: {
-      onSubmit: newListSchema,
+      onSubmit: listSchema,
     },
     onSubmit: async () => {
       await createListMutation(form.state.values);
@@ -65,7 +65,7 @@ export function CreateListDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create new list</DialogTitle>
-          <DialogDescription>Add a new review list.</DialogDescription>
+          <DialogDescription>Add a new projects list.</DialogDescription>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -85,7 +85,6 @@ export function CreateListDialog({
                   onChange={(e) => field.handleChange(e.target.value)}
                   disabled={isPending}
                   aria-invalid={field.state.meta.errors.length > 0}
-                  maxLength={50}
                 />
                 {field.state.meta.errors.length > 0 && (
                   <p className="text-destructive text-sm">
@@ -129,38 +128,28 @@ export function CreateListDialog({
             )}
           </form.Field>
 
-          <form.Field name="visibility">
+          <form.Field name="playlistLink">
             {(field) => (
               <div className="space-y-2">
-                <Label>Visibility</Label>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant={
-                      field.state.value === "UNLISTED" ? "default" : "outline"
-                    }
-                    size="sm"
-                    onClick={() => field.handleChange("UNLISTED")}
-                    disabled={isPending}
-                    className="flex-1"
-                  >
-                    <UnList className="h-4 w-4" />
-                    Unlisted
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={
-                      field.state.value === "PUBLIC" ? "default" : "outline"
-                    }
-                    size="sm"
-                    onClick={() => field.handleChange("PUBLIC")}
-                    disabled={isPending}
-                    className="flex-1"
-                  >
-                    <Globe className="h-4 w-4" />
-                    Public
-                  </Button>
-                </div>
+                <Label htmlFor="playlistLink">
+                  Playlist link{" "}
+                  <span className="text-muted-foreground font-normal">
+                    (optional)
+                  </span>
+                </Label>
+                <Input
+                  id="playlistLink"
+                  placeholder="https://youtube.com/playlist?list=..."
+                  value={(field.state.value as string) || ""}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  disabled={isPending}
+                  aria-invalid={field.state.meta.errors.length > 0}
+                />
+                {field.state.meta.errors.length > 0 && (
+                  <p className="text-destructive text-sm">
+                    {field.state.meta.errors[0]?.message}
+                  </p>
+                )}
               </div>
             )}
           </form.Field>

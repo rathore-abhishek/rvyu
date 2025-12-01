@@ -23,9 +23,8 @@ export function ListsGridSkeleton() {
             <div className="space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="mb-2 flex items-center gap-2">
+                  <div className="mb-2">
                     <Skeleton className="h-6 w-2/3" />
-                    <Skeleton className="h-5 w-16 rounded-md" />
                   </div>
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="mt-1 h-4 w-4/5" />
@@ -45,7 +44,10 @@ export function ListsGridSkeleton() {
                 <Skeleton className="h-3.5 w-3.5 rounded" />
                 <Skeleton className="h-3.5 w-24" />
               </div>
-              <Skeleton className="h-7 w-7 rounded-lg" />
+              <div className="inline-flex gap-2">
+                <Skeleton className="h-7 w-7 rounded-lg" />
+                <Skeleton className="h-7 w-7 rounded-lg" />
+              </div>
             </div>
           </div>
         </article>
