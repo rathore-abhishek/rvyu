@@ -88,6 +88,13 @@ const ListDetailPage = async ({
             isOwner={isOwner}
             listId={list.id}
             listName={list.name}
+            currentUserId={user?.id || null}
+            listOwnerId={list.userId}
+            search={search}
+            sortBy={sortBy}
+            sortDirection={sortDirection}
+            filter={filter}
+            currentPage={page}
           />
         </div>
 
@@ -139,6 +146,7 @@ const ListDetailPage = async ({
         filter={filter}
         page={page}
         isOwner={isOwner}
+        listOwnerId={list.userId}
       />
     </div>
   );

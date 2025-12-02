@@ -32,16 +32,20 @@ import Save from "@/components/icons/save";
 
 import { PlatformPreview } from "@/features/projects/components/platform-preview";
 import { ProjectReviewForm } from "@/features/projects/components/project-review-form";
+import {
+  getProjectDetails,
+  toggleProjectSave,
+} from "@/features/projects/lib/actions";
+
+import { formatDate } from "@/lib/utils";
 
 import {
   Calendar,
   CodeLink,
+  Delete,
   Error as ErrorIcon,
   Link as LinkIcon,
 } from "@/components/icons";
-
-import { getProjectDetails, toggleProjectSave } from "../../lists/lib/actions";
-import { formatDate } from "../../lists/lib/utils";
 
 interface ListProjectDetailModalProps {
   projectId: string | null;
@@ -50,6 +54,10 @@ interface ListProjectDetailModalProps {
   onOpenChange: (open: boolean) => void;
   currentUserId: string | null;
   initialSaved?: boolean;
+  isOwner?: boolean;
+  listOwnerId: string;
+  onPickAnother: () => void;
+  onDelete?: (e: React.MouseEvent, id: string, name: string) => void;
 }
 
 export function ListProjectDetailModal({
@@ -58,6 +66,10 @@ export function ListProjectDetailModal({
   onOpenChange,
   currentUserId,
   initialSaved = false,
+  isOwner = false,
+  onPickAnother,
+  listOwnerId,
+  onDelete,
 }: ListProjectDetailModalProps) {
   const queryClient = useQueryClient();
 
@@ -67,8 +79,8 @@ export function ListProjectDetailModal({
     isError,
     error,
   } = useQuery({
-    queryKey: ["project-details", projectId],
-    queryFn: () => getProjectDetails(projectId!),
+    queryKey: ["project-details", projectId, listOwnerId],
+    queryFn: () => getProjectDetails(projectId!, listOwnerId),
     enabled: !!projectId && open,
   });
 
@@ -148,36 +160,37 @@ export function ListProjectDetailModal({
   if (isLoading) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="sr-only">Loading project...</DialogTitle>
-            <Skeleton className="h-8 w-3/4" />
-            <Skeleton className="h-4 w-full" />
-          </DialogHeader>
-          <div className="space-y-5">
-            {/* Actions */}
-            <div className="flex gap-2">
-              <Skeleton className="h-9 w-24" />
-              <Skeleton className="h-9 w-20" />
-            </div>
+        <DialogContent className="flex h-full w-full max-w-5xl flex-row">
+          {/* Left Column Skeleton - Project Details */}
+          <div className="scrollbar-hide flex max-h-screen w-1/2 flex-col overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="sr-only">Loading project...</DialogTitle>
+              <Skeleton className="h-8 w-3/4" />
+              <Skeleton className="mt-2 h-4 w-full" />
+              <Skeleton className="mt-1 h-4 w-5/6" />
+            </DialogHeader>
 
-            {/* Tech Stack */}
-            <div className="flex flex-wrap gap-2">
-              <Skeleton className="h-8 w-20" />
-              <Skeleton className="h-8 w-24" />
-              <Skeleton className="h-8 w-16" />
-            </div>
+            <div className="mt-1 mb-4 space-y-5">
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Skeleton className="h-9 w-24" />
+                <Skeleton className="h-9 w-20" />
+                <div className="bg-border mx-2 h-6 w-px" />
+                <Skeleton className="h-9 w-9 rounded-md" />
+              </div>
 
-            {/* Body */}
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-2/3" />
-            </div>
+              {/* Creator & Date */}
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-3.5 w-3.5 rounded-full" />
+                <Skeleton className="h-3 w-32" />
+              </div>
 
-            {/* Creator & Date */}
-            <div className="flex items-center justify-between gap-4 border-t pt-4">
-              <Skeleton className="h-4 w-32" />
+              {/* Tech Stack */}
+              <div className="flex flex-wrap gap-2">
+                <Skeleton className="h-8 w-20 rounded-lg" />
+                <Skeleton className="h-8 w-24 rounded-lg" />
+                <Skeleton className="h-8 w-16 rounded-lg" />
+              </div>
             </div>
 
             {/* Platform Preview Skeleton */}
@@ -190,6 +203,56 @@ export function ListProjectDetailModal({
               <div className="flex flex-col gap-1">
                 <Skeleton className="aspect-2/1 w-full rounded-xl" />
                 <Skeleton className="h-3 w-32" />
+              </div>
+            </div>
+
+            {/* Body Skeleton */}
+            <div className="mt-4 space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+            </div>
+          </div>
+
+          <div className="via-border mx-5 h-full w-px bg-linear-to-b from-transparent to-transparent" />
+
+          {/* Right Column Skeleton - Review Form */}
+          <div className="scrollbar-hide mt-4 flex max-h-screen w-1/2 flex-col overflow-y-auto">
+            <div className="flex w-full flex-col gap-6 py-6">
+              {/* Overall Rating Skeleton */}
+              <div className="bg-muted/30 flex flex-col items-center justify-center gap-2 rounded-xl border p-6 text-center">
+                <Skeleton className="h-4 w-32" />
+                <div className="flex items-baseline gap-1">
+                  <Skeleton className="h-12 w-16" />
+                  <Skeleton className="h-6 w-8" />
+                </div>
+              </div>
+
+              {/* Sliders Skeleton */}
+              <div className="space-y-6">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Skeleton className="h-4 w-40" />
+                      <Skeleton className="h-4 w-12" />
+                    </div>
+                    <Skeleton className="h-5 w-full rounded-full" />
+                  </div>
+                ))}
+
+                {/* Remarks Skeleton */}
+                <div className="space-y-3">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-[120px] w-full rounded-md" />
+                </div>
+              </div>
+
+              {/* Buttons Skeleton */}
+              <div className="flex w-full gap-2">
+                <Skeleton className="h-10 flex-1" />
+                <Skeleton className="h-10 flex-1" />
               </div>
             </div>
           </div>
@@ -220,8 +283,8 @@ export function ListProjectDetailModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex h-full max-w-6xl flex-row">
-        <div className="flex w-1/2 flex-col overflow-y-auto">
+      <DialogContent className="flex h-full w-full max-w-5xl flex-row">
+        <div className="scrollbar-hide flex max-h-screen w-1/2 flex-col overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-serif text-2xl leading-tight tracking-wider">
               {project.name}
@@ -231,7 +294,7 @@ export function ListProjectDetailModal({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-5">
+          <div className="mt-1 mb-4 space-y-5">
             {/* Action Buttons with Like & Save */}
             <div className="flex items-center gap-2">
               <Button asChild size="sm">
@@ -258,26 +321,43 @@ export function ListProjectDetailModal({
               )}
               <div className="bg-border mx-2 h-6 w-px" />
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className={
-                      saved
-                        ? "text-primary hover:text-primary"
-                        : "text-muted-foreground"
-                    }
-                  >
-                    <Save className={saved ? "fill-current" : ""} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top">
-                  <p>{saved ? "Unsave" : "Save"}</p>
-                </TooltipContent>
-              </Tooltip>
+              {currentUserId && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      className={
+                        saved
+                          ? "text-primary hover:text-primary"
+                          : "text-muted-foreground"
+                      }
+                    >
+                      <Save className={saved ? "fill-current" : ""} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p>{saved ? "Unsave" : "Save"}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              {currentUserId && isOwner && onDelete && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      onClick={(e) => onDelete(e, project.id, project.name)}
+                      className="text-destructive lg:text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 rounded-lg"
+                    >
+                      <Delete />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+              )}
             </div>
 
             {/* Creator & Date */}
@@ -310,24 +390,43 @@ export function ListProjectDetailModal({
                 ))}
               </div>
             )}
-
-            {/* Rich Content */}
-            {bodyContent && editor && (
-              <div className="prose dark:prose-invert prose-sm scrollbar-hide max-h-[20rem] max-w-none overflow-scroll text-sm">
-                <EditorContent editor={editor} />
-              </div>
-            )}
           </div>
 
           {/* Platform Previews */}
           {project && <PlatformPreview liveLink={project.liveLink} />}
+
+          {/* Rich Content */}
+          {bodyContent && editor && (
+            <div className="prose dark:prose-invert prose-sm scrollbar-hide max-w-none text-sm">
+              <EditorContent editor={editor} />
+            </div>
+          )}
         </div>
-        <div className="bg-border mx-5 h-full w-px" />
-        <div className="w-1/2 overflow-hidden">
+        <div className="via-border mx-5 h-full w-px bg-linear-to-b from-transparent to-transparent" />
+        <div className="scrollbar-hide mt-4 flex max-h-screen w-1/2 flex-col overflow-y-auto">
           {project && (
             <ProjectReviewForm
               projectId={project.id}
               onSuccess={() => onOpenChange(false)}
+              isOwner={isOwner}
+              onPickAnother={onPickAnother}
+              initialData={
+                project.review
+                  ? {
+                      design: project.review.design,
+                      userExperience: project.review.userExperience,
+                      creativity: project.review.creativity,
+                      functionality: project.review.functionality,
+                      hireability: project.review.hireability,
+                      remark:
+                        typeof project.review.remark === "string"
+                          ? project.review.remark
+                          : project.review.remark
+                            ? JSON.stringify(project.review.remark)
+                            : null,
+                    }
+                  : undefined
+              }
             />
           )}
         </div>

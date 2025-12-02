@@ -4,8 +4,19 @@ import { useState } from "react";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -30,8 +41,17 @@ import {
   ProjectCard,
 } from "@/features/lists/components";
 import { getListProjects } from "@/features/lists/lib/actions";
+import {
+  deleteProject,
+  getRandomListProject,
+} from "@/features/projects/lib/actions";
 
-import { Error as ErrorIcon, FolderCode } from "@/components/icons";
+import {
+  Delete,
+  Error as ErrorIcon,
+  FolderCode,
+  Loader,
+} from "@/components/icons";
 
 import ProjectsTable, { ProjectsTableSkeleton } from "./projects-table";
 
@@ -45,6 +65,7 @@ interface ProjectsListProps {
   filter: "reviewed" | "pending";
   page?: number;
   isOwner?: boolean;
+  listOwnerId: string;
 }
 
 const ProjectsList = ({
@@ -57,10 +78,12 @@ const ProjectsList = ({
   filter,
   page: initialPage,
   isOwner = false,
+  listOwnerId,
 }: ProjectsListProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
 
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
@@ -70,6 +93,12 @@ const ProjectsList = ({
     string | null
   >(null);
   const [selectedProjectSaved, setSelectedProjectSaved] = useState(false);
+  const [isPickingRandom, setIsPickingRandom] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Get current page from URL or default to 1
   const currentPage = initialPage || 1;
@@ -103,6 +132,44 @@ const ProjectsList = ({
       }),
   });
 
+  const { mutate: deleteProjectMutation, isPending: isDeleting } = useMutation({
+    mutationFn: deleteProject,
+    onSuccess: () => {
+      toast.success("Project deleted successfully!");
+      setDeleteDialogOpen(false);
+      setProjectToDelete(null);
+      // Refetch lists after deletion
+      queryClient.invalidateQueries({
+        queryKey: [
+          "list-projects",
+          listId,
+          search,
+          sortBy,
+          sortDirection,
+          filter,
+          currentPage,
+        ],
+      });
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete project",
+      );
+    },
+  });
+
+  const confirmDelete = () => {
+    if (!projectToDelete) return;
+    deleteProjectMutation(projectToDelete.id);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent, id: string, name: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setProjectToDelete({ id, name });
+    setDeleteDialogOpen(true);
+  };
+
   const projects = projectsData?.projects ?? [];
   const totalPages = projectsData?.totalPages ?? 0;
 
@@ -115,6 +182,30 @@ const ProjectsList = ({
     setSelectedListProjectId(listProjectId);
     setSelectedProjectSaved(userSaved);
     setDetailModalOpen(true);
+  };
+
+  const handlePickRandom = async () => {
+    setIsPickingRandom(true);
+    try {
+      const randomProject = await getRandomListProject(listId);
+
+      if (!randomProject) {
+        toast.error("No not-reviewed projects found in this list");
+        return;
+      }
+
+      setSelectedProjectId(randomProject.project.id);
+
+      setSelectedListProjectId(randomProject.id);
+
+      setSelectedProjectSaved(false); // Default to false for new random project
+      setDetailModalOpen(true);
+    } catch (error) {
+      console.error("Error picking random project:", error);
+      toast.error("Failed to pick a random project");
+    } finally {
+      setIsPickingRandom(false);
+    }
   };
 
   // Helper to create URL with updated page parameter
@@ -351,6 +442,7 @@ const ProjectsList = ({
                 onClick={() =>
                   handleProjectClick(lp.project.id, lp.id, lp.userSaved)
                 }
+                onDelete={handleDeleteClick}
               />
             ))}
           </div>
@@ -434,6 +526,7 @@ const ProjectsList = ({
             filter={filter}
             currentUserId={currentUserId}
             isOwner={isOwner}
+            onDelete={handleDeleteClick}
           />
 
           {/* Pagination for table view */}
@@ -505,7 +598,47 @@ const ProjectsList = ({
           )}
         </>
       )}
-
+      <AlertDialog open={deleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-serif tracking-wider">
+              Delete List
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete{" "}
+              <span className="font-semibold">
+                &quot;{projectToDelete?.name}&quot;
+              </span>
+              ? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={isDeleting}
+              onClick={() => setDeleteDialogOpen(false)}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Delete />
+                  Delete
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       {/* Detail Modal */}
       <ListProjectDetailModal
         projectId={selectedProjectId}
@@ -514,6 +647,10 @@ const ProjectsList = ({
         onOpenChange={setDetailModalOpen}
         currentUserId={currentUserId}
         initialSaved={selectedProjectSaved}
+        isOwner={isOwner}
+        listOwnerId={listOwnerId}
+        onPickAnother={handlePickRandom}
+        onDelete={handleDeleteClick}
       />
     </>
   );

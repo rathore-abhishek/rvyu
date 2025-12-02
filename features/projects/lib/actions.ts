@@ -2,21 +2,25 @@
 
 import { revalidatePath } from "next/cache";
 
-import { eq } from "drizzle-orm";
+import { and, count, eq, isNull } from "drizzle-orm";
 
 import { getUser } from "@/actions/user";
 
 import db from "@/db";
-import { project, review, techStack, user as userTable } from "@/db/schema";
+import {
+  list,
+  listProject,
+  project,
+  review,
+  savedProject,
+  techStack,
+  user as userTable,
+} from "@/db/schema";
 import { validateOrThrow } from "@/validation";
 
 import { NewProject, ProjectMetadata } from "./types";
 import { ReviewSchema, newProjectSchema, reviewSchema } from "./validation";
 
-/**
- * Creates a new project with associated tech stack
- * Note: Not using transactions as neon-http driver doesn't support them
- */
 export async function submitProject(data: NewProject) {
   // Validate input data
   validateOrThrow(newProjectSchema, data);
@@ -57,56 +61,6 @@ export async function submitProject(data: NewProject) {
   revalidatePath("/dashboard/projects");
 
   return projectResult;
-}
-
-// export async function getProjects() {
-//   const user = await getUser();
-
-//   if (!user) {
-//     throw new Error("Unauthorized");
-//   }
-
-//   // Fetch minimal data for grid display - exclude body field for performance
-//   const projects = await db.query.project.findMany({
-//     where: eq(project.userId, user.id),
-//     columns: {
-//       id: true,
-//       name: true,
-//       description: true,
-//       liveLink: true,
-//       codeLink: true,
-//       visibility: true,
-//       createdAt: true,
-//       updatedAt: true,
-//     },
-//     with: {
-//       techStack: {
-//         columns: {
-//           id: true,
-//           label: true,
-//           image: true,
-//         },
-//       },
-//     },
-//     orderBy: (projects, { desc }) => [desc(projects.createdAt)],
-//   });
-
-//   return projects;
-// }
-
-export async function getProjectById(id: string) {
-  const user = await getUser();
-
-  if (!user) {
-    throw new Error("Unauthorized");
-  }
-
-  const projectData = await db.query.project.findFirst({
-    where: eq(project.id, id),
-    with: { techStack: true },
-  });
-
-  return projectData;
 }
 
 export async function getSiteMetadata(
@@ -234,4 +188,229 @@ export async function submitReview(data: ReviewSchema) {
   revalidatePath(`/projects/${data.projectId}`);
 
   return reviewResult;
+}
+
+export async function toggleProjectSave({ projectId }: { projectId: string }) {
+  const user = await getUser();
+  if (!user) {
+    throw new Error("You must be logged in to save projects");
+  }
+
+  // Check if user already saved this project
+  const existingSave = await db.query.savedProject.findFirst({
+    where: and(
+      eq(savedProject.userId, user.id),
+      eq(savedProject.projectId, projectId),
+    ),
+  });
+
+  if (existingSave) {
+    // Unsave - remove the bookmark
+    await db.delete(savedProject).where(eq(savedProject.id, existingSave.id));
+    return { saved: false };
+  } else {
+    // Save - create a bookmark
+    await db.insert(savedProject).values({
+      userId: user.id,
+      projectId,
+    });
+    return { saved: true };
+  }
+}
+
+// Get single project details for modal
+export async function getProjectDetails(
+  projectId: string,
+  reviewOwnerId?: string,
+) {
+  const user = await getUser();
+
+  const projectData = await db.query.project.findFirst({
+    where: eq(project.id, projectId),
+    with: {
+      techStack: {
+        columns: {
+          id: true,
+          label: true,
+          image: true,
+        },
+      },
+    },
+  });
+
+  if (!projectData) {
+    throw new Error("Project not found");
+  }
+
+  // Fetch review if ownerId is provided
+  let projectReview = null;
+  if (reviewOwnerId) {
+    projectReview = await db.query.review.findFirst({
+      where: and(
+        eq(review.projectId, projectId),
+        eq(review.userId, reviewOwnerId),
+      ),
+    });
+  }
+
+  // Check if user saved this project
+  let userSaved = false;
+  if (user) {
+    const saved = await db.query.savedProject.findFirst({
+      where: and(
+        eq(savedProject.userId, user.id),
+        eq(savedProject.projectId, projectData.id),
+      ),
+    });
+    userSaved = !!saved;
+  }
+
+  // Count saved by users
+  const [savedByResult] = await db
+    .select({ count: count() })
+    .from(savedProject)
+    .where(eq(savedProject.projectId, projectData.id));
+
+  return {
+    ...projectData,
+    review: projectReview,
+    userSaved,
+    _count: {
+      savedBy: savedByResult?.count || 0,
+    },
+  };
+}
+
+export async function getRandomListProject(listId: string) {
+  const user = await getUser();
+
+  // Get all not-reviewed projects in this list
+  const notReviewedProjects = await db
+    .select({
+      listProject: listProject,
+      project: project,
+    })
+    .from(listProject)
+    .innerJoin(project, eq(listProject.projectId, project.id))
+    .leftJoin(review, eq(review.projectId, project.id))
+    .where(and(eq(listProject.listId, listId), isNull(review.id)))
+    .groupBy(listProject.id, project.id);
+
+  if (notReviewedProjects.length === 0) {
+    return null;
+  }
+
+  // Pick a random project from the not-reviewed ones
+  const randomIndex = Math.floor(Math.random() * notReviewedProjects.length);
+  const randomProjectData = notReviewedProjects[randomIndex];
+
+  if (!randomProjectData) {
+    return null;
+  }
+
+  // Fetch tech stack for the project
+  const techStackData = await db.query.techStack.findMany({
+    where: eq(techStack.projectId, randomProjectData.project.id),
+    columns: {
+      id: true,
+      label: true,
+      image: true,
+    },
+  });
+
+  // Check if user saved this project
+  let userSaved = false;
+  if (user) {
+    const saved = await db.query.savedProject.findFirst({
+      where: and(
+        eq(savedProject.userId, user.id),
+        eq(savedProject.projectId, randomProjectData.project.id),
+      ),
+    });
+    userSaved = !!saved;
+  }
+
+  return {
+    ...randomProjectData.listProject,
+    project: {
+      ...randomProjectData.project,
+      techStack: techStackData,
+    },
+    userSaved,
+  };
+}
+
+export async function deleteProject(projectId: string) {
+  const user = await getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized: You must be logged in to delete projects");
+  }
+
+  // Validate projectId format
+  if (!projectId || typeof projectId !== "string") {
+    throw new Error("Invalid project ID");
+  }
+
+  // Verify the project exists and user has permission to delete it
+  // Check if the project is in any of the user's lists
+  const userListsWithProject = await db.query.list.findMany({
+    where: eq(list.userId, user.id),
+    with: {
+      listProjects: {
+        where: eq(listProject.projectId, projectId),
+      },
+    },
+  });
+
+  const hasPermission = userListsWithProject.some(
+    (userList) => userList.listProjects.length > 0,
+  );
+
+  if (!hasPermission) {
+    throw new Error(
+      "Forbidden: You can only delete projects from your own lists",
+    );
+  }
+
+  // Verify project exists
+  const projectData = await db.query.project.findFirst({
+    where: eq(project.id, projectId),
+    columns: {
+      id: true,
+    },
+  });
+
+  if (!projectData) {
+    throw new Error("Project not found");
+  }
+
+  try {
+    // Delete in proper order (reverse of creation)
+    // Note: Some deletions may be handled by cascade depending on your DB setup
+
+    // 1. Delete related tech stack items
+    await db.delete(techStack).where(eq(techStack.projectId, projectId));
+
+    // 2. Delete related reviews
+    await db.delete(review).where(eq(review.projectId, projectId));
+
+    // 3. Delete saved project bookmarks
+    await db.delete(savedProject).where(eq(savedProject.projectId, projectId));
+
+    // 4. Delete list project associations
+    await db.delete(listProject).where(eq(listProject.projectId, projectId));
+
+    // 5. Finally, delete the project itself
+    await db.delete(project).where(eq(project.id, projectId));
+
+    revalidatePath("/dashboard/projects");
+    revalidatePath("/projects");
+    revalidatePath(`/lists/${userListsWithProject[0]?.id}`);
+
+    return { success: true, message: "Project deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    throw new Error("Failed to delete project. Please try again.");
+  }
 }

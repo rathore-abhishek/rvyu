@@ -2,6 +2,11 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
+import { JSONContent, generateHTML } from "@tiptap/core";
+import { FontFamily } from "@tiptap/extension-font-family";
+import Link from "@tiptap/extension-link";
+import { TextStyle } from "@tiptap/extension-text-style";
+import StarterKit from "@tiptap/starter-kit";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -10,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import RichTextEditor from "@/components/ui/rich-text-editor";
 import { Slider } from "@/components/ui/slider";
+
+import Shuffle from "@/components/icons/shuffle";
 
 import { submitReview } from "../lib/actions";
 import { reviewSchema } from "../lib/validation";
@@ -28,14 +35,19 @@ interface ProjectReviewFormProps {
     remark: string | null;
   } | null;
   readOnly?: boolean;
+  isOwner?: boolean;
+  onPickAnother?: () => void;
 }
 
 export function ProjectReviewForm({
   projectId,
   onSuccess,
   initialData,
-  readOnly = false,
+  readOnly: readOnlyProp,
+  isOwner = false,
+  onPickAnother,
 }: ProjectReviewFormProps) {
+  const readOnly = readOnlyProp ?? !isOwner;
   const { mutateAsync: submitReviewMutation, isPending } = useMutation({
     mutationFn: submitReview,
     onSuccess: () => {
@@ -75,7 +87,7 @@ export function ProjectReviewForm({
   ] as const;
 
   return (
-    <div className="flex flex-col py-6">
+    <div className="flex w-full flex-col py-6">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -84,7 +96,7 @@ export function ProjectReviewForm({
             form.handleSubmit();
           }
         }}
-        className="flex flex-col gap-6"
+        className="flex w-full flex-col gap-6"
       >
         <div className="space-y-6 overflow-y-auto">
           {/* Overall Rating Display */}
@@ -155,39 +167,98 @@ export function ProjectReviewForm({
             ))}
 
             <form.Field name="remark">
-              {(field) => (
-                <div className="space-y-3">
-                  <Label className="text-sm font-medium">
-                    Remarks{" "}
-                    <span className="text-muted-foreground">(Optional)</span>
-                  </Label>
-                  <RichTextEditor
-                    value={field.state.value ?? ""}
-                    onChange={field.handleChange}
-                    placeholder={
-                      readOnly
-                        ? "No remarks provided."
-                        : "Add your detailed review here..."
-                    }
-                    disabled={isPending || readOnly}
-                  />
-                </div>
-              )}
+              {(field) => {
+                // Parse and convert remark to HTML for readonly display
+                const getRemarkHTML = () => {
+                  if (!field.state.value) return null;
+
+                  try {
+                    const content =
+                      typeof field.state.value === "string"
+                        ? JSON.parse(field.state.value)
+                        : field.state.value;
+
+                    return generateHTML(content as JSONContent, [
+                      StarterKit.configure({
+                        heading: {
+                          levels: [1, 2, 3],
+                        },
+                      }),
+                      TextStyle,
+                      FontFamily.configure({
+                        types: ["textStyle"],
+                      }),
+                      Link.configure({
+                        openOnClick: true,
+                        HTMLAttributes: {
+                          class:
+                            "text-primary underline underline-offset-2 hover:text-primary cursor-pointer",
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                        },
+                      }),
+                    ]);
+                  } catch {
+                    // Fallback to plain string if parsing fails
+                    return field.state.value;
+                  }
+                };
+
+                return (
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium">
+                      Remarks{" "}
+                      <span className="text-muted-foreground">(Optional)</span>
+                    </Label>
+                    {readOnly && field.state.value ? (
+                      <div
+                        className="prose dark:prose-invert prose-sm min-h-[120px] max-w-none rounded-md text-sm"
+                        dangerouslySetInnerHTML={{
+                          __html: getRemarkHTML() || "",
+                        }}
+                      />
+                    ) : readOnly ? (
+                      <div className="text-muted-foreground bg-muted/30 min-h-[120px] rounded-md border p-3 text-sm italic">
+                        No remarks provided.
+                      </div>
+                    ) : (
+                      <RichTextEditor
+                        value={field.state.value ?? ""}
+                        onChange={field.handleChange}
+                        placeholder="Add your detailed review here..."
+                        disabled={isPending}
+                      />
+                    )}
+                  </div>
+                );
+              }}
             </form.Field>
           </div>
         </div>
 
-        {!readOnly && (
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              "Submit Review"
-            )}
-          </Button>
+        {isOwner && (
+          <div className="flex w-full gap-2">
+            <Button
+              type="button"
+              variant={"outline"}
+              className="flex-1"
+              disabled={isPending}
+              onClick={onPickAnother}
+            >
+              {isPending ? <Loader2 className="animate-spin" /> : <Shuffle />}
+              Pick Another
+            </Button>
+            <Button type="submit" className="flex-1" disabled={isPending}>
+              {isPending ? (
+                <>
+                  <Loader2 className="animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                "Submit Review"
+              )}
+            </Button>
+          </div>
         )}
       </form>
     </div>

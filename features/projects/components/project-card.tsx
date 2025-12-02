@@ -15,7 +15,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { toggleProjectSave } from "@/features/lists/lib/actions";
+import { toggleProjectSave } from "@/features/projects/lib/actions";
 
 import { CodeLink, Delete, Link as LinkIcon, Save } from "@/components/icons";
 
@@ -44,6 +44,7 @@ interface ProjectCardProps {
   userSaved: boolean;
   currentUserId: string | null;
   onClick: () => void;
+  onDelete: (e: React.MouseEvent, id: string, name: string) => void;
 }
 
 export function ProjectCard({
@@ -54,10 +55,10 @@ export function ProjectCard({
   codeLink,
   techStack,
   review,
-
   userSaved,
   currentUserId,
   onClick,
+  onDelete,
 }: ProjectCardProps) {
   const queryClient = useQueryClient();
   const [saved, setSaved] = useState(userSaved);
@@ -86,7 +87,7 @@ export function ProjectCard({
 
       return { previousSaved };
     },
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       // Rollback on error
       if (context) {
         setSaved(context.previousSaved);
@@ -107,113 +108,180 @@ export function ProjectCard({
   };
 
   return (
-    <article
-      onClick={onClick}
-      className="group bg-card relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border"
-    >
-      {/* Project Preview */}
-      {!review && <ProjectCardPreview liveLink={liveLink} />}
+    <>
+      <article
+        onClick={onClick}
+        className="group bg-card relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border"
+      >
+        {/* Project Preview */}
+        {!review && <ProjectCardPreview liveLink={liveLink} />}
 
-      <div className="relative flex flex-1 flex-col gap-3 p-4">
-        {/* Header with Actions */}
-        <div className="flex flex-1 items-start justify-between gap-3">
-          <div className="min-w-0 flex-1 space-y-1">
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="line-clamp-1 text-base leading-tight font-semibold tracking-tight">
-                {name}
-              </h3>
+        <div className="relative flex flex-1 flex-col gap-3 p-4">
+          {/* Header with Actions */}
+          <div className="flex flex-1 items-start justify-between gap-3">
+            <div className="min-w-0 flex-1 space-y-1">
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="line-clamp-1 text-base leading-tight font-semibold tracking-tight">
+                  {name}
+                </h3>
+              </div>
+              {description && (
+                <p className="text-muted-foreground line-clamp-2 flex-1 text-sm leading-snug">
+                  {description}
+                </p>
+              )}
             </div>
-            {description && (
-              <p className="text-muted-foreground line-clamp-2 flex-1 text-sm leading-snug">
-                {description}
-              </p>
+
+            {currentUserId && (
+              <div className="shrink0 flex items-center gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      onClick={(e) => onDelete(e, projectId, name)}
+                      className="text-destructive lg:text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 rounded-lg"
+                    >
+                      <Delete />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      className={`h-8 w-8 ${saved ? "text-primary hover:text-primary hover:bg-primary/10" : "text-muted-foreground hover:text-muted-foreground"}`}
+                    >
+                      <motion.div
+                        animate={{ scale: saved ? [1, 1.2, 1] : 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Save
+                          className={`h-3.5 w-3.5 ${saved && "fill-current"}`}
+                        />
+                      </motion.div>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p>{saved ? "Unsave" : "Save"}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             )}
           </div>
 
-          {currentUserId && (
-            <div className="shrink0 flex items-center gap-2">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    size="icon-sm"
-                    variant="ghost"
-                    // onClick={(e) => onDelete(e, list.id, list.name)}
-                    className="text-destructive lg:text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 rounded-lg"
-                  >
-                    <Delete />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Delete</TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className={`h-8 w-8 ${saved ? "text-primary hover:text-primary hover:bg-primary/10" : "text-muted-foreground hover:text-muted-foreground"}`}
-                  >
-                    <motion.div
-                      animate={{ scale: saved ? [1, 1.2, 1] : 1 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <Save
-                        className={`h-3.5 w-3.5 ${saved && "fill-current"}`}
-                      />
-                    </motion.div>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="top">
-                  <p>{saved ? "Unsave" : "Save"}</p>
-                </TooltipContent>
-              </Tooltip>
+          {overallRating !== null && (
+            <div className="bg-muted/30 flex justify-between rounded-lg border p-4">
+              <p className="text-muted-foreground text-sm font-medium uppercase">
+                Overall
+              </p>
+              <div className="bg-primary/10 text-primary flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-sm font-semibold">
+                <span>{overallRating.toFixed(1)}</span>
+                <span className="text-[12px] opacity-70">/10</span>
+              </div>
             </div>
           )}
-        </div>
 
-        {overallRating !== null && (
-          <div className="bg-muted/30 flex justify-between rounded-lg border p-4">
-            <p className="text-muted-foreground text-sm font-medium uppercase">
-              Overall
-            </p>
-            <div className="bg-primary/10 text-primary flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-sm font-semibold">
-              <span>{overallRating.toFixed(1)}</span>
-              <span className="text-[12px] opacity-70">/10</span>
+          {/* Review Data */}
+          {review && (
+            <div className="bg-muted/30 rounded-lg border p-2.5">
+              <div className="grid gap-x-3 gap-y-1.5">
+                <ReviewItem label="Design" score={review.design} />
+                <ReviewItem label="UX" score={review.userExperience} />
+                <ReviewItem label="Creativity" score={review.creativity} />
+                <ReviewItem
+                  label="Functionality"
+                  score={review.functionality}
+                />
+                <ReviewItem label="Hireability" score={review.hireability} />
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Review Data */}
-        {review && (
-          <div className="bg-muted/30 rounded-lg border p-2.5">
-            <div className="grid gap-x-3 gap-y-1.5">
-              <ReviewItem label="Design" score={review.design} />
-              <ReviewItem label="UX" score={review.userExperience} />
-              <ReviewItem label="Creativity" score={review.creativity} />
-              <ReviewItem label="Functionality" score={review.functionality} />
-              <ReviewItem label="Hireability" score={review.hireability} />
-            </div>
-          </div>
-        )}
+          {/* Tech Stack - Expandable Icons */}
+          {!review && techStack && techStack.length > 0 && (
+            <div className="flex items-center">
+              {techStack.slice(0, 5).map((tech) => {
+                const isHovered = hoveredTech === tech.id;
+                return (
+                  <motion.div
+                    key={tech.id}
+                    className="bg-muted flex h-7 cursor-pointer items-center rounded-full border shadow-sm"
+                    style={{
+                      marginLeft: "-8px",
+                      zIndex: isHovered ? 10 : 1,
+                    }}
+                    animate={{
+                      width: isHovered ? "auto" : "28px",
+                    }}
+                    onMouseEnter={() => setHoveredTech(tech.id)}
+                    onMouseLeave={() => setHoveredTech(null)}
+                    layout
+                    transition={{
+                      duration: 0.25,
+                      ease: [0.4, 0, 0.2, 1],
+                    }}
+                  >
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center">
+                      {tech.image ? (
+                        <Image
+                          src={tech.image}
+                          alt={tech.label}
+                          width={16}
+                          height={16}
+                          className="h-4 w-4 rounded-full object-contain"
+                        />
+                      ) : (
+                        <span className="text-[10px] font-semibold">
+                          {tech.label.charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
 
-        {/* Tech Stack - Expandable Icons */}
-        {!review && techStack && techStack.length > 0 && (
-          <div className="flex items-center">
-            {techStack.slice(0, 5).map((tech) => {
-              const isHovered = hoveredTech === tech.id;
-              return (
+                    <AnimatePresence>
+                      {isHovered && (
+                        <motion.span
+                          className="overflow-hidden pr-2 text-xs font-medium"
+                          initial={{
+                            width: 0,
+                            opacity: 0,
+                            marginLeft: 0,
+                          }}
+                          animate={{
+                            width: "auto",
+                            opacity: 1,
+                            marginLeft: "4px",
+                          }}
+                          exit={{ width: 0, opacity: 0, marginLeft: 0 }}
+                          transition={{
+                            duration: 0.2,
+                            ease: [0.4, 0, 0.2, 1],
+                          }}
+                        >
+                          <span className="whitespace-nowrap">
+                            {tech.label}
+                          </span>
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })}
+              {techStack.length > 5 && (
                 <motion.div
-                  key={tech.id}
-                  className="bg-muted flex h-7 cursor-pointer items-center rounded-full border shadow-sm"
+                  className="bg-muted text-muted-foreground hover:bg-accent flex h-7 cursor-pointer items-center rounded-full border text-[10px] font-medium shadow-sm"
                   style={{
                     marginLeft: "-8px",
-                    zIndex: isHovered ? 10 : 1,
+                    zIndex: hoveredTech === "more" ? 10 : 1,
                   }}
                   animate={{
-                    width: isHovered ? "auto" : "28px",
+                    width: hoveredTech === "more" ? "auto" : "28px",
                   }}
-                  onMouseEnter={() => setHoveredTech(tech.id)}
+                  onMouseEnter={() => setHoveredTech("more")}
                   onMouseLeave={() => setHoveredTech(null)}
                   layout
                   transition={{
@@ -222,23 +290,13 @@ export function ProjectCard({
                   }}
                 >
                   <div className="flex h-7 w-7 shrink-0 items-center justify-center">
-                    {tech.image ? (
-                      <Image
-                        src={tech.image}
-                        alt={tech.label}
-                        width={16}
-                        height={16}
-                        className="h-4 w-4 rounded-full object-contain"
-                      />
-                    ) : (
-                      <span className="text-[10px] font-semibold">
-                        {tech.label.charAt(0).toUpperCase()}
-                      </span>
-                    )}
+                    <span className="text-[10px] font-semibold">
+                      +{techStack.length - 5}
+                    </span>
                   </div>
 
                   <AnimatePresence>
-                    {isHovered && (
+                    {hoveredTech === "more" && (
                       <motion.span
                         className="overflow-hidden pr-2 text-xs font-medium"
                         initial={{
@@ -257,120 +315,70 @@ export function ProjectCard({
                           ease: [0.4, 0, 0.2, 1],
                         }}
                       >
-                        <span className="whitespace-nowrap">{tech.label}</span>
+                        <span className="whitespace-nowrap">more</span>
                       </motion.span>
                     )}
                   </AnimatePresence>
                 </motion.div>
-              );
-            })}
-            {techStack.length > 5 && (
-              <motion.div
-                className="bg-muted text-muted-foreground hover:bg-accent flex h-7 cursor-pointer items-center rounded-full border text-[10px] font-medium shadow-sm"
-                style={{
-                  marginLeft: "-8px",
-                  zIndex: hoveredTech === "more" ? 10 : 1,
-                }}
-                animate={{
-                  width: hoveredTech === "more" ? "auto" : "28px",
-                }}
-                onMouseEnter={() => setHoveredTech("more")}
-                onMouseLeave={() => setHoveredTech(null)}
-                layout
-                transition={{
-                  duration: 0.25,
-                  ease: [0.4, 0, 0.2, 1],
-                }}
-              >
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center">
-                  <span className="text-[10px] font-semibold">
-                    +{techStack.length - 5}
-                  </span>
-                </div>
+              )}
+            </div>
+          )}
 
-                <AnimatePresence>
-                  {hoveredTech === "more" && (
-                    <motion.span
-                      className="overflow-hidden pr-2 text-xs font-medium"
-                      initial={{
-                        width: 0,
-                        opacity: 0,
-                        marginLeft: 0,
-                      }}
-                      animate={{
-                        width: "auto",
-                        opacity: 1,
-                        marginLeft: "4px",
-                      }}
-                      exit={{ width: 0, opacity: 0, marginLeft: 0 }}
-                      transition={{
-                        duration: 0.2,
-                        ease: [0.4, 0, 0.2, 1],
-                      }}
+          {/* Footer - Creator & Links */}
+          <div className="mt-auto flex items-center justify-end gap-3 border-t pt-3">
+            {/* External Links */}
+            <div className="flex shrink-0 items-center gap-1">
+              {codeLink && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      href={codeLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <span className="whitespace-nowrap">more</span>
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            )}
-          </div>
-        )}
-
-        {/* Footer - Creator & Links */}
-        <div className="mt-auto flex items-center justify-end gap-3 border-t pt-3">
-          {/* External Links */}
-          <div className="flex shrink-0 items-center gap-1">
-            {codeLink && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <a
-                    href={codeLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Button
-                      size="icon-lg"
-                      variant="ghost"
-                      className="text-muted-foreground hover:text-foreground"
+                      <Button
+                        size="icon-lg"
+                        variant="ghost"
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <CodeLink className="h-3.5 w-3.5" />
+                      </Button>
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p>View Code</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              {liveLink && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      href={liveLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      <CodeLink className="h-3.5 w-3.5" />
-                    </Button>
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent side="top">
-                  <p>View Code</p>
-                </TooltipContent>
-              </Tooltip>
-            )}
-            {liveLink && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <a
-                    href={liveLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Button
-                      size="icon-lg"
-                      variant="ghost"
-                      className="hover:text-foreground fill-accent"
-                    >
-                      <LinkIcon className="h-3.5 w-3.5" />
-                    </Button>
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent side="top">
-                  <p>View Live</p>
-                </TooltipContent>
-              </Tooltip>
-            )}
+                      <Button
+                        size="icon-lg"
+                        variant="ghost"
+                        className="hover:text-foreground fill-accent"
+                      >
+                        <LinkIcon className="h-3.5 w-3.5" />
+                      </Button>
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p>View Live</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </article>
+      </article>
+    </>
   );
 }
 

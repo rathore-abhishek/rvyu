@@ -31,7 +31,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { toggleProjectSave } from "@/features/lists/lib/actions";
+import { toggleProjectSave } from "@/features/projects/lib/actions";
 
 import { CodeLink, Delete, Link as LinkIcon, Save } from "@/components/icons";
 
@@ -62,6 +62,7 @@ interface ProjectsTableProps {
     listProjectId: string,
     userSaved: boolean,
   ) => void;
+  onDelete: (e: React.MouseEvent, id: string, name: string) => void;
   filter?: "reviewed" | "pending";
   currentUserId?: string | null;
   isOwner?: boolean;
@@ -128,10 +129,12 @@ function ActionsCell({
   project,
   currentUserId,
   isOwner,
+  onDelete,
 }: {
   project: Project;
   currentUserId?: string | null;
   isOwner?: boolean;
+  onDelete: (e: React.MouseEvent, id: string, name: string) => void;
 }) {
   const queryClient = useQueryClient();
   const [saved, setSaved] = useState(project.userSaved);
@@ -167,11 +170,7 @@ function ActionsCell({
     toggleSave({ projectId: project.project.id });
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // TODO: Implement delete functionality
-    toast.info("Delete functionality coming soon");
-  };
+  console.log(typeof onDelete);
 
   return (
     <div className="flex justify-center gap-1.5">
@@ -182,7 +181,9 @@ function ActionsCell({
               <Button
                 size="icon-sm"
                 variant="ghost"
-                onClick={handleDelete}
+                onClick={(e) =>
+                  onDelete(e, project.project.id, project.project.name)
+                }
                 className="text-destructive hover:bg-destructive/10 hover:text-destructive"
               >
                 <Delete className="h-4 w-4" />
@@ -225,7 +226,9 @@ const ProjectsTable = ({
   filter = "reviewed",
   currentUserId,
   isOwner = false,
+  onDelete,
 }: ProjectsTableProps) => {
+  console.log(onDelete);
   // Reviewed projects columns
   const reviewedColumns: ColumnDef<Project>[] = [
     {
@@ -631,6 +634,7 @@ const ProjectsTable = ({
           project={row.original}
           currentUserId={currentUserId}
           isOwner={isOwner}
+          onDelete={onDelete}
         />
       ),
     };
