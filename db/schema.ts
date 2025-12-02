@@ -140,7 +140,6 @@ export const listProject = pgTable("list_project", {
   projectId: text("projectId")
     .notNull()
     .references(() => project.id, { onDelete: "cascade" }),
-  order: integer("order").notNull().default(0),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });
 

@@ -52,7 +52,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className="container mx-auto mt-6 mb-32 max-w-6xl space-y-8 px-6">
+    <div className="container mx-auto mt-8 mb-32 max-w-6xl space-y-8 px-6">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <DashboardHeader />

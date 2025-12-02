@@ -28,7 +28,7 @@ const ListDetailActions = ({
       <div className="flex shrink-0 gap-2">
         {isOwner && (
           <Button
-            variant="secondary"
+            variant="outline"
             size="icon"
             onClick={() => setEditDialogOpen(true)}
           >

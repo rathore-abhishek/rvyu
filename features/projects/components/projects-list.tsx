@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +14,15 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import {
@@ -20,9 +31,9 @@ import {
 } from "@/features/lists/components";
 import { getListProjects } from "@/features/lists/lib/actions";
 
-import { Error as ErrorIcon, FolderCode, Loader } from "@/components/icons";
+import { Error as ErrorIcon, FolderCode } from "@/components/icons";
 
-import ProjectsTable from "./projects-table";
+import ProjectsTable, { ProjectsTableSkeleton } from "./projects-table";
 
 interface ProjectsListProps {
   listId: string;
@@ -31,6 +42,9 @@ interface ProjectsListProps {
   sortDirection: "asc" | "desc";
   view: "card" | "table";
   currentUserId: string | null;
+  filter: "reviewed" | "pending";
+  page?: number;
+  isOwner?: boolean;
 }
 
 const ProjectsList = ({
@@ -40,7 +54,14 @@ const ProjectsList = ({
   sortDirection,
   view,
   currentUserId,
+  filter,
+  page: initialPage,
+  isOwner = false,
 }: ProjectsListProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
     null,
@@ -50,31 +71,40 @@ const ProjectsList = ({
   >(null);
   const [selectedProjectSaved, setSelectedProjectSaved] = useState(false);
 
-  // Fetch projects with infinite scroll
+  // Get current page from URL or default to 1
+  const currentPage = initialPage || 1;
+
+  // Fetch projects with pagination
   const {
     data: projectsData,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
     isLoading: isProjectsLoading,
     isError: isProjectsError,
     error: projectsError,
     refetch: refetchProjects,
-  } = useInfiniteQuery({
-    queryKey: ["list-projects", listId, search, sortBy, sortDirection],
-    queryFn: ({ pageParam }) =>
+  } = useQuery({
+    queryKey: [
+      "list-projects",
+      listId,
+      search,
+      sortBy,
+      sortDirection,
+      filter,
+      currentPage,
+    ],
+    queryFn: () =>
       getListProjects({
         listId,
         search: search || undefined,
-        cursor: pageParam,
+        page: currentPage,
         limit: 12,
+        sortBy: sortBy as "date" | "rating",
+        sortDirection,
+        filter,
       }),
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-    initialPageParam: undefined as string | undefined,
   });
 
-  const allProjects =
-    projectsData?.pages.flatMap((page) => page.projects) ?? [];
+  const projects = projectsData?.projects ?? [];
+  const totalPages = projectsData?.totalPages ?? 0;
 
   const handleProjectClick = (
     projectId: string,
@@ -87,19 +117,113 @@ const ProjectsList = ({
     setDetailModalOpen(true);
   };
 
+  // Helper to create URL with updated page parameter
+  const createPageUrl = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (page === 1) {
+      params.delete("page");
+    } else {
+      params.set("page", page.toString());
+    }
+    return `${pathname}?${params.toString()}`;
+  };
+
+  const handlePageChange = (page: number) => {
+    router.push(createPageUrl(page), { scroll: false });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Generate page numbers for pagination
+  const generatePageNumbers = () => {
+    const pages: (number | "ellipsis")[] = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      // Show all pages if total is less than max
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+
+      if (currentPage > 3) {
+        pages.push("ellipsis");
+      }
+
+      // Show pages around current page
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (currentPage < totalPages - 2) {
+        pages.push("ellipsis");
+      }
+
+      // Always show last page
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
   // Loading state
   if (isProjectsLoading && !projectsData) {
     if (view === "table") {
+      return <ProjectsTableSkeleton filter={filter} />;
+    }
+
+    // Different skeleton for reviewed vs pending
+    if (filter === "pending") {
+      // Pending projects - simpler skeleton (no ratings)
       return (
-        <div className="space-y-4">
-          <Skeleton className="h-10 w-full" />
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full" />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-card group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border p-4"
+            >
+              <div className="relative flex flex-1 flex-col gap-3">
+                {/* Header with Actions */}
+                <div className="flex items-start justify-between gap-2">
+                  <Skeleton className="h-6 w-3/5" />
+                  <div className="flex shrink-0 items-center gap-2">
+                    <Skeleton className="h-8 w-8 rounded-lg" />
+                    <Skeleton className="h-8 w-8 rounded-lg" />
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-11/12" />
+                  <Skeleton className="h-4 w-4/5" />
+                </div>
+
+                {/* Tech Stack Icons */}
+                <div className="flex items-center gap-1.5">
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                </div>
+
+                {/* Footer - Links */}
+                <div className="mt-auto flex items-center justify-end gap-1 border-t pt-3">
+                  <Skeleton className="h-8 w-8 rounded-lg" />
+                  <Skeleton className="h-8 w-8 rounded-lg" />
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       );
     }
 
+    // Reviewed projects - full skeleton (with preview and ratings)
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
@@ -107,11 +231,56 @@ const ProjectsList = ({
             key={i}
             className="bg-card flex flex-col overflow-hidden rounded-xl border"
           >
-            <Skeleton className="aspect-2/1 w-full rounded-b-none" />
-            <div className="space-y-4 p-5">
-              <Skeleton className="h-6 w-3/4" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-2/3" />
+            <div className="space-y-4 p-4">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-2">
+                <Skeleton className="h-7 w-3/5" />
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-8 w-8 rounded" />
+                  <Skeleton className="h-8 w-8 rounded" />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-full" />
+                <Skeleton className="h-5 w-5/6" />
+              </div>
+
+              {/* Rating Bars */}
+              <Skeleton className="bg-muted/30 space-y-2 rounded-lg border p-2.5">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-3 w-16 shrink-0 rounded" />
+                  <Skeleton className="h-3 flex-1" />
+                  <Skeleton className="h-4 w-4 rounded" />
+                </div>
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-3 w-16 shrink-0 rounded" />
+                  <Skeleton className="h-3 flex-1" />
+                  <Skeleton className="h-4 w-4 rounded" />
+                </div>{" "}
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-3 w-16 shrink-0 rounded" />
+                  <Skeleton className="h-3 flex-1" />
+                  <Skeleton className="h-4 w-4 rounded" />
+                </div>{" "}
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-3 w-16 shrink-0 rounded" />
+                  <Skeleton className="h-3 flex-1" />
+                  <Skeleton className="h-4 w-4 rounded" />
+                </div>{" "}
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-3 w-16 shrink-0 rounded" />
+                  <Skeleton className="h-3 flex-1" />
+                  <Skeleton className="h-4 w-4 rounded" />
+                </div>
+              </Skeleton>
+
+              {/* Footer */}
+              <div className="flex items-center justify-end gap-2 border-t pt-3">
+                <Skeleton className="h-8 w-8 rounded" />
+                <Skeleton className="h-8 w-8 rounded" />
+              </div>
             </div>
           </div>
         ))}
@@ -140,7 +309,7 @@ const ProjectsList = ({
   }
 
   // Empty state
-  if (allProjects.length === 0) {
+  if (projects.length === 0) {
     return (
       <Empty>
         <EmptyHeader>
@@ -166,7 +335,7 @@ const ProjectsList = ({
       {view === "card" && (
         <div className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {allProjects.map((lp) => (
+            {projects.map((lp) => (
               <ProjectCard
                 key={lp.id}
                 listProjectId={lp.id}
@@ -176,6 +345,7 @@ const ProjectsList = ({
                 liveLink={lp.project.liveLink}
                 codeLink={lp.project.codeLink}
                 techStack={lp.project.techStack}
+                review={lp.project.review}
                 userSaved={lp.userSaved}
                 currentUserId={currentUserId}
                 onClick={() =>
@@ -185,24 +355,71 @@ const ProjectsList = ({
             ))}
           </div>
 
-          {/* Load More Button */}
-          {hasNextPage && (
+          {/* Pagination */}
+          {totalPages > 1 && (
             <div className="flex justify-center pt-4">
-              <Button
-                onClick={() => fetchNextPage()}
-                disabled={isFetchingNextPage}
-                variant="outline"
-                size="lg"
-              >
-                {isFetchingNextPage ? (
-                  <>
-                    <Loader className="h-4 w-4" />
-                    Loading...
-                  </>
-                ) : (
-                  "Load More"
-                )}
-              </Button>
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href={
+                        currentPage > 1 ? createPageUrl(currentPage - 1) : "#"
+                      }
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage > 1) {
+                          handlePageChange(currentPage - 1);
+                        }
+                      }}
+                      className={
+                        currentPage === 1
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                    />
+                  </PaginationItem>
+
+                  {generatePageNumbers().map((page, index) => (
+                    <PaginationItem key={index}>
+                      {page === "ellipsis" ? (
+                        <PaginationEllipsis />
+                      ) : (
+                        <PaginationLink
+                          href={createPageUrl(page)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(page);
+                          }}
+                          isActive={currentPage === page}
+                        >
+                          {page}
+                        </PaginationLink>
+                      )}
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href={
+                        currentPage < totalPages
+                          ? createPageUrl(currentPage + 1)
+                          : "#"
+                      }
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage < totalPages) {
+                          handlePageChange(currentPage + 1);
+                        }
+                      }}
+                      className={
+                        currentPage === totalPages
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           )}
         </div>
@@ -210,13 +427,83 @@ const ProjectsList = ({
 
       {/* Table View */}
       {view === "table" && (
-        <ProjectsTable
-          projects={allProjects}
-          onProjectClick={handleProjectClick}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          fetchNextPage={fetchNextPage}
-        />
+        <>
+          <ProjectsTable
+            projects={projects}
+            onProjectClick={handleProjectClick}
+            filter={filter}
+            currentUserId={currentUserId}
+            isOwner={isOwner}
+          />
+
+          {/* Pagination for table view */}
+          {totalPages > 1 && (
+            <div className="flex justify-center pt-4">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href={
+                        currentPage > 1 ? createPageUrl(currentPage - 1) : "#"
+                      }
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage > 1) {
+                          handlePageChange(currentPage - 1);
+                        }
+                      }}
+                      className={
+                        currentPage === 1
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                    />
+                  </PaginationItem>
+
+                  {generatePageNumbers().map((page, index) => (
+                    <PaginationItem key={index}>
+                      {page === "ellipsis" ? (
+                        <PaginationEllipsis />
+                      ) : (
+                        <PaginationLink
+                          href={createPageUrl(page)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(page);
+                          }}
+                          isActive={currentPage === page}
+                        >
+                          {page}
+                        </PaginationLink>
+                      )}
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href={
+                        currentPage < totalPages
+                          ? createPageUrl(currentPage + 1)
+                          : "#"
+                      }
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage < totalPages) {
+                          handlePageChange(currentPage + 1);
+                        }
+                      }}
+                      className={
+                        currentPage === totalPages
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+        </>
       )}
 
       {/* Detail Modal */}

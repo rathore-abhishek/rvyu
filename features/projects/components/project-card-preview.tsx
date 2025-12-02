@@ -69,7 +69,7 @@ export function ProjectCardPreview({ liveLink }: ProjectCardPreviewProps) {
               }}
               onLoad={() => setImageLoading(false)}
             />
-            <p className="text-muted-foreground bg-muted absolute bottom-3 left-2 line-clamp-1 rounded-lg px-2.5 py-1 text-[13px] leading-4">
+            <p className="text-muted-foreground bg-muted absolute bottom-3 mx-2 line-clamp-1 rounded-lg px-2.5 py-1 text-[13px] leading-4">
               {previewTitle}
             </p>
           </>

@@ -18,12 +18,12 @@ import RichTextEditor from "@/components/ui/rich-text-editor";
 import { Textarea } from "@/components/ui/textarea";
 
 import { submitProjectToList } from "@/features/lists/lib/actions";
-import { TechStackInput } from "@/features/projects/components";
 import { submitProject } from "@/features/projects/lib/actions";
 import { NewProject } from "@/features/projects/lib/types";
 import { newProjectWithoutTechStackSchema } from "@/features/projects/lib/validation";
 
 import { Loader, Tick } from "@/components/icons";
+import { TechStackInput } from "@/features/projects/components/tech-stack-input";
 
 export default function SubmitProjectPage() {
   const params = useParams();

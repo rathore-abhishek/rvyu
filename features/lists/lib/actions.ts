@@ -2,12 +2,19 @@
 
 import { revalidatePath } from "next/cache";
 
-import { and, count, desc, eq, exists, ilike, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, ilike, or } from "drizzle-orm";
 
 import { getUser } from "@/actions/user";
 
 import db from "@/db";
-import { list, listProject, project, savedProject } from "@/db/schema";
+import {
+  list,
+  listProject,
+  project,
+  review,
+  savedProject,
+  techStack,
+} from "@/db/schema";
 import { validateOrThrow } from "@/validation";
 
 import { List } from "./types";
@@ -162,7 +169,6 @@ export async function submitProjectToList({
   await db.insert(listProject).values({
     listId,
     projectId,
-    order: 0,
   });
 
   revalidatePath(`/lists/${listId}`);
@@ -205,65 +211,101 @@ export async function toggleProjectSave({ projectId }: { projectId: string }) {
 export async function getListProjects({
   listId,
   search,
-  cursor,
+  page = 1,
   limit = 12,
+  sortBy = "date",
+  sortDirection = "desc",
+  filter = "reviewed",
 }: {
   listId: string;
   search?: string;
-  cursor?: string;
+  page?: number;
   limit?: number;
-  sortBy?: "recent";
+  sortBy?: "date" | "rating";
+  sortDirection?: "asc" | "desc";
+  filter?: "reviewed" | "pending";
 }) {
   const user = await getUser();
 
   // Build where conditions
   const conditions = [eq(listProject.listId, listId)];
 
+  // Add search condition if provided
   if (search) {
     conditions.push(
-      exists(
-        db
-          .select({ id: project.id })
-          .from(project)
-          .where(
-            and(
-              eq(project.id, listProject.projectId),
-              or(
-                ilike(project.name, `%${search}%`),
-                ilike(project.description, `%${search}%`),
-              ),
-            ),
-          ),
-      ),
+      or(
+        ilike(project.name, `%${search}%`),
+        ilike(project.description, `%${search}%`),
+      )!,
     );
   }
 
   const whereCondition = and(...conditions);
 
-  // Fetch list projects with relations
-  const listProjects = await db.query.listProject.findMany({
-    where: whereCondition,
-    with: {
-      project: {
-        with: {
-          techStack: {
-            columns: {
-              id: true,
-              label: true,
-              image: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: desc(listProject.createdAt),
-    limit: limit + 1,
-    offset: cursor ? 1 : 0,
-  });
+  // Fetch all projects to properly filter and count
+  const listProjectsData = await db
+    .select({
+      listProject: listProject,
+      project: project,
+    })
+    .from(listProject)
+    .innerJoin(project, eq(listProject.projectId, project.id))
+    .where(whereCondition)
+    .orderBy(desc(listProject.createdAt));
 
-  // Check user's save status
+  // Fetch related data for each project
+  const projectsWithRelations = await Promise.all(
+    listProjectsData.map(async ({ listProject: lp, project: proj }) => {
+      // Fetch tech stack
+      const techStackData = await db.query.techStack.findMany({
+        where: eq(techStack.projectId, proj.id),
+        columns: {
+          id: true,
+          label: true,
+          image: true,
+        },
+      });
+
+      // Fetch reviews
+      const reviewsData = await db.query.review.findMany({
+        where: eq(review.projectId, proj.id),
+      });
+
+      return {
+        ...lp,
+        project: {
+          ...proj,
+          techStack: techStackData,
+          reviews: reviewsData,
+        },
+      };
+    }),
+  );
+
+  // Filter based on review status and user authentication
+  let filteredProjects = projectsWithRelations;
+
+  // If user is not authenticated, only show reviewed projects
+  if (!user) {
+    filteredProjects = filteredProjects.filter(
+      (lp) => lp.project.reviews && lp.project.reviews.length > 0,
+    );
+  } else {
+    // If user is authenticated and owner, filter by reviewed/pending status
+    if (filter === "reviewed") {
+      filteredProjects = filteredProjects.filter(
+        (lp) => lp.project.reviews && lp.project.reviews.length > 0,
+      );
+    } else if (filter === "pending") {
+      filteredProjects = filteredProjects.filter(
+        (lp) => !lp.project.reviews || lp.project.reviews.length === 0,
+      );
+    }
+  }
+
+  // Check user's save status and calculate overall rating
   const projectsWithMeta = await Promise.all(
-    listProjects.map(async (lp) => {
+    filteredProjects.map(async (lp) => {
       // Check if user saved this project
       let userSaved = false;
       if (user) {
@@ -282,11 +324,26 @@ export async function getListProjects({
         .from(savedProject)
         .where(eq(savedProject.projectId, lp.project.id));
 
+      // Calculate overall rating
+      let overallRating = null;
+      if (lp.project.reviews && lp.project.reviews.length > 0) {
+        const firstReview = lp.project.reviews[0];
+        overallRating =
+          (firstReview.design +
+            firstReview.userExperience +
+            firstReview.creativity +
+            firstReview.functionality +
+            firstReview.hireability) /
+          5;
+      }
+
       return {
         ...lp,
         userSaved,
+        overallRating,
         project: {
           ...lp.project,
+          review: lp.project.reviews[0] || null,
           _count: {
             savedBy: savedByResult?.count || 0,
           },
@@ -295,19 +352,49 @@ export async function getListProjects({
     }),
   );
 
-  const hasMore = projectsWithMeta.length > limit;
-  const data = hasMore ? projectsWithMeta.slice(0, limit) : projectsWithMeta;
-  const nextCursor = hasMore ? data[data.length - 1]?.id : null;
+  // Sort based on sortBy and sortDirection
+  const sortedProjects = projectsWithMeta.sort((a, b) => {
+    let comparison = 0;
+
+    if (sortBy === "rating") {
+      // Sort by overall rating
+      const ratingA = a.overallRating ?? -1;
+      const ratingB = b.overallRating ?? -1;
+      comparison = ratingA - ratingB;
+    } else {
+      // Sort by date (review date if exists, otherwise listProject createdAt)
+      const dateA = a.project.review?.createdAt
+        ? new Date(a.project.review.createdAt).getTime()
+        : new Date(a.createdAt).getTime();
+      const dateB = b.project.review?.createdAt
+        ? new Date(b.project.review.createdAt).getTime()
+        : new Date(b.createdAt).getTime();
+      comparison = dateA - dateB;
+    }
+
+    // Apply sort direction
+    return sortDirection === "asc" ? comparison : -comparison;
+  });
+
+  // Calculate pagination
+  const totalCount = sortedProjects.length;
+  const totalPages = Math.ceil(totalCount / limit);
+  const offset = (page - 1) * limit;
+  const paginatedProjects = sortedProjects.slice(offset, offset + limit);
 
   return {
-    projects: data,
-    nextCursor,
-    hasMore,
+    projects: paginatedProjects,
+    totalCount,
+    totalPages,
+    currentPage: page,
   };
 }
 
 // Get single project details for modal
-export async function getProjectDetails(projectId: string) {
+export async function getProjectDetails(
+  projectId: string,
+  reviewOwnerId?: string,
+) {
   const user = await getUser();
 
   const projectData = await db.query.project.findFirst({
@@ -325,6 +412,17 @@ export async function getProjectDetails(projectId: string) {
 
   if (!projectData) {
     throw new Error("Project not found");
+  }
+
+  // Fetch review if ownerId is provided
+  let projectReview = null;
+  if (reviewOwnerId) {
+    projectReview = await db.query.review.findFirst({
+      where: and(
+        eq(review.projectId, projectId),
+        eq(review.userId, reviewOwnerId),
+      ),
+    });
   }
 
   // Check if user saved this project
@@ -347,6 +445,7 @@ export async function getProjectDetails(projectId: string) {
 
   return {
     ...projectData,
+    review: projectReview,
     userSaved,
     _count: {
       savedBy: savedByResult?.count || 0,
@@ -367,29 +466,34 @@ export async function getRandomListProject(listId: string) {
     return null;
   }
 
-  // Fetch a random project
-  // Note: ORDER BY RANDOM() can be slow on large tables, but for list projects it should be fine
-  const randomProject = await db.query.listProject.findFirst({
-    where: eq(listProject.listId, listId),
-    with: {
-      project: {
-        with: {
-          techStack: {
-            columns: {
-              id: true,
-              label: true,
-              image: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: sql`RANDOM()`,
-  });
+  // Generate a random offset
+  const randomOffset = Math.floor(Math.random() * countResult.count);
 
-  if (!randomProject) {
+  // Fetch a random project using random offset (more efficient than ORDER BY RANDOM())
+  const [randomProjectData] = await db
+    .select({
+      listProject: listProject,
+      project: project,
+    })
+    .from(listProject)
+    .innerJoin(project, eq(listProject.projectId, project.id))
+    .where(eq(listProject.listId, listId))
+    .limit(1)
+    .offset(randomOffset);
+
+  if (!randomProjectData) {
     return null;
   }
+
+  // Fetch tech stack for the project
+  const techStackData = await db.query.techStack.findMany({
+    where: eq(techStack.projectId, randomProjectData.project.id),
+    columns: {
+      id: true,
+      label: true,
+      image: true,
+    },
+  });
 
   // Check if user saved this project
   let userSaved = false;
@@ -397,14 +501,18 @@ export async function getRandomListProject(listId: string) {
     const saved = await db.query.savedProject.findFirst({
       where: and(
         eq(savedProject.userId, user.id),
-        eq(savedProject.projectId, randomProject.project.id),
+        eq(savedProject.projectId, randomProjectData.project.id),
       ),
     });
     userSaved = !!saved;
   }
 
   return {
-    ...randomProject,
+    ...randomProjectData.listProject,
+    project: {
+      ...randomProjectData.project,
+      techStack: techStackData,
+    },
     userSaved,
   };
 }

@@ -20,12 +20,12 @@ import RichTextEditor from "@/components/ui/rich-text-editor";
 import { Textarea } from "@/components/ui/textarea";
 
 import { submitProjectToList } from "@/features/lists/lib/actions";
+import { TechStackInput } from "@/features/projects/components/tech-stack-input";
 import { submitProject } from "@/features/projects/lib/actions";
 import { NewProject } from "@/features/projects/lib/types";
 import { newProjectWithoutTechStackSchema } from "@/features/projects/lib/validation";
 
-import { Loader, Tick } from "@/components/icons";
-import { TechStackInput } from "@/features/projects/components/tech-stack-input";
+import { Loader } from "@/components/icons";
 
 interface SubmitProjectDialogProps {
   open: boolean;
@@ -41,7 +41,6 @@ export function SubmitProjectDialog({
   listName,
 }: SubmitProjectDialogProps) {
   const queryClient = useQueryClient();
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [techStack, setTechStack] = useState<
     { label: string; image?: string }[]
   >([]);
@@ -86,7 +85,7 @@ export function SubmitProjectDialog({
     },
     onSuccess: () => {
       toast.success("Project submitted successfully!");
-      setIsSubmitted(true);
+      onOpenChange(false);
       queryClient.invalidateQueries({ queryKey: ["lists", listId] });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
@@ -103,23 +102,8 @@ export function SubmitProjectDialog({
     setTechStack(techStack.filter((_, i) => i !== index));
   };
 
-  const resetForm = () => {
-    form.reset();
-    setTechStack([]);
-    setIsSubmitted(false);
-  };
-
-  const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) {
-      if (isSubmitted) {
-        resetForm();
-      }
-    }
-    onOpenChange(newOpen);
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Submit Project</DialogTitle>
@@ -128,49 +112,105 @@ export function SubmitProjectDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {isSubmitted ? (
-          <div className="flex flex-col items-center justify-center gap-6 py-10 text-center">
-            <div className="bg-primary/10 text-primary flex h-20 w-20 items-center justify-center rounded-full">
-              <Tick className="h-10 w-10" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold">Project Submitted!</h3>
-              <p className="text-muted-foreground">
-                Your project has been successfully created and added to the
-                list.
-              </p>
-            </div>
-            <div className="flex gap-4">
-              <Button variant="outline" onClick={resetForm}>
-                Submit Another
-              </Button>
-              <Button onClick={() => onOpenChange(false)}>Done</Button>
-            </div>
-          </div>
-        ) : (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              console.log("Form submitted, current values:", form.state.values);
-              console.log("Form errors:", form.state.errors);
-              console.log("Can submit:", form.state.canSubmit);
-              form.handleSubmit();
-            }}
-            className="space-y-6"
-          >
-            {/* Name */}
-            <form.Field name="name">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            console.log("Form submitted, current values:", form.state.values);
+            console.log("Form errors:", form.state.errors);
+            console.log("Can submit:", form.state.canSubmit);
+            form.handleSubmit();
+          }}
+          className="space-y-6"
+        >
+          {/* Name */}
+          <form.Field name="name">
+            {(field) => (
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  placeholder="e.g. My Awesome App"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  disabled={isPending}
+                  aria-invalid={field.state.meta.errors.length > 0}
+                  maxLength={100}
+                />
+                {field.state.meta.errors.length > 0 && (
+                  <p className="text-destructive text-sm">
+                    {field.state.meta.errors[0]?.message}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+          {/* Description */}
+          <form.Field name="description">
+            {(field) => (
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Brief description of your project..."
+                  value={(field.state.value as string) || ""}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  rows={3}
+                  maxLength={1000}
+                  disabled={isPending}
+                  aria-invalid={field.state.meta.errors.length > 0}
+                />
+                {field.state.value && (
+                  <p className="text-muted-foreground text-xs">
+                    {(field.state.value as string).length}/1000 characters
+                  </p>
+                )}
+                {field.state.meta.errors.length > 0 && (
+                  <p className="text-destructive text-sm">
+                    {field.state.meta.errors[0]?.message}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+          {/* Body */}
+          <form.Field name="body">
+            {(field) => (
+              <div className="space-y-2">
+                <Label htmlFor="body">
+                  Content{" "}
+                  <span className="text-muted-foreground font-normal">
+                    (optional)
+                  </span>
+                </Label>
+                <div className="min-h-[200px]">
+                  <RichTextEditor
+                    value={(field.state.value as string) || ""}
+                    onChange={(value) => field.handleChange(value)}
+                    disabled={isPending}
+                  />
+                </div>
+                {field.state.meta.errors.length > 0 && (
+                  <p className="text-destructive text-sm">
+                    {field.state.meta.errors[0]?.message}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+          {/* Links */}
+          <div className="grid gap-6 md:grid-cols-2">
+            <form.Field name="liveLink">
               {(field) => (
                 <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
+                  <Label htmlFor="liveLink">Live URL</Label>
                   <Input
-                    id="name"
-                    placeholder="e.g. My Awesome App"
+                    id="liveLink"
+                    type="url"
+                    placeholder="https://example.com"
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
                     disabled={isPending}
                     aria-invalid={field.state.meta.errors.length > 0}
-                    maxLength={100}
                   />
                   {field.state.meta.errors.length > 0 && (
                     <p className="text-destructive text-sm">
@@ -180,51 +220,25 @@ export function SubmitProjectDialog({
                 </div>
               )}
             </form.Field>
-            {/* Description */}
-            <form.Field name="description">
+
+            <form.Field name="codeLink">
               {(field) => (
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Brief description of your project..."
-                    value={(field.state.value as string) || ""}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    rows={3}
-                    maxLength={1000}
-                    disabled={isPending}
-                    aria-invalid={field.state.meta.errors.length > 0}
-                  />
-                  {field.state.value && (
-                    <p className="text-muted-foreground text-xs">
-                      {(field.state.value as string).length}/1000 characters
-                    </p>
-                  )}
-                  {field.state.meta.errors.length > 0 && (
-                    <p className="text-destructive text-sm">
-                      {field.state.meta.errors[0]?.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            </form.Field>
-            {/* Body */}
-            <form.Field name="body">
-              {(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor="body">
-                    Content{" "}
+                  <Label htmlFor="codeLink">
+                    Code URL{" "}
                     <span className="text-muted-foreground font-normal">
                       (optional)
                     </span>
                   </Label>
-                  <div className="min-h-[200px]">
-                    <RichTextEditor
-                      value={(field.state.value as string) || ""}
-                      onChange={(value) => field.handleChange(value)}
-                      disabled={isPending}
-                    />
-                  </div>
+                  <Input
+                    id="codeLink"
+                    type="url"
+                    placeholder="https://github.com/username/repo"
+                    value={(field.state.value as string) || ""}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    disabled={isPending}
+                    aria-invalid={field.state.meta.errors.length > 0}
+                  />
                   {field.state.meta.errors.length > 0 && (
                     <p className="text-destructive text-sm">
                       {field.state.meta.errors[0]?.message}
@@ -233,88 +247,37 @@ export function SubmitProjectDialog({
                 </div>
               )}
             </form.Field>
-            {/* Links */}
-            <div className="grid gap-6 md:grid-cols-2">
-              <form.Field name="liveLink">
-                {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="liveLink">Live URL</Label>
-                    <Input
-                      id="liveLink"
-                      type="url"
-                      placeholder="https://example.com"
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      disabled={isPending}
-                      aria-invalid={field.state.meta.errors.length > 0}
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <p className="text-destructive text-sm">
-                        {field.state.meta.errors[0]?.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </form.Field>
+          </div>
+          {/* Tech Stack */}
+          <TechStackInput
+            techStack={techStack}
+            onAdd={addTech}
+            onRemove={removeTech}
+            disabled={isPending}
+          />
 
-              <form.Field name="codeLink">
-                {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="codeLink">
-                      Code URL{" "}
-                      <span className="text-muted-foreground font-normal">
-                        (optional)
-                      </span>
-                    </Label>
-                    <Input
-                      id="codeLink"
-                      type="url"
-                      placeholder="https://github.com/username/repo"
-                      value={(field.state.value as string) || ""}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      disabled={isPending}
-                      aria-invalid={field.state.meta.errors.length > 0}
-                    />
-                    {field.state.meta.errors.length > 0 && (
-                      <p className="text-destructive text-sm">
-                        {field.state.meta.errors[0]?.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </form.Field>
-            </div>
-            {/* Tech Stack */}
-            <TechStackInput
-              techStack={techStack}
-              onAdd={addTech}
-              onRemove={removeTech}
+          <div className="flex justify-between gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-1/2"
+              onClick={() => onOpenChange(false)}
               disabled={isPending}
-            />
-
-            <div className="flex justify-between gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="w-1/2"
-                onClick={() => onOpenChange(false)}
-                disabled={isPending}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isPending} className="w-1/2">
-                {isPending ? (
-                  <>
-                    <Loader className="h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  "Submit Project"
-                )}
-              </Button>
-            </div>
-          </form>
-        )}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isPending} className="w-1/2">
+              {isPending ? (
+                <>
+                  <Loader className="h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                "Submit Project"
+              )}
+            </Button>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

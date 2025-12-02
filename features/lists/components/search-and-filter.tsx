@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
+import { useRouter } from "@bprogress/next";
 import { useDebouncedCallback } from "use-debounce";
 
 import { Button } from "@/components/ui/button";
@@ -31,12 +32,16 @@ interface SearchAndFilterProps {
   onSearchChange?: (value: string) => void;
   onSortChange?: (sortBy: string, sortDirection: "asc" | "desc") => void;
   onViewChange?: (view: "card" | "table") => void;
+  onFilterChange?: (filter: "reviewed" | "pending") => void;
+  isOwner: boolean;
 }
 
 const SearchAndFilter = ({
   onSearchChange,
   onSortChange,
   onViewChange,
+  onFilterChange,
+  isOwner,
 }: SearchAndFilterProps) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -50,11 +55,9 @@ const SearchAndFilter = ({
   const [view, setView] = useState<"card" | "table">(
     (searchParams.get("view") as "card" | "table") || "card",
   );
-  const currentSearch = searchParams.get("search") || "";
-
-  useEffect(() => {
-    setSearch((prev) => (prev !== currentSearch ? currentSearch : prev));
-  }, [searchParams]);
+  const [filter, setFilter] = useState<"reviewed" | "pending">(
+    (searchParams.get("filter") as "reviewed" | "pending") || "reviewed",
+  );
 
   // Update URL params
   const updateUrlParams = useCallback(
@@ -103,6 +106,12 @@ const SearchAndFilter = ({
     onViewChange?.(newView);
   };
 
+  const handleFilterChange = (newFilter: "reviewed" | "pending") => {
+    setFilter(newFilter);
+    updateUrlParams({ filter: newFilter });
+    onFilterChange?.(newFilter);
+  };
+
   return (
     <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
       <div className="flex w-full flex-row gap-2 sm:w-auto">
@@ -118,39 +127,68 @@ const SearchAndFilter = ({
           />
         </InputGroup>
 
-        <Select value={sortBy} onValueChange={handleSortChange}>
+        <Select
+          value={sortBy}
+          onValueChange={handleSortChange}
+          disabled={filter === "pending"}
+        >
           <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="date">Date Reviewed</SelectItem>
-            <SelectItem value="name">Project Name</SelectItem>
             <SelectItem value="rating">Overall Rating</SelectItem>
           </SelectContent>
         </Select>
 
-        <Button variant={"outline"} size={"icon"} onClick={toggleSortDirection}>
+        <Button
+          variant={"outline"}
+          size={"icon"}
+          onClick={toggleSortDirection}
+          disabled={filter === "pending"}
+        >
           {sortDirection === "desc" ? <SortDown /> : <SortUp />}
         </Button>
       </div>
-
-      <div className="corner-squircle supports-[corner-shape: squircle]:rounded-xl flex items-center space-x-1 rounded-md border p-1">
-        <Button
-          variant={"ghost"}
-          size={"icon-sm"}
-          className={view === "table" ? "bg-muted" : ""}
-          onClick={() => handleViewChange("table")}
-        >
-          <Table />
-        </Button>
-        <Button
-          variant={"ghost"}
-          size={"icon-sm"}
-          className={view === "card" ? "bg-muted" : ""}
-          onClick={() => handleViewChange("card")}
-        >
-          <Card />
-        </Button>
+      <div className="flex gap-2">
+        {isOwner && (
+          <div className="corner-squircle flex items-center space-x-1 rounded-md border p-1 supports-[corner-shape:squircle]:rounded-2xl">
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className={filter === "reviewed" ? "bg-muted" : ""}
+              onClick={() => handleFilterChange("reviewed")}
+            >
+              Reviewed
+            </Button>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className={filter === "pending" ? "bg-muted" : ""}
+              onClick={() => handleFilterChange("pending")}
+            >
+              Pending
+            </Button>
+          </div>
+        )}
+        <div className="corner-squircle flex items-center space-x-1 rounded-md border p-1 supports-[corner-shape:squircle]:rounded-2xl">
+          <Button
+            variant={"ghost"}
+            size={"icon-sm"}
+            className={view === "table" ? "bg-muted" : ""}
+            onClick={() => handleViewChange("table")}
+          >
+            <Table />
+          </Button>
+          <Button
+            variant={"ghost"}
+            size={"icon-sm"}
+            className={view === "card" ? "bg-muted" : ""}
+            onClick={() => handleViewChange("card")}
+          >
+            <Card />
+          </Button>
+        </div>
       </div>
     </div>
   );

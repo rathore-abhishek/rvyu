@@ -16,9 +16,10 @@ import {
 } from "@/components/ui/tooltip";
 
 import { toggleProjectSave } from "@/features/lists/lib/actions";
-import { ProjectCardPreview } from "@/features/projects/components/project-card-preview";
 
-import { CodeLink, Link as LinkIcon, Save } from "@/components/icons";
+import { CodeLink, Delete, Link as LinkIcon, Save } from "@/components/icons";
+
+import { ProjectCardPreview } from "./project-card-preview";
 
 interface ProjectCardProps {
   listProjectId: string;
@@ -32,6 +33,13 @@ interface ProjectCardProps {
     label: string;
     image: string | null;
   }>;
+  review: {
+    design: number;
+    userExperience: number;
+    creativity: number;
+    functionality: number;
+    hireability: number;
+  } | null;
 
   userSaved: boolean;
   currentUserId: string | null;
@@ -45,6 +53,7 @@ export function ProjectCard({
   liveLink,
   codeLink,
   techStack,
+  review,
 
   userSaved,
   currentUserId,
@@ -53,6 +62,15 @@ export function ProjectCard({
   const queryClient = useQueryClient();
   const [saved, setSaved] = useState(userSaved);
   const [hoveredTech, setHoveredTech] = useState<string | null>(null);
+
+  const overallRating = review
+    ? (review.design +
+        review.userExperience +
+        review.creativity +
+        review.functionality +
+        review.hireability) /
+      5
+    : null;
 
   const { mutate: toggleSave, isPending: isSaving } = useMutation({
     mutationFn: toggleProjectSave,
@@ -91,55 +109,96 @@ export function ProjectCard({
   return (
     <article
       onClick={onClick}
-      className="group bg-card hover:border-primary/50 relative flex cursor-pointer flex-col overflow-hidden rounded-xl border transition-colors"
+      className="group bg-card relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border"
     >
       {/* Project Preview */}
-      <ProjectCardPreview liveLink={liveLink} />
+      {!review && <ProjectCardPreview liveLink={liveLink} />}
 
-      <div className="relative flex flex-col gap-3 p-4">
+      <div className="relative flex flex-1 flex-col gap-3 p-4">
         {/* Header with Actions */}
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-1 items-start justify-between gap-3">
           <div className="min-w-0 flex-1 space-y-1">
-            <h3 className="line-clamp-1 text-base leading-tight font-semibold tracking-tight">
-              {name}
-            </h3>
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="line-clamp-1 text-base leading-tight font-semibold tracking-tight">
+                {name}
+              </h3>
+            </div>
             {description && (
-              <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+              <p className="text-muted-foreground line-clamp-2 flex-1 text-sm leading-snug">
                 {description}
               </p>
             )}
           </div>
 
-          {/* Compact Action Buttons */}
-          <div className="flex shrink-0 items-center gap-1">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className={`h-8 w-8 ${saved ? "text-primary" : "text-muted-foreground"}`}
-                >
-                  <motion.div
-                    animate={{ scale: saved ? [1, 1.2, 1] : 1 }}
-                    transition={{ duration: 0.3 }}
+          {currentUserId && (
+            <div className="shrink0 flex items-center gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="icon-sm"
+                    variant="ghost"
+                    // onClick={(e) => onDelete(e, list.id, list.name)}
+                    className="text-destructive lg:text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 rounded-lg"
                   >
-                    <Save
-                      className={`h-3.5 w-3.5 ${saved && "fill-current"}`}
-                    />
-                  </motion.div>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>{saved ? "Unsave" : "Save"}</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
+                    <Delete />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className={`h-8 w-8 ${saved ? "text-primary hover:text-primary hover:bg-primary/10" : "text-muted-foreground hover:text-muted-foreground"}`}
+                  >
+                    <motion.div
+                      animate={{ scale: saved ? [1, 1.2, 1] : 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Save
+                        className={`h-3.5 w-3.5 ${saved && "fill-current"}`}
+                      />
+                    </motion.div>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>{saved ? "Unsave" : "Save"}</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          )}
         </div>
 
+        {overallRating !== null && (
+          <div className="bg-muted/30 flex justify-between rounded-lg border p-4">
+            <p className="text-muted-foreground text-sm font-medium uppercase">
+              Overall
+            </p>
+            <div className="bg-primary/10 text-primary flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-sm font-semibold">
+              <span>{overallRating.toFixed(1)}</span>
+              <span className="text-[12px] opacity-70">/10</span>
+            </div>
+          </div>
+        )}
+
+        {/* Review Data */}
+        {review && (
+          <div className="bg-muted/30 rounded-lg border p-2.5">
+            <div className="grid gap-x-3 gap-y-1.5">
+              <ReviewItem label="Design" score={review.design} />
+              <ReviewItem label="UX" score={review.userExperience} />
+              <ReviewItem label="Creativity" score={review.creativity} />
+              <ReviewItem label="Functionality" score={review.functionality} />
+              <ReviewItem label="Hireability" score={review.hireability} />
+            </div>
+          </div>
+        )}
+
         {/* Tech Stack - Expandable Icons */}
-        {techStack && techStack.length > 0 && (
+        {!review && techStack && techStack.length > 0 && (
           <div className="flex items-center">
             {techStack.slice(0, 5).map((tech) => {
               const isHovered = hoveredTech === tech.id;
@@ -178,7 +237,6 @@ export function ProjectCard({
                     )}
                   </div>
 
-                  {/* Text - only renders when hovered */}
                   <AnimatePresence>
                     {isHovered && (
                       <motion.span
@@ -260,12 +318,7 @@ export function ProjectCard({
         )}
 
         {/* Footer - Creator & Links */}
-        <div className="flex items-center justify-between gap-3 border-t pt-3">
-          {/* Creator */}
-          <div className="flex min-w-0 flex-1 items-center gap-2">
-            {/* User info removed */}
-          </div>
-
+        <div className="mt-auto flex items-center justify-end gap-3 border-t pt-3">
           {/* External Links */}
           <div className="flex shrink-0 items-center gap-1">
             {codeLink && (
@@ -318,5 +371,32 @@ export function ProjectCard({
         </div>
       </div>
     </article>
+  );
+}
+
+function ReviewItem({
+  label,
+  score,
+  className = "",
+}: {
+  label: string;
+  score: number;
+  className?: string;
+}) {
+  return (
+    <div className={`flex items-center gap-6 ${className}`}>
+      <span className="text-muted-foreground w-16 shrink-0 text-xs font-medium">
+        {label}
+      </span>
+      <div className="bg-primary/10 h-1.5 flex-1 overflow-hidden rounded-full">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${(score / 10) * 100}%` }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="bg-primary h-full rounded-full"
+        />
+      </div>
+      <span className="w-4 text-right text-xs font-semibold">{score}</span>
+    </div>
   );
 }

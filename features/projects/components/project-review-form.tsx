@@ -19,11 +19,22 @@ type ReviewFormValues = z.infer<typeof reviewSchema>;
 interface ProjectReviewFormProps {
   projectId: string;
   onSuccess?: () => void;
+  initialData?: {
+    design: number;
+    userExperience: number;
+    creativity: number;
+    functionality: number;
+    hireability: number;
+    remark: string | null;
+  } | null;
+  readOnly?: boolean;
 }
 
 export function ProjectReviewForm({
   projectId,
   onSuccess,
+  initialData,
+  readOnly = false,
 }: ProjectReviewFormProps) {
   const { mutateAsync: submitReviewMutation, isPending } = useMutation({
     mutationFn: submitReview,
@@ -39,17 +50,18 @@ export function ProjectReviewForm({
   const form = useForm({
     defaultValues: {
       projectId,
-      design: 5,
-      userExperience: 5,
-      creativity: 5,
-      functionality: 5,
-      hireability: 5,
-      remark: "",
+      design: initialData?.design ?? 5,
+      userExperience: initialData?.userExperience ?? 5,
+      creativity: initialData?.creativity ?? 5,
+      functionality: initialData?.functionality ?? 5,
+      hireability: initialData?.hireability ?? 5,
+      remark: initialData?.remark ?? "",
     } as ReviewFormValues,
     validators: {
       onChange: reviewSchema,
     },
     onSubmit: async ({ value }) => {
+      if (readOnly) return;
       await submitReviewMutation(value);
     },
   });
@@ -68,7 +80,9 @@ export function ProjectReviewForm({
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          form.handleSubmit();
+          if (!readOnly) {
+            form.handleSubmit();
+          }
         }}
         className="flex flex-col gap-6"
       >
@@ -133,7 +147,7 @@ export function ProjectReviewForm({
                       value={[field.state.value]}
                       onValueChange={(vals) => field.handleChange(vals[0])}
                       className="py-1"
-                      disabled={isPending}
+                      disabled={isPending || readOnly}
                     />
                   </div>
                 )}
@@ -150,8 +164,12 @@ export function ProjectReviewForm({
                   <RichTextEditor
                     value={field.state.value ?? ""}
                     onChange={field.handleChange}
-                    placeholder="Add your detailed review here..."
-                    disabled={isPending}
+                    placeholder={
+                      readOnly
+                        ? "No remarks provided."
+                        : "Add your detailed review here..."
+                    }
+                    disabled={isPending || readOnly}
                   />
                 </div>
               )}
@@ -159,16 +177,18 @@ export function ProjectReviewForm({
           </div>
         </div>
 
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Submitting...
-            </>
-          ) : (
-            "Submit Review"
-          )}
-        </Button>
+        {!readOnly && (
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              "Submit Review"
+            )}
+          </Button>
+        )}
       </form>
     </div>
   );

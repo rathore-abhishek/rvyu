@@ -31,13 +31,16 @@ const ListDetailPage = async ({
   const sortDirection =
     (resolvedSearchParams.sortDir as "asc" | "desc") || "desc";
   const view = (resolvedSearchParams.view as "card" | "table") || "card";
+  const filter =
+    (resolvedSearchParams.filter as "reviewed" | "pending") || "reviewed";
+  const page = parseInt((resolvedSearchParams.page as string) || "1", 10);
 
   const list = await getListDetails(id);
 
   const isOwner = list.userId === user?.id;
 
   return (
-    <div className="container mx-auto mt-6 mb-32 max-w-6xl space-y-8 px-6">
+    <div className="container mx-auto mt-10 mb-32 max-w-6xl space-y-8 px-6">
       {/* Header Section */}
       <div className="space-y-6">
         {/* Title and Actions */}
@@ -124,7 +127,7 @@ const ListDetailPage = async ({
         </div>
       </div>
 
-      <SearchAndFilter />
+      <SearchAndFilter isOwner={isOwner} />
       {/* Client-side interactive content */}
       <ProjectsList
         listId={id}
@@ -133,6 +136,9 @@ const ListDetailPage = async ({
         sortDirection={sortDirection}
         view={view}
         currentUserId={user?.id || null}
+        filter={filter}
+        page={page}
+        isOwner={isOwner}
       />
     </div>
   );
