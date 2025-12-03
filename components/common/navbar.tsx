@@ -26,7 +26,7 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-3 right-0 left-0 z-50 px-5">
-      <nav className="from-background to-background/80 relative container mx-auto flex max-w-6xl items-center justify-between overflow-hidden rounded-2xl border bg-linear-to-br px-6 py-3 shadow-sm backdrop-blur-sm sm:rounded-3xl sm:py-4">
+      <nav className="from-background to-background/10 relative container mx-auto flex max-w-6xl items-center justify-between overflow-hidden rounded-2xl border bg-linear-to-br px-6 py-3 shadow-sm backdrop-blur-sm sm:rounded-3xl sm:py-4">
         <Meteors number={10} angle={70} />
 
         {/* Gradient overlay */}
