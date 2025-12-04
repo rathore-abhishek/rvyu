@@ -1,19 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
 
 import { Button } from "@/components/ui/button";
 import { FlickeringGrid } from "@/components/ui/flickering-grid";
+import { Highlighter } from "@/components/ui/highlighter";
 import { Spotlight } from "@/components/ui/spotlight";
+
+import { getUser } from "@/actions/user";
 
 import { Github } from "@/components/icons";
 
 const Dashboard = () => {
+  
+
   return (
-    <>
+    <div className="relative">
       <section className="relative z-10 mx-auto flex max-w-6xl flex-col items-center justify-center gap-6 px-4 py-24 text-center sm:py-32">
         <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" />
         <FlickeringGrid
@@ -30,10 +38,20 @@ const Dashboard = () => {
           transition={{ duration: 0.5 }}
           className="flex flex-col items-center gap-4"
         >
-          <h1 className="text-muted-foreground font-serif text-6xl font-medium tracking-wide">
-            The best way to <span className="text-foreground">collect</span>{" "}
+          <h1 className="text-muted-foreground relative font-serif text-6xl font-medium tracking-wide">
+            The best way to{" "}
+            <span className="text-foreground z-20">collect</span>{" "}
             <span className="italic">&</span> <br />
-            <span className="text-foreground">review</span> projects
+            <span className="text-foreground">review</span>{" "}
+            <div className="sticky inline-flex shrink-0">
+              <Highlighter
+                action="highlight"
+                color="var(--color-border)"
+                padding={0}
+              >
+                projects
+              </Highlighter>
+            </div>
           </h1>
 
           <p className="text-muted-foreground max-w-2xl text-lg">
@@ -117,7 +135,7 @@ const Dashboard = () => {
           />
         </motion.div>
       </section>
-    </>
+    </div>
   );
 };
 

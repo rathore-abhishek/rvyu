@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -11,31 +14,47 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getUser } from "@/actions/user";
 
 import { Meteors } from "../ui/meteors";
-import { MobileNav } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
 
-const navLinks = [{ href: "/dashboard", label: "Dashboard" }];
-
 const Navbar = () => {
+  const pathname = usePathname();
+
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: getUser,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
+  const isLanding = pathname === "/";
+  const showEffect = !isLanding || isScrolled;
+
   return (
     <header className="sticky top-3 right-0 left-0 z-50 px-5">
-      <nav className="from-background to-background/10 relative container mx-auto flex max-w-6xl items-center justify-between overflow-hidden rounded-2xl border bg-linear-to-br px-6 py-3 shadow-sm backdrop-blur-sm sm:rounded-3xl sm:py-4">
-        <Meteors number={10} angle={70} />
+      <nav
+        className={`relative container mx-auto flex items-center justify-between overflow-hidden rounded-2xl bg-linear-to-br px-6 py-3 backdrop-blur-sm transition-all duration-300 sm:rounded-3xl sm:py-4 ${
+          showEffect
+            ? `from-background to-background/10 border shadow-md ${isLanding ? "max-w-5xl" : "max-w-6xl"}`
+            : "max-w-4xl border-transparent shadow-none"
+        }`}
+      >
+        {showEffect && <Meteors number={10} angle={70} />}
 
         {/* Gradient overlay */}
-        <div className="from-primary/5 pointer-events-none absolute inset-0 rounded-2xl bg-linear-to-br via-transparent to-transparent sm:rounded-3xl" />
-
-        {/* Mobile Menu */}
-        <div className="relative md:hidden">
-          <MobileNav user={user ?? null} />
-        </div>
+        {showEffect && (
+          <div className="from-primary/5 pointer-events-none absolute inset-0 rounded-2xl bg-linear-to-br via-transparent to-transparent sm:rounded-3xl" />
+        )}
 
         {/* Logo */}
         <Link href="/" className="relative flex items-center gap-2">
@@ -51,27 +70,20 @@ const Navbar = () => {
           </span>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <ul className="relative hidden items-center gap-6 md:flex lg:gap-8">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-
         {/* Right Section - Theme Toggle & User Menu/CTA */}
         <div className="relative flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
           {isLoading ? (
             <Skeleton className="h-10 w-10 rounded-full" />
           ) : user ? (
-            <UserMenu user={user} />
+            <>
+              {isLanding && (
+                <Button asChild size="sm" className="hidden sm:flex">
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+              )}
+              <UserMenu user={user} />
+            </>
           ) : (
             <Button asChild size="sm" className="hidden sm:flex">
               <Link href="/auth/login">Get Started</Link>
