@@ -10,6 +10,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { getUser } from "@/actions/user";
 
@@ -69,6 +74,38 @@ const Navbar = () => {
             rvyu.
           </span>
         </Link>
+
+        {/* Navigation Links */}
+        {isLanding && (
+          <ul className="relative hidden items-center gap-1 sm:flex">
+            <li>
+              <Link
+                href="#features"
+                className="text-muted-foreground hover:text-foreground rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+              >
+                Features
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="#faq"
+                className="text-muted-foreground hover:text-foreground rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+              >
+                FAQ
+              </Link>
+            </li>
+            <li>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-muted-foreground hover:text-foreground cursor-pointer rounded-lg px-3 py-2 text-sm font-medium transition-colors">
+                    Pricing
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>we don&apos;t do that here 😌</TooltipContent>
+              </Tooltip>
+            </li>
+          </ul>
+        )}
 
         {/* Right Section - Theme Toggle & User Menu/CTA */}
         <div className="relative flex items-center gap-2 sm:gap-3">
