@@ -783,7 +783,7 @@ const SkeletonSaveProject = () => {
             {/* External Links */}
             <div className="flex shrink-0 items-center gap-1">
               <a
-                href={"#"}
+                href={"https://github.com/rathore-abhishek/rvyu"}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
@@ -798,7 +798,7 @@ const SkeletonSaveProject = () => {
               </a>
 
               <a
-                href={"#"}
+                href={"https://rathore-abhishek.vercel.app"}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
