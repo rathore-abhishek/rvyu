@@ -4,6 +4,10 @@ import { useState } from "react";
 
 import { AnimatePresence, motion } from "motion/react";
 
+import { Button } from "@/components/ui/button";
+
+import ChevronUp from "@/components/icons/chevron-up";
+
 import { cn } from "@/lib/utils";
 
 interface FAQItem {
@@ -109,49 +113,40 @@ const FAQCard = ({ question, answer, isOpen, onClick }: FAQCardProps) => {
         </h3>
 
         {/* Toggle Icon */}
-        <div
-          className={cn(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors",
-            isOpen
-              ? "bg-primary/10 text-primary"
-              : "bg-muted text-muted-foreground",
-          )}
-        >
-          <motion.svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            animate={{ rotate: isOpen ? 45 : 0 }}
-            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+        <Button variant="outline" size="icon-sm">
+          <motion.div
+            initial={{ rotate: 180 }}
+            animate={{ rotate: isOpen ? 0 : 180 }}
+            transition={{ duration: 0.3 }}
           >
-            <path d="M12 5v14" />
-            <path d="M5 12h14" />
-          </motion.svg>
-        </div>
+            <ChevronUp />
+          </motion.div>
+        </Button>
       </div>
 
       {/* Answer Content */}
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
             transition={{
               height: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
-              opacity: { duration: 0.2, ease: "easeInOut" },
             }}
           >
             <div className="border-t px-4 pt-4 pb-5 sm:px-5">
-              <p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
+              <motion.p
+                className="text-muted-foreground text-sm leading-relaxed sm:text-base"
+                initial={{ opacity: 0, filter: "blur(4px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, filter: "blur(4px)" }}
+                transition={{
+                  duration: 0.4,
+                }}
+              >
                 {answer}
-              </p>
+              </motion.p>
             </div>
           </motion.div>
         )}
