@@ -17,10 +17,10 @@ import { Github } from "@/components/icons";
 const Dashboard = () => {
   return (
     <div className="relative">
-      <section className="relative z-10 mx-auto flex max-w-6xl flex-col items-center justify-center gap-6 px-4 py-24 text-center sm:py-32">
+      <section className="sm:py- relative z-10 mx-auto flex max-w-6xl flex-col items-center justify-center gap-6 px-4 py-16 text-center">
         <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" />
         <FlickeringGrid
-          className="absolute inset-0 -z-10 size-full [mask-image:radial-gradient(450px_circle_at_center,white,transparent)]"
+          className="absolute inset-0 -z-10 size-full mask-[radial-gradient(250px_circle_at_center,white,transparent)] sm:mask-[radial-gradient(450px_circle_at_center,white,transparent)]"
           squareSize={4}
           gridGap={6}
           color="#6B7280"
@@ -33,7 +33,7 @@ const Dashboard = () => {
           transition={{ duration: 0.5 }}
           className="flex flex-col items-center gap-4"
         >
-          <h1 className="text-muted-foreground relative font-serif text-6xl font-medium tracking-wide">
+          <h1 className="text-muted-foreground relative font-serif text-4xl font-medium tracking-wide sm:text-5xl md:text-6xl">
             The best way to{" "}
             <span className="text-foreground z-20">collect</span>{" "}
             <span className="italic">&</span> <br />
@@ -45,7 +45,7 @@ const Dashboard = () => {
             </div>
           </h1>
 
-          <p className="text-muted-foreground max-w-2xl text-lg">
+          <p className="text-muted-foreground max-w-2xl px-2 text-sm sm:px-0 sm:text-base md:text-lg">
             Stop digging through tweets and DMs. Create a list, share the link,
             and let your community submit their work for your next review.
           </p>
@@ -55,7 +55,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-col gap-2 sm:flex-row sm:gap-4"
+          className="flex flex-row gap-4"
         >
           <Button asChild>
             <Link href="/auth/login">
@@ -89,11 +89,11 @@ const Dashboard = () => {
                 <Github />
               </Link>
             </Button>
-            <span className="text-muted-foreground/30 pointer-events-none absolute -top-5 left-40 size-full -rotate-34 font-mono text-[10px]">
+            <span className="text-muted-foreground/30 pointer-events-none absolute -top-5 left-40 hidden size-full -rotate-34 font-mono text-[10px] sm:block">
               Give Star <br /> please :3 <br /> for cookie
             </span>
             <svg
-              className="text-muted-foreground/30 left- pointer-events-none absolute top-2 left-26 size-full rotate-190"
+              className="text-muted-foreground/30 left- pointer-events-none absolute top-2 left-26 hidden size-full rotate-190 sm:block"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 323.057 323.057"
               xmlSpace="preserve"

@@ -30,7 +30,7 @@ import { CodeLink, Link, Loader, Save, Tick } from "@/components/icons";
 
 import Cursor from "../icons/cursor";
 
-export function FeaturesSectionDemo() {
+export function FeaturesSection() {
   const features = [
     {
       title: "Create Lists",
@@ -62,13 +62,13 @@ export function FeaturesSectionDemo() {
   ];
 
   return (
-    <div className="relative z-20 mx-auto max-w-5xl">
+    <div className="relative z-20 mx-auto max-w-5xl px-4">
       {/* Features Heading */}
       <div className="mb-8 space-y-3">
-        <h2 className="text-foreground font-serif text-4xl font-bold tracking-wider">
+        <h2 className="text-foreground font-serif text-2xl font-semibold tracking-wider sm:text-3xl md:text-4xl">
           Why rvyu?
         </h2>
-        <p className="text-muted-foreground max-w-md text-base">
+        <p className="text-muted-foreground max-w-md text-sm md:text-base">
           No more hunting through DMs or tweets. Just create a list, share the
           link, and let people submit their stuff.
         </p>
@@ -120,7 +120,7 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
 // Skeleton 1: Create List Form
 const SkeletonCreateList = () => {
   return (
-    <div className="relative flex h-full justify-center px-2 py-8 perspective-distant transform-3d">
+    <div className="relative flex h-full justify-center px-8 py-8 perspective-distant transform-3d">
       <Card className="w-full max-w-md rotate-x-20 rotate-y-20 -rotate-z-10">
         <CardHeader>
           <CardTitle className="font-serif text-xl tracking-wider">
@@ -177,8 +177,8 @@ const SkeletonCreateList = () => {
         </CardContent>
       </Card>
 
-      <div className="from-background via-background pointer-events-none absolute inset-x-0 bottom-0 z-40 h-32 w-full bg-gradient-to-t to-transparent" />
-      <div className="from-background via-background pointer-events-none absolute right-0 z-40 h-full w-30 bg-gradient-to-l to-transparent" />
+      <div className="from-background via-background pointer-events-none absolute inset-x-0 bottom-0 z-40 h-20 w-full bg-gradient-to-t to-transparent sm:h-32" />
+      <div className="from-background via-background pointer-events-none absolute right-0 z-40 h-full w-16 bg-gradient-to-l to-transparent sm:w-30" />
     </div>
   );
 };
@@ -431,8 +431,8 @@ const SkeletonShareList = () => {
           </span>
         </div>
       </div>
-      <div className="from-background via-background/80 pointer-events-none absolute inset-x-0 top-0 z-40 h-16 w-full bg-gradient-to-b to-transparent" />
-      <div className="from-background via-background/80 pointer-events-none absolute inset-x-0 bottom-0 z-40 h-16 w-full bg-gradient-to-t to-transparent" />
+      <div className="from-background via-background/80 pointer-events-none absolute inset-x-0 top-0 z-40 h-10 w-full bg-gradient-to-b to-transparent sm:h-16" />
+      <div className="from-background via-background/80 pointer-events-none absolute inset-x-0 bottom-0 z-40 h-10 w-full bg-gradient-to-t to-transparent sm:h-16" />
     </div>
   );
 };
@@ -815,7 +815,7 @@ const SkeletonSaveProject = () => {
           </div>
         </div>
       </article>
-      <div className="from-background via-background pointer-events-none absolute inset-x-0 bottom-0 z-40 h-32 w-full bg-gradient-to-t to-transparent" />
+      <div className="from-background via-background pointer-events-none absolute inset-x-0 bottom-0 z-40 h-20 w-full bg-gradient-to-t to-transparent sm:h-32" />
     </div>
   );
 };
@@ -918,10 +918,10 @@ const SkeletonReviews = () => {
           </CardContent>
         </Card>
       </div>
-      <div className="from-background via-background pointer-events-none absolute inset-x-0 bottom-0 z-40 h-32 w-full bg-gradient-to-t to-transparent" />
-      <div className="from-background via-background pointer-events-none absolute right-0 z-40 h-full w-30 bg-gradient-to-l to-transparent" />
+      <div className="from-background via-background pointer-events-none absolute inset-x-0 bottom-0 z-40 h-40 w-full bg-gradient-to-t to-transparent sm:h-32" />
+      <div className="from-background via-background pointer-events-none absolute right-0 z-40 h-full w-20 bg-gradient-to-l to-transparent sm:w-30" />
     </div>
   );
 };
 
-export default FeaturesSectionDemo;
+export default FeaturesSection;
