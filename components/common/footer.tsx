@@ -6,19 +6,17 @@ import { Heart } from "@/components/icons";
 
 import { FlickeringGrid } from "../ui/flickering-grid";
 import { Meteors } from "../ui/meteors";
+import RvyuFuzzy from "./rvyu-fuzzy";
 
 const Footer = () => {
   return (
     <footer className="px-6 py-16">
-      <div className="relative container mx-auto flex w-full max-w-6xl flex-col items-center gap-12 overflow-hidden text-center">
+      <div className="relative container mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-12 overflow-hidden text-center">
         <Meteors number={10} angle={75} />
         <div className="via-muted absolute inset-x-0 top-0 h-px bg-linear-to-l from-transparent to-transparent"></div>
-        <p className="text-muted-foreground pointer-events-none z-10 font-serif text-[10rem] leading-tight font-bold tracking-wide">
-          rvyu
-          <span className="from-primary via-muted-foreground bg-linear-to-br to-white bg-clip-text text-transparent">
-            .
-          </span>
-        </p>
+        <div className="text-muted-foreground pointer-events-none z-10 flex w-full items-center justify-center pt-20 font-serif text-[10rem] leading-tight font-bold tracking-wide">
+          <RvyuFuzzy />
+        </div>
 
         <a
           href="https://rathore-abhishek.vercel.app"
@@ -41,16 +39,14 @@ const Footer = () => {
             </span>
           </p>
         </a>
-        <div className="absolute top-10 left-1/2 z-0 h-[200px] w-[400px] -translate-x-1/2 mask-[radial-gradient(200px_circle_at_center,white,transparent)]">
-          <FlickeringGrid
-            className="h-full w-full"
-            squareSize={4}
-            gridGap={6}
-            color="#00a6f4"
-            maxOpacity={0.4}
-            flickerChance={0.08}
-          />
-        </div>
+        <FlickeringGrid
+          className="absolute mask-[radial-gradient(180px_circle_at_center,white,transparent)]"
+          squareSize={4}
+          gridGap={6}
+          color="#00a6f4"
+          maxOpacity={0.4}
+          flickerChance={0.08}
+        />
       </div>
     </footer>
   );
