@@ -107,6 +107,8 @@ export function ProjectCard({
     toggleSave({ projectId });
   };
 
+  console.log(techStack);
+
   return (
     <>
       <article
