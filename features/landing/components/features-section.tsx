@@ -30,7 +30,7 @@ import { CodeLink, Link, Loader, Save, Tick } from "@/components/icons";
 
 import Cursor from "../icons/cursor";
 
-export function FeaturesSection() {
+export default function FeaturesSection() {
   const features = [
     {
       title: "Create Lists",
@@ -62,7 +62,10 @@ export function FeaturesSection() {
   ];
 
   return (
-    <div className="relative z-20 mx-auto max-w-5xl px-4">
+    <section
+      className="relative z-20 mx-auto max-w-5xl scroll-mt-24 px-4"
+      id="features"
+    >
       {/* Features Heading */}
       <div className="mb-8 space-y-3">
         <h2 className="text-foreground font-serif text-2xl font-semibold tracking-wider sm:text-3xl md:text-4xl">
@@ -83,7 +86,7 @@ export function FeaturesSection() {
           </FeatureCard>
         ))}
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -923,5 +926,3 @@ const SkeletonReviews = () => {
     </div>
   );
 };
-
-export default FeaturesSection;
