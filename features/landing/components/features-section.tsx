@@ -249,7 +249,7 @@ const SkeletonShareList = () => {
       await animate(
         "#copy-btn",
         {
-          backgroundColor: "var(--color-primary-10, rgba(59, 130, 246, 0.15))",
+          backgroundColor: "rgba(34, 197, 94, 0.15)",
         },
         { duration: 0.15, ease: easeOut },
       );
@@ -377,9 +377,9 @@ const SkeletonShareList = () => {
               {/* Copy Button */}
               <div
                 id="copy-btn"
-                className={`flex h-6 w-6 cursor-default items-center justify-center rounded-md transition-colors ${
+                className={`bg-muted flex h-6 w-6 cursor-default items-center justify-center rounded-md transition-colors ${
                   isCopied
-                    ? "bg-green-500/10 text-green-500"
+                    ? "text-green-500"
                     : "text-muted-foreground hover:text-primary"
                 }`}
               >
