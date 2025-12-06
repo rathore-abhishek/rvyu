@@ -122,7 +122,7 @@ const Navbar = () => {
               <UserMenu user={user} />
             </>
           ) : (
-            <Button asChild size="sm" className="hidden sm:flex">
+            <Button asChild size="sm">
               <Link href="/auth/login">Get Started</Link>
             </Button>
           )}
