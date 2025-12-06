@@ -19,11 +19,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+import CopyShare from "@/components/icons/copy-share";
+import Play from "@/components/icons/play";
+
 import { ProjectCardPreview } from "@/features/lists/components";
 
 import { cn } from "@/lib/utils";
 
-import { CodeLink, Link, Loader, Save } from "@/components/icons";
+import { CodeLink, Link, Loader, Save, Tick } from "@/components/icons";
 
 import Cursor from "../icons/cursor";
 
@@ -60,6 +63,17 @@ export function FeaturesSectionDemo() {
 
   return (
     <div className="relative z-20 mx-auto max-w-5xl">
+      {/* Features Heading */}
+      <div className="mb-8 space-y-3">
+        <h2 className="text-foreground font-serif text-4xl font-bold tracking-wider">
+          Why rvyu?
+        </h2>
+        <p className="text-muted-foreground max-w-md text-base">
+          No more hunting through DMs or tweets. Just create a list, share the
+          link, and let people submit their stuff.
+        </p>
+      </div>
+
       <div className="border-border grid grid-cols-1 rounded-xl border lg:grid-cols-6">
         {features.map((feature) => (
           <FeatureCard key={feature.title} className={feature.className}>
@@ -120,7 +134,7 @@ const SkeletonCreateList = () => {
             {/* Name Field */}
             <div className="space-y-2 duration-300">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" value={"Frontend Projects"} />
+              <Input id="name" value={"Frontend Projects"} readOnly />
             </div>
 
             {/* Description Field */}
@@ -137,6 +151,7 @@ const SkeletonCreateList = () => {
                 rows={3}
                 className="resize-none"
                 value={""}
+                readOnly
               />
             </div>
 
@@ -148,7 +163,7 @@ const SkeletonCreateList = () => {
                   (optional)
                 </span>
               </Label>
-              <Input value={"https://youtube.com/playlist?list=..."} />
+              <Input value={"https://youtube.com/playlist?list=..."} readOnly />
             </div>
 
             {/* Buttons */}
@@ -168,84 +183,256 @@ const SkeletonCreateList = () => {
   );
 };
 
-// Skeleton 2: Share List
+// Skeleton 2: Share List - List cards with cursor animation and toast
 const SkeletonShareList = () => {
+  const [isCopied, setIsCopied] = useState(false);
+  const [scope, animate] = useAnimate();
+
+  const mockLists = [
+    {
+      name: "Backend APIs",
+      description: "REST and GraphQL projects",
+      date: "Nov 28",
+    },
+    {
+      name: "Frontend Projects",
+      description: "React, Vue, and Angular showcases",
+      date: "Dec 2",
+    },
+    {
+      name: "Mobile Apps",
+      description: "iOS and Android applications",
+      date: "Dec 5",
+    },
+  ];
+
+  useEffect(() => {
+    const easeOut = [0.0, 0.0, 0.2, 1] as const;
+    const easeInOut = [0.4, 0, 0.2, 1] as const;
+
+    async function runAnimation() {
+      // Reset states
+      setIsCopied(false);
+
+      // Reset cursor to start position (below the copy button)
+      await animate(
+        "#share-cursor",
+        { opacity: 0, translateX: 0, translateY: 20, scale: 1 },
+        { duration: 0 },
+      );
+
+      // Reset toast
+      await animate(
+        "#share-toast",
+        { opacity: 0, translateY: 20, scale: 0.95 },
+        { duration: 0 },
+      );
+
+      // Small delay before starting
+      await new Promise((r) => setTimeout(r, 600));
+
+      // 1. Cursor fades in smoothly
+      await animate(
+        "#share-cursor",
+        { opacity: 1 },
+        { duration: 0.4, ease: easeOut },
+      );
+
+      // 2. Cursor moves to copy button (upward and slightly left to center on button)
+      await animate(
+        "#share-cursor",
+        { translateX: -4, translateY: -10 },
+        { duration: 0.7, ease: easeInOut },
+      );
+
+      // 3. Hover effect on button
+      await animate(
+        "#copy-btn",
+        {
+          backgroundColor: "var(--color-primary-10, rgba(59, 130, 246, 0.15))",
+        },
+        { duration: 0.15, ease: easeOut },
+      );
+
+      // Natural pause before click
+      await new Promise((r) => setTimeout(r, 180));
+
+      // 4. Click - cursor presses down
+      await animate(
+        "#share-cursor",
+        { scale: 0.85 },
+        { duration: 0.06, ease: easeOut },
+      );
+      animate("#copy-btn", { scale: 0.92 }, { duration: 0.06, ease: easeOut });
+      await new Promise((r) => setTimeout(r, 60));
+
+      // 5. Release click
+      animate("#share-cursor", { scale: 1 }, { duration: 0.1, ease: easeOut });
+      await animate(
+        "#copy-btn",
+        { scale: 1 },
+        { duration: 0.1, ease: easeOut },
+      );
+
+      // 6. Show copied state
+      setIsCopied(true);
+
+      // Cursor drifts away
+      animate(
+        "#share-cursor",
+        { translateX: 10, translateY: 5, opacity: 0.4 },
+        { duration: 0.35, ease: easeOut },
+      );
+
+      // 7. Show toast notification with slide + scale
+      await new Promise((r) => setTimeout(r, 150));
+      await animate(
+        "#share-toast",
+        { opacity: 1, translateY: 0, scale: 1 },
+        { duration: 0.25, ease: easeOut },
+      );
+
+      // Hold success state
+      await new Promise((r) => setTimeout(r, 2200));
+
+      // 8. Hide toast
+      await animate(
+        "#share-toast",
+        { opacity: 0, translateY: 8, scale: 0.98 },
+        { duration: 0.25, ease: easeInOut },
+      );
+
+      // 9. Cursor returns to start
+      await animate(
+        "#share-cursor",
+        { translateX: 0, translateY: 20, opacity: 0 },
+        { duration: 0.4, ease: easeInOut },
+      );
+
+      // Reset button
+      animate(
+        "#copy-btn",
+        { backgroundColor: "transparent" },
+        { duration: 0.15 },
+      );
+
+      // Pause before loop
+      await new Promise((r) => setTimeout(r, 500));
+
+      runAnimation();
+    }
+
+    const timeout = setTimeout(runAnimation, 500);
+    return () => clearTimeout(timeout);
+  }, [animate]);
+
   return (
-    <div className="relative flex h-full flex-col items-center justify-center py-8">
-      <motion.div
-        className="bg-card w-full max-w-xs rounded-xl border p-5 shadow-lg"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        viewport={{ once: true }}
-      >
-        <div className="mb-4 flex items-center gap-2">
-          <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-lg">
-            <svg
-              className="text-primary h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-              />
-            </svg>
+    <div
+      className="relative flex h-full flex-col items-center justify-center py-6"
+      ref={scope}
+    >
+      {/* Stacked List Cards */}
+      <div className="relative w-full max-w-xs space-y-3">
+        {/* Card Above (faded) */}
+        <div className="bg-card rounded-xl border p-4 opacity-40">
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold">{mockLists[0].name}</h3>
+            <p className="text-muted-foreground text-xs">
+              {mockLists[0].description}
+            </p>
           </div>
-          <span className="text-foreground font-medium">
-            Share submission link
-          </span>
-        </div>
-
-        {/* Link Input */}
-        <div className="bg-muted/50 border-input mb-3 flex items-center gap-2 rounded-lg border p-2.5">
-          <span className="text-muted-foreground flex-1 truncate text-sm">
-            rvyu.com/submit/abc123
-          </span>
-          <div className="bg-primary/10 text-primary rounded-md p-1.5">
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-              />
-            </svg>
+          <div className="mt-3 flex items-center justify-between border-t pt-2">
+            <span className="text-muted-foreground text-[10px]">
+              Created {mockLists[0].date}
+            </span>
+            <div className="flex gap-1">
+              <div className="bg-muted h-5 w-5 rounded" />
+              <div className="bg-muted h-5 w-5 rounded" />
+            </div>
           </div>
         </div>
 
-        {/* Success Message */}
-        <motion.div
-          className="text-primary flex items-center justify-center gap-1.5 text-sm font-medium"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.3 }}
-          viewport={{ once: true }}
+        {/* Main Card (active) */}
+        <div className="bg-card relative rounded-xl border p-4 shadow-lg">
+          <div className="space-y-2">
+            <div className="flex items-start justify-between">
+              <h3 className="text-sm font-semibold">{mockLists[1].name}</h3>
+            </div>
+            <p className="text-muted-foreground text-xs">
+              {mockLists[1].description}
+            </p>
+          </div>
+          <div className="mt-3 flex items-center justify-between border-t pt-2">
+            <span className="text-muted-foreground text-[10px]">
+              Created {mockLists[1].date}
+            </span>
+            <div className="relative flex gap-1">
+              {/* Play Button */}
+              <div
+                className={`text-muted-foreground flex h-6 w-6 cursor-default items-center justify-center rounded-md transition-colors`}
+              >
+                <Play className="h-3.5 w-3.5" />
+              </div>
+
+              {/* Copy Button */}
+              <div
+                id="copy-btn"
+                className={`flex h-6 w-6 cursor-default items-center justify-center rounded-md transition-colors ${
+                  isCopied
+                    ? "bg-green-500/10 text-green-500"
+                    : "text-muted-foreground hover:text-primary"
+                }`}
+              >
+                {isCopied ? (
+                  <Tick className="h-3.5 w-3.5" />
+                ) : (
+                  <CopyShare className="h-3.5 w-3.5" />
+                )}
+              </div>
+
+              {/* Cursor - positioned at bottom-right of copy button */}
+              <Cursor
+                id="share-cursor"
+                className="absolute -right-2 -bottom-2 size-5 opacity-0"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Card Below (faded) */}
+        <div className="bg-card rounded-xl border p-4 opacity-40">
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold">{mockLists[2].name}</h3>
+            <p className="text-muted-foreground text-xs">
+              {mockLists[2].description}
+            </p>
+          </div>
+          <div className="mt-3 flex items-center justify-between border-t pt-2">
+            <span className="text-muted-foreground text-[10px]">
+              Created {mockLists[2].date}
+            </span>
+            <div className="flex gap-1">
+              <div className="bg-muted h-5 w-5 rounded" />
+            </div>
+          </div>
+        </div>
+
+        {/* Toast Notification */}
+        <div
+          id="share-toast"
+          className="bg-card absolute right-0 bottom-4 left-0 mx-auto flex w-fit items-center gap-2 rounded-lg border px-3 py-2 opacity-0 shadow-xl"
+          style={{ transform: "translateY(20px) scale(0.95)" }}
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-          <span>Link copied!</span>
-        </motion.div>
-      </motion.div>
+          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500/15">
+            <Tick className="h-3 w-3 text-green-500" />
+          </div>
+          <span className="text-xs font-medium whitespace-nowrap">
+            Link copied!
+          </span>
+        </div>
+      </div>
+      <div className="from-background via-background/80 pointer-events-none absolute inset-x-0 top-0 z-40 h-16 w-full bg-gradient-to-b to-transparent" />
+      <div className="from-background via-background/80 pointer-events-none absolute inset-x-0 bottom-0 z-40 h-16 w-full bg-gradient-to-t to-transparent" />
     </div>
   );
 };
@@ -443,7 +630,7 @@ const SkeletonSaveProject = () => {
                 variant="ghost"
                 size="icon-sm"
                 id="button"
-                className={`h-8 w-8 transition-colors ${
+                className={`h-8 w-8 cursor-default transition-colors ${
                   saved
                     ? "text-primary hover:text-primary hover:bg-primary/10"
                     : isPending
@@ -633,79 +820,106 @@ const SkeletonSaveProject = () => {
   );
 };
 
-// Skeleton 4: Reviews & Ratings - matches ReviewItem structure
+// Skeleton 4: Reviews & Ratings - Static mockup like Create List
 const SkeletonReviews = () => {
-  const reviewItems = [
-    { label: "Design", score: 9, delay: 0.3 },
-    { label: "UX", score: 8, delay: 0.4 },
-    { label: "Creativity", score: 9, delay: 0.5 },
-    { label: "Functionality", score: 7, delay: 0.6 },
-    { label: "Hireability", score: 8, delay: 0.7 },
+  const ratingCategories = [
+    { label: "Design and Aesthetics", value: 8 },
+    { label: "User Experience", value: 7 },
+    { label: "Creativity", value: 9 },
+    { label: "Functionality", value: 8 },
+    { label: "Hireability", value: 7 },
   ];
 
-  const overallRating = (9 + 8 + 9 + 7 + 8) / 5;
+  const overallRating =
+    ratingCategories.reduce((acc, cat) => acc + cat.value, 0) /
+    ratingCategories.length;
 
   return (
-    <div className="relative flex h-full items-center justify-center py-8">
-      <motion.div
-        className="bg-card w-full max-w-sm rounded-xl border p-5 shadow-lg"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        viewport={{ once: true }}
-      >
-        {/* Overall Rating - matches project-card structure */}
-        <motion.div
-          className="bg-muted/30 mb-4 flex justify-between rounded-lg border p-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-          viewport={{ once: true }}
-        >
-          <p className="text-muted-foreground text-sm font-medium uppercase">
-            Overall
-          </p>
-          <div className="bg-primary/10 text-primary flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-sm font-semibold">
-            <span>{overallRating.toFixed(1)}</span>
-            <span className="text-[12px] opacity-70">/10</span>
-          </div>
-        </motion.div>
-
-        {/* Review Items - matches ReviewItem component */}
-        <div className="bg-muted/30 rounded-lg border p-2.5">
-          <div className="grid gap-x-3 gap-y-1.5">
-            {reviewItems.map((item) => (
-              <div key={item.label} className="flex items-center gap-6">
-                <span className="text-muted-foreground w-16 shrink-0 text-xs font-medium">
-                  {item.label}
+    <div className="relative flex h-full justify-center px-2 py-8">
+      <div className="max-h-[20rem] w-full">
+        <Card className="w-full max-w-md">
+          <CardHeader className="pb-4">
+            <CardTitle className="font-serif text-xl tracking-wider">
+              Submit Review
+            </CardTitle>
+            <CardDescription>
+              Rate this project across different criteria.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-5">
+              {/* Overall Rating Display */}
+              <div className="bg-muted/30 flex flex-col items-center justify-center gap-1 rounded-xl border p-4 text-center">
+                <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+                  Overall Rating
                 </span>
-                <div className="bg-primary/10 h-1.5 flex-1 overflow-hidden rounded-full">
-                  <motion.div
-                    className="bg-primary h-full rounded-full"
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${(item.score / 10) * 100}%` }}
-                    transition={{
-                      delay: item.delay,
-                      duration: 0.5,
-                      ease: "easeOut",
-                    }}
-                    viewport={{ once: true }}
-                  />
+                <div className="flex items-baseline gap-1">
+                  <span className="font-serif text-4xl font-bold">
+                    {overallRating.toFixed(1)}
+                  </span>
+                  <span className="text-muted-foreground text-lg">/ 10</span>
                 </div>
-                <motion.span
-                  className="text-foreground w-4 text-right text-xs font-semibold"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ delay: item.delay + 0.2, duration: 0.3 }}
-                  viewport={{ once: true }}
-                >
-                  {item.score}
-                </motion.span>
               </div>
-            ))}
-          </div>
-        </div>
-      </motion.div>
+
+              {/* Rating Sliders */}
+              <div className="space-y-4">
+                {ratingCategories.map((category) => (
+                  <div key={category.label} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">
+                        {category.label}
+                      </Label>
+                      <span className="text-muted-foreground font-mono text-sm">
+                        {category.value} / 10
+                      </span>
+                    </div>
+                    {/* Static Slider Mockup */}
+                    <div className="bg-muted relative h-2 w-full rounded-full">
+                      <div
+                        className="bg-primary absolute top-0 left-0 h-full rounded-full"
+                        style={{ width: `${(category.value / 10) * 100}%` }}
+                      />
+                      <div
+                        className="bg-primary absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border-2 border-white shadow-md"
+                        style={{
+                          left: `calc(${(category.value / 10) * 100}% - 8px)`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Remarks Field */}
+              <div className="space-y-2">
+                <Label>
+                  Remarks{" "}
+                  <span className="text-muted-foreground font-normal">
+                    (Optional)
+                  </span>
+                </Label>
+                <Textarea
+                  placeholder="Add your detailed review here..."
+                  rows={2}
+                  className="resize-none"
+                  value={"Great project! The design is clean and modern."}
+                  readOnly
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-2 pt-2">
+                <Button variant="outline" className="flex-1">
+                  Pick Another
+                </Button>
+                <Button className="flex-1">Submit Review</Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="from-background via-background pointer-events-none absolute inset-x-0 bottom-0 z-40 h-32 w-full bg-gradient-to-t to-transparent" />
+      <div className="from-background via-background pointer-events-none absolute right-0 z-40 h-full w-30 bg-gradient-to-l to-transparent" />
     </div>
   );
 };
