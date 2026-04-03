@@ -188,7 +188,7 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1">
               <Button
                 type="button"
                 variant="outline"
@@ -197,14 +197,14 @@ const Login = () => {
                 <Google />
                 Google
               </Button>
-              <Button
+              {/*<Button
                 type="button"
                 variant="outline"
                 onClick={() => handleSocialLogin("github")}
               >
                 <Github />
                 GitHub
-              </Button>
+              </Button>*/}
             </div>
 
             <div className="text-center text-sm">
