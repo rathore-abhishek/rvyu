@@ -14,11 +14,7 @@ export function ThemeToggle() {
     const newTheme = resolvedTheme === "dark" ? "light" : "dark";
 
     // Check if View Transition API is supported
-    if (
-      typeof document !== "undefined" &&
-      "startViewTransition" in document &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
+    if (typeof document !== "undefined" && "startViewTransition" in document) {
       // Use View Transition API with proper type casting
       const doc = document as Document & {
         startViewTransition: (callback: () => void) => void;
