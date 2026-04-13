@@ -41,6 +41,7 @@ const ListDetailActions = ({
   sortBy,
   sortDirection,
   filter,
+  savedOnly,
   currentPage,
 }: {
   isOwner: boolean;
@@ -52,6 +53,7 @@ const ListDetailActions = ({
   sortBy: string;
   sortDirection: "asc" | "desc";
   filter: "reviewed" | "pending";
+  savedOnly?: boolean;
   currentPage: number;
 }) => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -82,6 +84,7 @@ const ListDetailActions = ({
           sortBy,
           sortDirection,
           filter,
+          savedOnly,
           currentPage,
         ],
       });

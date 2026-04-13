@@ -187,6 +187,7 @@ export async function getListProjects({
   sortBy = "date",
   sortDirection = "desc",
   filter = "reviewed",
+  savedOnly = false,
 }: {
   listId: string;
   search?: string;
@@ -195,6 +196,7 @@ export async function getListProjects({
   sortBy?: "date" | "rating";
   sortDirection?: "asc" | "desc";
   filter?: "reviewed" | "pending";
+  savedOnly?: boolean;
 }) {
   const user = await getUser();
 
@@ -275,7 +277,7 @@ export async function getListProjects({
   }
 
   // Check user's save status and calculate overall rating
-  const projectsWithMeta = await Promise.all(
+  let projectsWithMeta = await Promise.all(
     filteredProjects.map(async (lp) => {
       // Check if user saved this project
       let userSaved = false;
@@ -322,6 +324,11 @@ export async function getListProjects({
       };
     }),
   );
+
+  // Apply the "savedOnly" filter if requested
+  if (savedOnly) {
+    projectsWithMeta = projectsWithMeta.filter((lp) => lp.userSaved);
+  }
 
   // Sort based on sortBy and sortDirection
   const sortedProjects = projectsWithMeta.sort((a, b) => {

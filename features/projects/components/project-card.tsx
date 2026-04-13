@@ -43,6 +43,7 @@ interface ProjectCardProps {
 
   userSaved: boolean;
   currentUserId: string | null;
+  isOwner?: boolean;
   onClick: () => void;
   onDelete: (e: React.MouseEvent, id: string, name: string) => void;
 }
@@ -57,6 +58,7 @@ export function ProjectCard({
   review,
   userSaved,
   currentUserId,
+  isOwner = false,
   onClick,
   onDelete,
 }: ProjectCardProps) {
@@ -136,19 +138,21 @@ export function ProjectCard({
 
             {currentUserId && (
               <div className="shrink0 flex items-center gap-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="icon-sm"
-                      variant="ghost"
-                      onClick={(e) => onDelete(e, projectId, name)}
-                      className="text-destructive lg:text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 rounded-lg"
-                    >
-                      <Delete />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
+                {isOwner && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        onClick={(e) => onDelete(e, projectId, name)}
+                        className="text-destructive lg:text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 rounded-lg"
+                      >
+                        <Delete />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                  </Tooltip>
+                )}
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button

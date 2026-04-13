@@ -63,6 +63,7 @@ interface ProjectsListProps {
   view: "card" | "table";
   currentUserId: string | null;
   filter: "reviewed" | "pending";
+  savedOnly?: boolean;
   page?: number;
   isOwner?: boolean;
   listOwnerId: string;
@@ -76,6 +77,7 @@ const ProjectsList = ({
   view,
   currentUserId,
   filter,
+  savedOnly = false,
   page: initialPage,
   isOwner = false,
   listOwnerId,
@@ -118,6 +120,7 @@ const ProjectsList = ({
       sortBy,
       sortDirection,
       filter,
+      savedOnly,
       currentPage,
     ],
     queryFn: () =>
@@ -129,6 +132,7 @@ const ProjectsList = ({
         sortBy: sortBy as "date" | "rating",
         sortDirection,
         filter,
+        savedOnly,
       }),
   });
 
@@ -147,6 +151,7 @@ const ProjectsList = ({
           sortBy,
           sortDirection,
           filter,
+          savedOnly,
           currentPage,
         ],
       });
@@ -439,6 +444,7 @@ const ProjectsList = ({
                 review={lp.project.review}
                 userSaved={lp.userSaved}
                 currentUserId={currentUserId}
+                isOwner={isOwner}
                 onClick={() =>
                   handleProjectClick(lp.project.id, lp.id, lp.userSaved)
                 }

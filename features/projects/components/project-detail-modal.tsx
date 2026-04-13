@@ -319,9 +319,9 @@ export function ListProjectDetailModal({
                   </a>
                 </Button>
               )}
-              <div className="bg-border mx-2 h-6 w-px" />
 
               {currentUserId && (
+              <><div className="bg-border mx-2 h-6 w-px" />
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -342,6 +342,7 @@ export function ListProjectDetailModal({
                     <p>{saved ? "Unsave" : "Save"}</p>
                   </TooltipContent>
                 </Tooltip>
+                </>
               )}
               {currentUserId && isOwner && onDelete && (
                 <Tooltip>

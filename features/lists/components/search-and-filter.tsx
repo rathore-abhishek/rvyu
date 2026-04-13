@@ -26,7 +26,7 @@ import SortDown from "@/components/icons/sort-down";
 import SortUp from "@/components/icons/sort-up";
 import Table from "@/components/icons/table";
 
-import { Search } from "@/components/icons";
+import { Search, Save } from "@/components/icons";
 
 interface SearchAndFilterProps {
   onSearchChange?: (value: string) => void;
@@ -34,6 +34,8 @@ interface SearchAndFilterProps {
   onViewChange?: (view: "card" | "table") => void;
   onFilterChange?: (filter: "reviewed" | "pending") => void;
   isOwner: boolean;
+  isAuthenticated: boolean;
+  savedOnly?: boolean;
 }
 
 const SearchAndFilter = ({
@@ -42,6 +44,8 @@ const SearchAndFilter = ({
   onViewChange,
   onFilterChange,
   isOwner,
+  isAuthenticated,
+  savedOnly: initialSavedOnly = false,
 }: SearchAndFilterProps) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -58,6 +62,7 @@ const SearchAndFilter = ({
   const [filter, setFilter] = useState<"reviewed" | "pending">(
     (searchParams.get("filter") as "reviewed" | "pending") || "reviewed",
   );
+  const [savedOnly, setSavedOnly] = useState(initialSavedOnly);
 
   // Update URL params
   const updateUrlParams = useCallback(
@@ -112,6 +117,11 @@ const SearchAndFilter = ({
     onFilterChange?.(newFilter);
   };
 
+  const handleSavedOnlyChange = (newSavedOnly: boolean) => {
+    setSavedOnly(newSavedOnly);
+    updateUrlParams({ saved: newSavedOnly ? "true" : null });
+  };
+
   return (
     <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
       <div className="flex w-full flex-row gap-2 sm:w-auto">
@@ -150,7 +160,15 @@ const SearchAndFilter = ({
           {sortDirection === "desc" ? <SortDown /> : <SortUp />}
         </Button>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center"> {isAuthenticated && (
+            <Button
+              variant={"ghost"}
+              size={"icon-lg"}
+              onClick={() => handleSavedOnlyChange(!savedOnly)}
+            >
+              <Save className={`${savedOnly ? "fill-current" : ""}`} />
+            </Button>
+        )}
         {isOwner && (
           <div className="corner-squircle flex items-center space-x-1 rounded-md border p-1 supports-[corner-shape:squircle]:rounded-2xl">
             <Button
@@ -161,16 +179,19 @@ const SearchAndFilter = ({
             >
               Reviewed
             </Button>
-            <Button
-              variant={"ghost"}
-              size={"sm"}
-              className={filter === "pending" ? "bg-muted" : ""}
-              onClick={() => handleFilterChange("pending")}
-            >
-              Pending
-            </Button>
+            {isOwner && (
+              <Button
+                variant={"ghost"}
+                size={"sm"}
+                className={filter === "pending" ? "bg-muted" : ""}
+                onClick={() => handleFilterChange("pending")}
+              >
+                Pending
+              </Button>
+            )}
           </div>
         )}
+       
         <div className="corner-squircle flex items-center space-x-1 rounded-md border p-1 supports-[corner-shape:squircle]:rounded-2xl">
           <Button
             variant={"ghost"}

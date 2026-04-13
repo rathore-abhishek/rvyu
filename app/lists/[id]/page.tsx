@@ -33,6 +33,7 @@ const ListDetailPage = async ({
   const view = (resolvedSearchParams.view as "card" | "table") || "card";
   const filter =
     (resolvedSearchParams.filter as "reviewed" | "pending") || "reviewed";
+  const savedOnly = resolvedSearchParams.saved === "true";
   const page = parseInt((resolvedSearchParams.page as string) || "1", 10);
 
   const list = await getListDetails(id);
@@ -94,6 +95,7 @@ const ListDetailPage = async ({
             sortBy={sortBy}
             sortDirection={sortDirection}
             filter={filter}
+            savedOnly={savedOnly}
             currentPage={page}
           />
         </div>
@@ -134,7 +136,7 @@ const ListDetailPage = async ({
         </div>
       </div>
 
-      <SearchAndFilter isOwner={isOwner} />
+      <SearchAndFilter isOwner={isOwner} isAuthenticated={!!user} savedOnly={savedOnly} />
       {/* Client-side interactive content */}
       <ProjectsList
         listId={id}
@@ -144,6 +146,7 @@ const ListDetailPage = async ({
         view={view}
         currentUserId={user?.id || null}
         filter={filter}
+        savedOnly={savedOnly}
         page={page}
         isOwner={isOwner}
         listOwnerId={list.userId}
