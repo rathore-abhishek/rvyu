@@ -114,11 +114,9 @@ const Navbar = () => {
             <Skeleton className="h-10 w-10 rounded-full" />
           ) : user ? (
             <>
-              {isLanding && (
                 <Button asChild size="sm" className="hidden sm:flex">
                   <Link href="/dashboard">Dashboard</Link>
                 </Button>
-              )}
               <UserMenu user={user} />
             </>
           ) : (
